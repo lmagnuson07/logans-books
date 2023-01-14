@@ -1,5 +1,8 @@
 # CakePHP 3
 
+# folders 
+/private_docs/
+
 /vendor/*
 /config/app.php
 
