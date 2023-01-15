@@ -36,27 +36,27 @@ CREATE TABLE IF NOT EXISTS book (
 CREATE TABLE IF NOT EXISTS bookGenre (
 	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
     ,name					VARCHAR(255)	NOT NULL
-    ,description			TEXT	
+    ,description			TEXT			DEFAULT NULL	
 );
 -- 3
 CREATE TABLE IF NOT EXISTS bookCategory (
 	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
     ,name					VARCHAR(255)	NOT NULL
-    ,description			TEXT
+    ,description			TEXT			DEFAULT NULL
 );
 -- 4
 CREATE TABLE IF NOT EXISTS bookEdition (
 	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
     ,name					VARCHAR(255)	NOT NULL
-    ,description			TEXT
+    ,description			TEXT			DEFAULT NULL
 );
 -- 5
 CREATE TABLE IF NOT EXISTS bookAuthor (
 	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
     ,first_name				VARCHAR(255)	NOT NULL	
     ,last_name				VARCHAR(255)	NOT NULL
-    ,image_url				VARCHAR(255)	
-    ,email					VARCHAR(255)	
+    ,image_url				VARCHAR(255)	DEFAULT NULL
+    ,email					VARCHAR(255)	DEFAULT NULL
 );
 -- 6
 CREATE TABLE IF NOT EXISTS bookPublisher (
@@ -65,9 +65,9 @@ CREATE TABLE IF NOT EXISTS bookPublisher (
     ,residence_id			INT				NOT NULL
     ,street_address			VARCHAR(255)	NOT NULL
     ,postal_code			VARCHAR(50)		NOT NULL
-    ,website_url			VARCHAR(255)	
+    ,website_url			VARCHAR(255)	DEFAULT NULL
     ,email					VARCHAR(255)	NOT NULL
-	,phone					VARCHAR(50)	
+	,phone					VARCHAR(50)		DEFAULT NULL
 );
 -- 7 
 CREATE TABLE IF NOT EXISTS bookPrice (
