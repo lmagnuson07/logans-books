@@ -2,6 +2,7 @@
 
 # folders 
 /private_docs/
+/database_scripts_private/
 
 /vendor/*
 /config/app.php
