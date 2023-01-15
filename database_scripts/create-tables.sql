@@ -30,11 +30,31 @@ DROP TABLE IF EXISTS customer;
 DROP TABLE IF EXISTS coupon;
 DROP TABLE IF EXISTS sale;
 DROP TABLE IF EXISTS paymentcard;
+
 DROP TABLE IF EXISTS salepaymentcarddetail;
 DROP TABLE IF EXISTS salecoupondetail;
 DROP TABLE IF EXISTS saleitemdetail;
 
+DROP TABLE IF EXISTS vendor;
+DROP TABLE IF EXISTS vendorcontact;
+DROP TABLE IF EXISTS purchaseorder;
+
+DROP TABLE IF EXISTS vendorcontactdetail;
+DROP TABLE IF EXISTS bookvendordetail;
+DROP TABLE IF EXISTS purchaseorderdetail;
+
+DROP TABLE IF EXISTS receiveorder;
+DROP TABLE IF EXISTS receivedatedetail;
+DROP TABLE IF EXISTS receiveorderdetail;
+
+DROP TABLE IF EXISTS rental;
+DROP TABLE IF EXISTS rentalbook;
+DROP TABLE IF EXISTS rentalcoupondetail;
+DROP TABLE IF EXISTS rentaldetail;
+
 -- --------- Books -----------------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------------------------------
 -- 1
 CREATE TABLE IF NOT EXISTS book (
 	id 						INT 			NOT NULL 		AUTO_INCREMENT 	PRIMARY KEY
@@ -276,6 +296,134 @@ CREATE TABLE IF NOT EXISTS saleitemdetail (
     ,sale_id				INT				NOT NULL
     ,book_id				INT 			NOT NULL
 );
+-- -----------------------------------------------------------------------------------------------------
+-- Purchase Order --------------------------------------------------------------------------------------
+-- 1
+CREATE TABLE IF NOT EXISTS vendor (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,name					VARCHAR(255)	NOT NULL
+    ,residence_id			INT 			NOT NULL
+    ,street_address			VARCHAR(255) 	NOT NULL
+    ,postal_code			VARCHAR(50)		NOT NULL
+    ,phone_number			VARCHAR(50)		DEFAULT NULL
+    ,website_url			VARCHAR(255)	DEFAULT NULL
+    ,email					VARCHAR(255)	DEFAULT NULL
+);
+-- 2
+CREATE TABLE IF NOT EXISTS vendorcontact (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+	,first_name				VARCHAR(255)	NOT NULL
+	,last_name				VARCHAR(255) 	NOT NULL
+    ,residence_id			INT 			NOT NULL
+    ,street_address			VARCHAR(255) 	NOT NULL
+    ,postal_code			VARCHAR(50)		NOT NULL
+	,prefered_contact_method	VARCHAR(50)	DEFAULT NULL
+    ,home_phone				VARCHAR(50)		DEFAULT NULL
+    ,cell_phone				VARCHAR(50)		DEFAULT NULL
+    ,email					VARCHAR(255)	DEFAULT NULL
+    ,vendor_id				INT				NOT NULL
+);
+-- 3 
+CREATE TABLE IF NOT EXISTS purchaseorder (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,date					DATETIME		NOT NULL DEFAULT (CURRENT_DATE)
+    ,tax_amount				DECIMAL(10,4)	NOT NULL
+    ,subtotal				DECIMAL(10, 4) 	NOT NULL
+    ,notes					TEXT			DEFAULT NULL
+    ,is_closed				TINYINT			NOT NULL DEFAULT 0
+    ,employee_id			INT 			NOT NULL
+    ,vendor_id				INT 			NOT NULL
+);
+-- Bridging tables
+-- 1
+CREATE TABLE IF NOT EXISTS vendorcontactdetail (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,vendor_id				INT 			NOT NULL
+    ,vendor_contact_id		INT 			NOT NULL
+);
+-- 2 
+CREATE TABLE IF NOT EXISTS bookvendordetail (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,book_id				INT				NOT NULL
+    ,vendor_id				INT 			NOT NULL
+);
+-- 3 
+CREATE TABLE IF NOT EXISTS purchaseorderdetail (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,purchase_price			DECIMAL(10,4) 	NOT NULL
+    ,purchase_qty			INT				NOT NULL
+    ,purchase_order_id		INT				NOT NULL
+    ,book_id				INT 			NOT NULL
+);
+-- -----------------------------------------------------------------------------------------------------
+-- Receiving -------------------------------------------------------------------------------------------
+-- 1
+CREATE TABLE IF NOT EXISTS receiveorder (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,purchase_order_id		INT				NOT NULL
+    ,employee_id			INT 			NOT NULL
+);
+-- 2 
+CREATE TABLE IF NOT EXISTS receivedatedetail (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,receive_order_id		INT 			NOT NULL
+    ,receive_date			DATETIME		NOT NULL 	DEFAULT (CURRENT_DATE)
+    ,receive_status			VARCHAR(100)	NOT NULL DEFAULT 'received'
+);
+-- 3 
+CREATE TABLE IF NOT EXISTS receiveorderdetail (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,qty					INT 			NOT NULL
+    ,purchase_order_detail_id	INT 		NOT NULL
+    ,receive_order_id			INT 		NOT NULL
+);
+-- -----------------------------------------------------------------------------------------------------
+-- Rentals ---------------------------------------------------------------------------------------------
+-- 1
+CREATE TABLE IF NOT EXISTS rental (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,subtotal				DECIMAL(10,4) 	NOT NULL	
+    ,tax_amount				DECIMAL(10,4) 	NOT NULL
+    ,date_open				DATETIME		NOT NULL DEFAULT (CURRENT_DATE)
+    ,date_closed			DATETIME		DEFAULT NULL
+    ,payment_type			VARCHAR(100)	NOT NULL
+    ,employee_id			INT 			NOT NULL
+    ,customer_id			INT 			NOT NULL
+);
+-- 2 
+CREATE TABLE IF NOT EXISTS rentalbook (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+	,daily_rate				DECIMAL(10,4)	NOT NULL	
+    ,current_condition		VARCHAR(255)	NOT NULL
+    ,is_available			TINYINT			NOT NULL DEFAULT 1
+    ,is_retired				TINYINT			NOT NULL DEFAULT 0
+    ,purchase_order_detail_id	INT			NOT NULL
+);
+-- 3 
+CREATE TABLE IF NOT EXISTS rentalcoupondetail (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,rental_id				INT				NOT NULL
+    ,coupon_id				INT				NOT NULL
+);
+-- 4 	
+CREATE TABLE IF NOT EXISTS rentaldetail (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY	
+    ,date_due				DATETIME		NOT NULL
+    ,out_condition			VARCHAR(255)	NOT NULL DEFAULT 'good'
+    ,in_condition			VARCHAR(255)	DEFAULT NULL
+    ,comments				TEXT			DEFAULT NULL
+    ,rental_rate			DECIMAL(10,4)	NOT NULL
+    ,damage_repair_cost		DECIMAL(10,4) 	DEFAULT NULL
+    ,rental_id				INT 			NOT NULL
+    ,rental_book_id			INT 			NOT NULL
+);
+-- -----------------------------------------------------------------------------------------------------
+-- Refunds ---------------------------------------------------------------------------------------------
+-- 1
+
+
+
+
 
 
 
