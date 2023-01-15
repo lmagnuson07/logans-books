@@ -1,0 +1,15 @@
+{
+    "name": "logma/logans-books",
+    "autoload": {
+        "psr-4": {
+            "Logma\\LogansBooks\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "lmagnuson07",
+            "email": "logmagns07@gmail.com"
+        }
+    ],
+    "require": {}
+}
