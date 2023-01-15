@@ -70,6 +70,9 @@ ALTER TABLE salerefund DROP CONSTRAINT fk_sale_salerefund_sale_id;
 ALTER TABLE salerefunddetail DROP CONSTRAINT fk_salerefund_salerefunddetal_sale_refund_id;
 ALTER TABLE salerefunddetail DROP CONSTRAINT fk_book_salerefunddetal_sale_book_id;
 
+ALTER TABLE store DROP CONSTRAINT fk_residence_store_residence_id;
+ALTER TABLE storeemployeedetail DROP CONSTRAINT fk_store_storeemployeedetail_store_id;
+ALTER TABLE storeemployeedetail DROP CONSTRAINT fk_employee_storeemployeedetail_employee_id;
 
 -- Drop Indexes
 ALTER TABLE book DROP INDEX i_book_title;
@@ -296,6 +299,14 @@ FOREIGN KEY (book_id) REFERENCES book(id);
 -- -----------------------------------------------------------------------------------------------------
 -- Company ---------------------------------------------------------------------------------------------
 -- 1 
+ALTER TABLE store ADD CONSTRAINT fk_residence_store_residence_id
+FOREIGN KEY (residence_id) REFERENCES residence(id);
+-- 2 
+ALTER TABLE storeemployeedetail ADD CONSTRAINT fk_store_storeemployeedetail_store_id
+FOREIGN KEY (store_id) REFERENCES store(id);
+-- 3 
+ALTER TABLE storeemployeedetail ADD CONSTRAINT fk_employee_storeemployeedetail_employee_id
+FOREIGN KEY (store_id) REFERENCES store(id);
 -- ----- Indexes ---------------------------------------------------------------------------------------
 -- Books
 ALTER TABLE book ADD INDEX i_book_title (title);

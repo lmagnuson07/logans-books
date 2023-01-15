@@ -55,6 +55,9 @@ DROP TABLE IF EXISTS rentaldetail;
 DROP TABLE IF EXISTS salerefund;
 DROP TABLE IF EXISTS salerefunddetail;
 
+DROP TABLE IF EXISTS store;
+DROP TABLE IF EXISTS storeemployeedetail;
+
 -- --------- Books -----------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------
@@ -441,9 +444,26 @@ CREATE TABLE IF NOT EXISTS salerefunddetail (
     ,sale_refund_id			INT 			NOT NULL
     ,book_id				INT 			NOT NULL
 );
-
-
-
+-- -----------------------------------------------------------------------------------------------------
+-- Company Info ----------------------------------------------------------------------------------------
+-- 1 
+CREATE TABLE IF NOT EXISTS store (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY	
+    ,residence_id			INT 			NOT NULL
+    ,street_address			VARCHAR(255)	NOT NULL
+    ,postal_code			VARCHAR(50)		NOT NULL
+    ,email					VARCHAR(255)	NOT NULL
+    ,phone_number			VARCHAR(50)		NOT NULL
+	,is_warehouse			TINYINT			NOT NULL
+    ,is_closed				TINYINT			NOT NULL DEFAULT 0
+);
+-- 2 
+CREATE TABLE IF NOT EXISTS storeemployeedetail (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY	
+	,store_id				INT 			NOT NULL
+    ,employee_id			INT 			NOT NULL
+    ,is_current_employee	TINYINT 		NOT NULL DEFAULT 1
+);
 
 
 
