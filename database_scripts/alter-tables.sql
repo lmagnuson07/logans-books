@@ -64,6 +64,13 @@ ALTER TABLE rentalcoupondetail DROP CONSTRAINT fk_coupon_rentalcoupon_coupon_id;
 ALTER TABLE rentaldetail DROP CONSTRAINT fk_rental_rentaldetail_rental_id;
 ALTER TABLE rentaldetail DROP CONSTRAINT fk_rentalbook_rentaldetail_rental_book_id;
 
+ALTER TABLE salerefund DROP CONSTRAINT fk_employee_salerefund_employee_id;
+ALTER TABLE salerefund DROP CONSTRAINT fk_customer_salerefund_customer_id;
+ALTER TABLE salerefund DROP CONSTRAINT fk_sale_salerefund_sale_id;
+ALTER TABLE salerefunddetail DROP CONSTRAINT fk_salerefund_salerefunddetal_sale_refund_id;
+ALTER TABLE salerefunddetail DROP CONSTRAINT fk_book_salerefunddetal_sale_book_id;
+
+
 -- Drop Indexes
 ALTER TABLE book DROP INDEX i_book_title;
 
@@ -269,6 +276,26 @@ FOREIGN KEY (rental_id) REFERENCES rental(id);
 -- 7
 ALTER TABLE rentaldetail ADD CONSTRAINT fk_rentalbook_rentaldetail_rental_book_id
 FOREIGN KEY (rental_book_id) REFERENCES rentalbook(id);
+-- -----------------------------------------------------------------------------------------------------
+-- Refunds ---------------------------------------------------------------------------------------------
+-- 1 
+ALTER TABLE salerefund ADD CONSTRAINT fk_employee_salerefund_employee_id
+FOREIGN KEY (employee_id) REFERENCES employee(id);
+-- 2 
+ALTER TABLE salerefund ADD CONSTRAINT fk_customer_salerefund_customer_id
+FOREIGN KEY (customer_id) REFERENCES customer(id);
+-- 3 
+ALTER TABLE salerefund ADD CONSTRAINT fk_sale_salerefund_sale_id
+FOREIGN KEY (sale_id) REFERENCES sale(id);
+-- 4 
+ALTER TABLE salerefunddetail ADD CONSTRAINT fk_salerefund_salerefunddetal_sale_refund_id
+FOREIGN KEY (sale_refund_id) REFERENCES salerefund(id);
+-- 5 
+ALTER TABLE salerefunddetail ADD CONSTRAINT fk_book_salerefunddetal_sale_book_id
+FOREIGN KEY (book_id) REFERENCES book(id);
+-- -----------------------------------------------------------------------------------------------------
+-- Company ---------------------------------------------------------------------------------------------
+-- 1 
 -- ----- Indexes ---------------------------------------------------------------------------------------
 -- Books
 ALTER TABLE book ADD INDEX i_book_title (title);

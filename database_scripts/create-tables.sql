@@ -52,6 +52,9 @@ DROP TABLE IF EXISTS rentalbook;
 DROP TABLE IF EXISTS rentalcoupondetail;
 DROP TABLE IF EXISTS rentaldetail;
 
+DROP TABLE IF EXISTS salerefund;
+DROP TABLE IF EXISTS salerefunddetail;
+
 -- --------- Books -----------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------
@@ -420,7 +423,24 @@ CREATE TABLE IF NOT EXISTS rentaldetail (
 -- -----------------------------------------------------------------------------------------------------
 -- Refunds ---------------------------------------------------------------------------------------------
 -- 1
-
+CREATE TABLE IF NOT EXISTS salerefund (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY	
+    ,refund_date			DATETIME		NOT NULL DEFAULT (CURRENT_DATE)
+    ,tax_amount				DECIMAL(10,4)	NOT NULL
+    ,subtotal				DECIMAL(10,4) 	NOT NULL
+    ,employee_id			INT				NOT NULL
+    ,customer_id			INT 			NOT NULL
+    ,sale_id				INT 			NOT NULL
+);
+-- 2 
+CREATE TABLE IF NOT EXISTS salerefunddetail (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY	
+    ,selling_price			DECIMAL(10,4) 	NOT NULL
+    ,single_item_refunded_price	DECIMAL(10,4) NOT NULL	
+    ,qty_refunded			INT 			NOT NULL
+    ,sale_refund_id			INT 			NOT NULL
+    ,book_id				INT 			NOT NULL
+);
 
 
 
