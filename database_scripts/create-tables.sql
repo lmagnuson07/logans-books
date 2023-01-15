@@ -16,6 +16,11 @@ DROP TABLE IF EXISTS bookauthordetail;
 DROP TABLE IF EXISTS bookpublisherdetail;
 DROP TABLE IF EXISTS bookpricedetail;
 
+DROP TABLE IF EXISTS country;
+DROP TABLE IF EXISTS state;
+DROP TABLE IF EXISTS city;
+DROP TABLE IF EXISTS residence;
+
 DROP TABLE IF EXISTS employee;
 DROP TABLE IF EXISTS position;
 DROP TABLE IF EXISTS employeepositiondetail;
@@ -86,7 +91,7 @@ CREATE TABLE IF NOT EXISTS bookpublisher (
 CREATE TABLE IF NOT EXISTS bookprice (
 	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY		
     ,historical_price		DECIMAL(10,4)	NOT NULL
-    ,historical_price_date	DATETIME		NOT NULL
+    ,historical_price_date	DATETIME		DEFAULT (CURRENT_DATE)
 );
 -- bridging tables
 -- 1
@@ -127,13 +132,43 @@ CREATE TABLE IF NOT EXISTS bookpricedetail (
     ,price_id				INT 			NOT NULL
 );
 -- -----------------------------------------------------------------------------------------------------
+-- Residence ------------------------------------------------------------------------------------------
+-- 1
+CREATE TABLE IF NOT EXISTS country (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,name					VARCHAR(255)	NOT NULL
+    ,alpha_2_code			CHAR(2)			NOT NULL
+    ,alpha_3_code			CHAR(3)			NOT NULL
+);
+-- 2
+CREATE TABLE IF NOT EXISTS state (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,name					VARCHAR(255) 	NOT NULL
+    ,code					VARCHAR(50)		DEFAULT NULL
+    ,country_id				INT				NOT NULL
+);
+-- 3
+CREATE TABLE IF NOT EXISTS city (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,name					VARCHAR(255)	NOT NULL
+    ,state_id				INT 			NOT NULL
+    ,country_id				INT 			NOT NULL
+);
+-- 4
+CREATE TABLE IF NOT EXISTS residence (
+	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,country_id				INT 			NOT NULL
+    ,state_id				INT 			NOT NULL
+    ,city_id				INT 			NOT NULL
+);
+-- -----------------------------------------------------------------------------------------------------
 -- Employee/Admin --------------------------------------------------------------------------------------
 -- 1
 CREATE TABLE IF NOT EXISTS employee (
 	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
     ,first_name				VARCHAR(255)	NOT NULL
     ,last_name				VARCHAR(255)	NOT NULL
-    ,resident_id			INT				NOT NULL
+    ,residence_id			INT				NOT NULL
     ,street_address			VARCHAR(255)	NOT NULL	
     ,postal_code			VARCHAR(50)		NOT NULL
     ,email					VARCHAR(255)	NOT NULL	
@@ -169,13 +204,13 @@ CREATE TABLE IF NOT EXISTS employeemanagerdetail (
     ,manager_id				INT 			NOT NULL
 );
 -- -----------------------------------------------------------------------------------------------------
--- Customer - Sale --------------------------------------------------------------------------------------
+-- Customer - Sale -------------------------------------------------------------------------------------
 -- 1
 CREATE TABLE IF NOT EXISTS customer (
 	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
     ,first_name				VARCHAR(255)	NOT NULL
     ,last_name				VARCHAR(255)	NOT NULL
-    ,resident_id			INT				NOT NULL
+    ,residence_id			INT				NOT NULL
     ,street_address			VARCHAR(255)	NOT NULL	
     ,postal_code			VARCHAR(50)		NOT NULL
     ,email					VARCHAR(255)	NOT NULL	
@@ -241,6 +276,10 @@ CREATE TABLE IF NOT EXISTS saleitemdetail (
     ,sale_id				INT				NOT NULL
     ,book_id				INT 			NOT NULL
 );
+
+
+
+
 
 
 
