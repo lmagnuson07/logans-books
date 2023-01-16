@@ -10,6 +10,7 @@ if(!isset($page_heading)) { $page_heading = 'Logan\'s Books'; }
 				content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title><?php echo $page_title; ?> - [Admin Area]</title>
+	<link rel="stylesheet" media="all" href="<?php echo url_for('/css/style.css'); ?>">
 </head>
 <body>
 <header>
@@ -20,6 +21,7 @@ if(!isset($page_heading)) { $page_heading = 'Logan\'s Books'; }
 		</ul>
 		<?php require_once('book_navigation.php'); ?>
 	</nav>
+	<div class="card"><h2>hey</h2></div>
 </header>
 
 <main>

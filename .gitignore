@@ -1,9 +1,10 @@
 # CakePHP 3
 
 # folders 
-/private_docs/
+/docs_private/
 /database_scripts_private/
 
+/node_modules/
 /vendor/*
 /config/app.php
 

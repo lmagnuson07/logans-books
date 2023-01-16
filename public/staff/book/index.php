@@ -8,6 +8,9 @@ require_once('../../../private/shared/staff_header.php');
 <a href="<?php echo url_for('/staff/'); ?>">&laquo; Go back to Staff home page</a>
 <p>Create a new book >></p>
 <p>List of books</p>
+<form action="">
+	<input type="text" placeholder="Enter search"/>
+</form>
 <table border="1">
 	<thead>
 	<tr>
