@@ -1,0 +1,32 @@
+{
+  "name": "logans-books",
+  "version": "1.0.0",
+  "description": "Logan's Books is a **PHP/MySql** database driven application for a fictious bookstore. Data is uploaded to the database via PDO **Prepared Statements** and **Transactions**. Presentation and business logic is separated via **Twig Templates** templating engine along with **OOP** principles and **MVC** paradigm. SCSS is compiled using **PostCSS**. CSS is also minified and translated for maximum browser support using **PostCSS**. Plugins and extensions are installed via **Composer**. **jQuery** is used to handle DOM tree traversal and manipulation for dynamic content. All book covers are acquired from [Open Library Covers API](https://openlibrary.org/dev/docs/api/covers \"Open Library Covers API\"). Most of the mock data is generated from [Mockaroo](https://www.mockaroo.com/ \"Generate Test Data Fast\"). **See the links to the public schemas and datasets used for this project below*. \r ## Modules \r - Forward Facing\r   - Customer Sales (storefront and e-commerce)\r   - Rentals (storefront only)\r   - Refunds/Returns (storefront and e-commerce)\r - Admin/Employees\r   - Purchase Orders (storefront and warehouse for e-commerce inventory) \r   - Receiving (storefront and warehouse for e-commerce inventory)\r ## Features\r ### Books \r - Book CRUD (storefront and e-commerce)\r - Genre CRUD (storefront and e-commerce)\r - Category CRUD (storefront and e-commerce)\r - Edition CRUD (storefront and e-commerce) \r - Publisher CRUD (storefront and e-commerce)\r ### Customer Accounts\r - Customer Account CRU (storefront and e-commerce)\r - Customer Account Deletion (admin only)\r ### Employee Accounts\r - Employee Account CRUD (storefront and warehouse only) (admin only)\r ### Store/Warehouse Locations\r - Store/Warehouse CRUD (only top level admin - Company CEO)\r ---\r ### Mockaroo Links",
+  "main": "index.js",
+  "scripts": {
+    "watch:css": "postcss private/scss/index.css -o public/css/style.css -w",
+    "build:css": "postcss private/scss/index.css -o public/css/style.css",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lmagnuson07/logans-books.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lmagnuson07/logans-books/issues"
+  },
+  "homepage": "https://github.com/lmagnuson07/logans-books#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.13",
+    "cssnano": "^5.1.14",
+    "postcss": "^8.4.21",
+    "postcss-assets": "^6.0.0",
+    "postcss-cli": "^10.1.0",
+    "postcss-import": "^15.1.0",
+    "postcss-preset-env": "^7.8.3",
+    "precss": "^4.0.0"
+  }
+}

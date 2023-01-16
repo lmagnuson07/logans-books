@@ -1,0 +1,17 @@
+.card {
+	height: 1000px;
+	background-image: url('../../public/img/images.png');
+	background-repeat: no-repeat;
+	background-position: center;
+}
+/*background-color: $lightColor;*/
+body h1 {
+	/*	color: pink;*/
+	}
+input::-moz-placeholder {
+	color: red;
+}
+input::placeholder {
+	color: red;
+}
+
