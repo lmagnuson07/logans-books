@@ -1,7 +1,11 @@
 <?php
-	require_once('../../../private/shared/staff_header.php');
+require_once('../../../private/initialize.php');
+
+$page_title = "Book CRUD";
+require_once('../../../private/shared/staff_header.php');
 ?>
 <h2>Books</h2>
+<a href="<?php echo url_for('/staff/'); ?>">&laquo; Go back to Staff home page</a>
 <p>Create a new book >></p>
 <p>List of books</p>
 <table border="1">

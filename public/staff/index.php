@@ -1,5 +1,7 @@
 <?php
-	require_once('../../private/shared/staff_header.php');
+require_once('../../private/initialize.php');
+
+require_once('../../private/shared/staff_header.php');
 ?>
 	<!--	redirect to login page from here if user is not logged in -->
 	<h2>About This Page</h2>
