@@ -1,21 +1,5 @@
 @import 'vars';
 
-.card {
-	height: 1000px;
-	background-image: resolve('images.png');
-	background-repeat: no-repeat;
-	background-position: center;
-}
 body {
 	/*background-color: $lightColor;*/
-
-
-	h1 {
-	/*	color: pink;*/
-	}
 }
-
-input::placeholder {
-	color: red;
-}
-

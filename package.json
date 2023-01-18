@@ -6,6 +6,7 @@
   "scripts": {
     "watch:css": "postcss private/scss/index.css -o public/css/style.css -w",
     "build:css": "postcss private/scss/index.css -o public/css/style.css",
+		"lint:css": "stylelint \"**/public/css/*.css\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -27,6 +28,8 @@
     "postcss-cli": "^10.1.0",
     "postcss-import": "^15.1.0",
     "postcss-preset-env": "^7.8.3",
-    "precss": "^4.0.0"
+    "precss": "^4.0.0",
+    "stylelint": "^14.16.1",
+    "stylelint-config-standard": "^29.0.0"
   }
 }

@@ -21,7 +21,6 @@ if(!isset($page_heading)) { $page_heading = 'Logan\'s Books'; }
 		</ul>
 		<?php require_once('book_navigation.php'); ?>
 	</nav>
-	<div class="card"><h2>hey</h2></div>
 </header>
 
 <main>

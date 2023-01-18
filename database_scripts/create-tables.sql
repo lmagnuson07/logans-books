@@ -1,63 +1,5 @@
 USE logans_books;
 
--- Drop Tables
-DROP TABLE IF EXISTS book;
-DROP TABLE IF EXISTS bookgenre;
-DROP TABLE IF EXISTS bookcategory;
-DROP TABLE IF EXISTS bookedition;
-DROP TABLE IF EXISTS bookauthor;
-DROP TABLE IF EXISTS bookpublisher;
-DROP TABLE IF EXISTS bookprice;
-
-DROP TABLE IF EXISTS bookgenredetail;
-DROP TABLE IF EXISTS bookcategorydetail;
-DROP TABLE IF EXISTS bookeditiondetail;
-DROP TABLE IF EXISTS bookauthordetail;
-DROP TABLE IF EXISTS bookpublisherdetail;
-DROP TABLE IF EXISTS bookpricedetail;
-
-DROP TABLE IF EXISTS country;
-DROP TABLE IF EXISTS state;
-DROP TABLE IF EXISTS city;
-DROP TABLE IF EXISTS residence;
-
-DROP TABLE IF EXISTS employee;
-DROP TABLE IF EXISTS position;
-DROP TABLE IF EXISTS employeepositiondetail;
-DROP TABLE IF EXISTS employeemanagerdetail;
-
-DROP TABLE IF EXISTS customer;
-DROP TABLE IF EXISTS coupon;
-DROP TABLE IF EXISTS sale;
-DROP TABLE IF EXISTS paymentcard;
-
-DROP TABLE IF EXISTS salepaymentcarddetail;
-DROP TABLE IF EXISTS salecoupondetail;
-DROP TABLE IF EXISTS saleitemdetail;
-
-DROP TABLE IF EXISTS vendor;
-DROP TABLE IF EXISTS vendorcontact;
-DROP TABLE IF EXISTS purchaseorder;
-
-DROP TABLE IF EXISTS vendorcontactdetail;
-DROP TABLE IF EXISTS bookvendordetail;
-DROP TABLE IF EXISTS purchaseorderdetail;
-
-DROP TABLE IF EXISTS receiveorder;
-DROP TABLE IF EXISTS receivedatedetail;
-DROP TABLE IF EXISTS receiveorderdetail;
-
-DROP TABLE IF EXISTS rental;
-DROP TABLE IF EXISTS rentalbook;
-DROP TABLE IF EXISTS rentalcoupondetail;
-DROP TABLE IF EXISTS rentaldetail;
-
-DROP TABLE IF EXISTS salerefund;
-DROP TABLE IF EXISTS salerefunddetail;
-
-DROP TABLE IF EXISTS store;
-DROP TABLE IF EXISTS storeemployeedetail;
-
 -- --------- Books -----------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------
@@ -65,7 +7,7 @@ DROP TABLE IF EXISTS storeemployeedetail;
 CREATE TABLE IF NOT EXISTS book (
 	id 						INT 			NOT NULL 		AUTO_INCREMENT 	PRIMARY KEY
     ,title 					VARCHAR(255) 	NOT NULL
-    ,tageline				VARCHAR(255)	NOT NULL
+    ,tagline				VARCHAR(255)	NOT NULL
 	,synopsis				TEXT			NOT NULL
 	,number_of_pages		int				NOT NULL
     ,language				VARCHAR(255)	NOT NULL
@@ -79,6 +21,7 @@ CREATE TABLE IF NOT EXISTS book (
 -- 2
 CREATE TABLE IF NOT EXISTS bookgenre (
 	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
+    ,is_fiction				TINYINT			NOT NULL
     ,name					VARCHAR(255)	NOT NULL
     ,description			TEXT			DEFAULT NULL	
 );
@@ -106,7 +49,7 @@ CREATE TABLE IF NOT EXISTS bookauthor (
 CREATE TABLE IF NOT EXISTS bookpublisher (
 	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY		
     ,name					VARCHAR(255)	NOT NULL	
-    ,residence_id			INT				NOT NULL
+    ,city_id				INT				NOT NULL
     ,street_address			VARCHAR(255)	NOT NULL
     ,postal_code			VARCHAR(50)		NOT NULL
     ,website_url			VARCHAR(255)	DEFAULT NULL
@@ -180,13 +123,6 @@ CREATE TABLE IF NOT EXISTS city (
     ,state_id				INT 			NOT NULL
     ,country_id				INT 			NOT NULL
 );
--- 4
-CREATE TABLE IF NOT EXISTS residence (
-	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
-    ,country_id				INT 			NOT NULL
-    ,state_id				INT 			NOT NULL
-    ,city_id				INT 			NOT NULL
-);
 -- -----------------------------------------------------------------------------------------------------
 -- Employee/Admin --------------------------------------------------------------------------------------
 -- 1
@@ -194,7 +130,7 @@ CREATE TABLE IF NOT EXISTS employee (
 	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
     ,first_name				VARCHAR(255)	NOT NULL
     ,last_name				VARCHAR(255)	NOT NULL
-    ,residence_id			INT				NOT NULL
+    ,city_id				INT				NOT NULL
     ,street_address			VARCHAR(255)	NOT NULL	
     ,postal_code			VARCHAR(50)		NOT NULL
     ,email					VARCHAR(255)	NOT NULL	
@@ -236,7 +172,7 @@ CREATE TABLE IF NOT EXISTS customer (
 	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
     ,first_name				VARCHAR(255)	NOT NULL
     ,last_name				VARCHAR(255)	NOT NULL
-    ,residence_id			INT				NOT NULL
+    ,city_id				INT				NOT NULL
     ,street_address			VARCHAR(255)	NOT NULL	
     ,postal_code			VARCHAR(50)		NOT NULL
     ,email					VARCHAR(255)	NOT NULL	
@@ -308,7 +244,7 @@ CREATE TABLE IF NOT EXISTS saleitemdetail (
 CREATE TABLE IF NOT EXISTS vendor (
 	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
     ,name					VARCHAR(255)	NOT NULL
-    ,residence_id			INT 			NOT NULL
+    ,city_id				INT 			NOT NULL
     ,street_address			VARCHAR(255) 	NOT NULL
     ,postal_code			VARCHAR(50)		NOT NULL
     ,phone_number			VARCHAR(50)		DEFAULT NULL
@@ -320,7 +256,7 @@ CREATE TABLE IF NOT EXISTS vendorcontact (
 	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY
 	,first_name				VARCHAR(255)	NOT NULL
 	,last_name				VARCHAR(255) 	NOT NULL
-    ,residence_id			INT 			NOT NULL
+    ,city_id				INT 			NOT NULL
     ,street_address			VARCHAR(255) 	NOT NULL
     ,postal_code			VARCHAR(50)		NOT NULL
 	,prefered_contact_method	VARCHAR(50)	DEFAULT NULL
@@ -449,7 +385,7 @@ CREATE TABLE IF NOT EXISTS salerefunddetail (
 -- 1 
 CREATE TABLE IF NOT EXISTS store (
 	id						INT				NOT NULL	AUTO_INCREMENT	PRIMARY KEY	
-    ,residence_id			INT 			NOT NULL
+    ,city_id				INT 			NOT NULL
     ,street_address			VARCHAR(255)	NOT NULL
     ,postal_code			VARCHAR(50)		NOT NULL
     ,email					VARCHAR(255)	NOT NULL
