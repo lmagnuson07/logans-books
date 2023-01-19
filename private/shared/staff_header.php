@@ -16,10 +16,7 @@ if(!isset($page_heading)) { $page_heading = 'Logan\'s Books'; }
 <header>
 	<h1><?php echo $page_heading; ?> - [Admin Area]</h1>
 	<nav>
-		<ul>
-			<li><a href="<?php echo url_for('/staff/book'); ?>">Books</a></li>
-		</ul>
-		<?php require_once('book_navigation.php'); ?>
+		<?php require('book_navigation.php'); ?>
 	</nav>
 </header>
 

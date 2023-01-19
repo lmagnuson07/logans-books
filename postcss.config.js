@@ -8,7 +8,7 @@ module.exports = {
 		require('postcss-import'),
 		require('postcss-assets')({
 			loadPaths: ['public/img'],
-			relative: 'logans-books/public'
+			//relative: 'logans-books/public'
 		}),
 		// require('cssnano')({
 		// 	preset: ["default", { discardComments: { removeAll: true, }, }],
