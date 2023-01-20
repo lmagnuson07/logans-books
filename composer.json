@@ -1,9 +1,11 @@
 {
     "name": "logma/logans-books",
     "autoload": {
-        "psr-4": {
-            "Logma\\LogansBooks\\": "src/"
+				"classmap": ["private/classes"],
+        "psr-0": {
+            "App\\": "src/"
         }
+
     },
     "authors": [
         {
