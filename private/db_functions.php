@@ -4,7 +4,7 @@ function db_connect() {
 	try {
 		// FETCH_ASSOC, FETCH_CLASS, default fetch array
 		$conn = new PDO('mysql:dbname=logans_books;host=localhost;port:80', DB_USER, DB_PASS, [
-			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_CLASS,
+			//PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_CLASS,
 			PDO::ATTR_EMULATE_PREPARES => false, // performance boost. placeholders in other clause. Returns int not string.
 		]);
 	} catch (\PDOException $e) {

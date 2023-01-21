@@ -1,3 +1,7 @@
+:root {
+	--max-body-width: 90rem;
+}
+
 body {
 	/*background-color: $lightColor;*/
 }

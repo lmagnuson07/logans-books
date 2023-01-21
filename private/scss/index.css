@@ -1,4 +1,7 @@
 @import 'vars';
+:root {
+	--max-body-width: 120rem;
+}
 
 body {
 	/*background-color: $lightColor;*/

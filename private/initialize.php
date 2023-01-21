@@ -2,8 +2,6 @@
 // composer dump_autoload -o
 require __DIR__ . '/../vendor/autoload.php';
 
-//$loader->addPsr4('classes\\Book\\', dirname(__DIR__));
-
 ob_start();
 require_once("db_credentials.php");
 require_once("db_functions.php");
