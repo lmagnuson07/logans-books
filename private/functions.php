@@ -7,8 +7,19 @@ function url_for($script_path) {
 	}
 	return WWW_ROOT . $script_path;
 }
+// Use for url queries
+function u($string="") {
+	return urlencode($string);
+}
+// use for url path segments (/search?)
+function raw_u($string="") {
+	return rawurlencode($string);
+}
+function h($string="") {
+	return htmlspecialchars($string);
+}
 
 function title_text($str) {
-    $result = preg_replace("/[\-_.]/", " ", $str);
-    return ucfirst($result);
+	$result = preg_replace("/[\-_.]/", " ", $str);
+	return ucfirst($result);
 }

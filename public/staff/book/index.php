@@ -1,21 +1,136 @@
 <?php
+/**
+ * @var $db
+ */
 // setup
 $formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
 require_once('../../../private/initialize.php');
-var_dump($_POST);
+
 $page_title = "Book CRUD";
 $bookId = $_GET['id'] ?? null;
+
 // SQL
 // Edit books SQL
 if (isset($bookId)) {
-	$qry = "SELECT * FROM book WHERE id = :id";
+	// TODO: Refactor to store the genres, categories, and editions on an object
+	// Genres
+	$qry = "SELECT * FROM bookgenre ORDER BY name";
 	$statement = $db->prepare($qry);
 
+	$statement->execute();
+	$genres = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\Genre');
+
+	// Categories
+	$qry = "SELECT * FROM bookcategory ORDER BY name";
+	$statement = $db->prepare($qry);
+
+	$statement->execute();
+	$categories = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\Category');
+
+	// Editions
+	$qry = "SELECT * FROM bookedition ORDER BY name";
+	$statement = $db->prepare($qry);
+
+	$statement->execute();
+	$editions = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\Edition');
+
+	// Many-to-many relationships
+	$qry = "SELECT b.id, b.current_price, b.qty_in_stock, b.qty_on_order, 
+	b.title, b.tagline, b.synopsis, b.number_of_pages, b.format, 
+	b.language, b.cover_image_url, b.is_available,
+	bgd.genre_id, bg.name AS genre_name, 
+    bcd.category_id, bc.name AS category_name, 
+    bed.edition_id, be.name AS edition_name,
+    bad.author_id, CONCAT(ba.first_name, \" \", ba.last_name) AS author_fullname,
+    bpd.publisher_id, bp.name AS publisher_name
+	FROM book b
+	INNER JOIN bookgenredetail bgd
+		ON bgd.book_id = b.id
+	INNER JOIN bookgenre bg
+		ON bg.id = bgd.genre_id
+	INNER JOIN bookcategorydetail bcd
+		ON bcd.book_id = b.id
+	INNER JOIN bookcategory bc
+		ON bc.id = bcd.category_id
+	INNER JOIN bookeditiondetail bed
+		ON bed.book_id = b.id
+	INNER JOIN bookedition be
+		ON be.id = bed.edition_id
+	INNER JOIN bookauthordetail bad
+		ON bad.book_id = b.id
+	INNER JOIN bookauthor ba
+		ON ba.id = bad.author_id
+	INNER JOIN bookpublisherdetail bpd
+		ON bpd.book_id = b.id
+	INNER JOIN bookpublisher bp
+		ON bp.id = bpd.publisher_id
+	WHERE b.id = :id";
+
+	$statement = $db->prepare($qry);
 	$statement->bindValue('id', $bookId);
 
 	$statement->execute();
-	$statement->setFetchMode(PDO::FETCH_CLASS, 'App\\Entities\\Book');
-	$book = $statement->fetch();
+	$book = $statement->fetchAll();
+
+	$bookObj = [];
+	foreach($book as $i=>$b) {
+		if (!isset($bookObj['id'])) {
+			$bookObj['id'] = $b->id;
+			$bookObj['current_price'] = $b->current_price;
+			$bookObj['qty_in_stock'] = $b->qty_in_stock;
+			$bookObj['qty_on_order'] = $b->qty_on_order;
+			$bookObj['title'] = $b->title;
+			$bookObj['tagline'] = $b->tagline;
+			$bookObj['synopsis'] = $b->synopsis;
+			$bookObj['number_of_pages'] = $b->number_of_pages;
+			$bookObj['format'] = $b->format;
+			$bookObj['language'] = $b->language;
+			$bookObj['cover_image_url'] = $b->cover_image_url;
+			$bookObj['is_available'] = $b->is_available;
+		}
+		// Genre
+		if(!empty($bookObj['genres'])) {
+				if (!in_array($b->genre_id, $bookObj['genres'])) {
+					$bookObj['genres'][] = $b->genre_id;
+				}
+		} else {
+			$bookObj['genres'][] = $b->genre_id;
+		}
+		// Categories
+		if(!empty($bookObj['categories'])) {
+				if (!in_array($b->category_id, $bookObj['categories'])) {
+					$bookObj['categories'][] = $b->category_id;
+				}
+		} else {
+			$bookObj['categories'][] = $b->category_id;
+		}
+		// Editions
+		if(!empty($bookObj['editions'])) {
+				if (!in_array($b->edition_id, $bookObj['editions'])) {
+					$bookObj['editions'][] = $b->edition_id;
+				}
+		} else {
+			$bookObj['editions'][] = $b->edition_id;
+		}
+		// Authors
+		if(!empty($bookObj['authors'])) {
+				if (!in_array($b->author_id, $bookObj['authors'])) {
+					$bookObj['authors'][] = $b->author_id;
+				}
+		} else {
+			$bookObj['authors'][] = $b->author_id;
+		}
+		// Publisher
+		if(!empty($bookObj['publishers'])) {
+				if (!in_array($b->publisher_id, $bookObj['publishers'])) {
+					$bookObj['publishers'][] = $b->publisher_id;
+				}
+		} else {
+			$bookObj['publishers'][] = $b->publisher_id;
+		}
+	}
+	$book = new \App\Entities\Book($bookObj);
+
 // View books SQL
 } else {
 	$qry = "SELECT * FROM book";
@@ -29,13 +144,12 @@ $count = 0;
 require_once('../../../private/shared/staff_header.php');
 ?>
 <h2>Books</h2>
-<a href="<?php echo url_for('/staff/'); ?>">&laquo; Go back to Staff home page</a>
-<p>Create a new book >></p>
-
 <!---------------- View Books-------------------->
 <?php if(!isset($bookId)): ?>
+<a href="<?php echo url_for('/staff/'); ?>">&laquo; Go back to Staff home page</a>
+<p>Create a new book >></p>
 <p>List of books</p>
-<table border="1">
+<table>
 	<thead>
 	<tr>
 		<th>&nbsp;</th>
@@ -67,7 +181,7 @@ require_once('../../../private/shared/staff_header.php');
 			echo "<td>" . $b->number_of_pages . "</td >";
 			echo "<td>" . $b->language . "</td >";
 			echo "<td>" . $b->format . "</td >";
-			echo "<td><a href=\"index.php?id={$b->id}\">Edit</a></td>";
+			echo "<td><a href=" . url_for("staff/book/index.php?id=" . h(u($b->id))) . ">Edit</a></td>";
 			echo "<td><a href=\"#\">Deactivate</a ></td >";
 			echo "</tr>";
 		}
@@ -77,20 +191,104 @@ require_once('../../../private/shared/staff_header.php');
 <!-- ----------------------------------------->
 <!-- Edit Book ------------------------------->
 <?php elseif($bookId > 0): ?>
+<a href="<?php echo url_for('/staff/book/'); ?>">&laquo; Go back to Books</a>
 <h2>Book Form</h2>
-	<form action="index.php" method="post">
-		<h3><?php echo $book->title . " - [Book ID: " .  $bookId . "]"; ?></h3>
-		<?php foreach($book as $k=>$v){
-			echo "<input type=\"hidden\" name=\"book[$k]\" value=\"$v\" />";
-			if($k != 'id') {
+<h3><?php echo $book->title . " - [Book ID: " .  $bookId . "]"; ?></h3>
+	<form class="edit-book-form" action="index.php" method="post">
+		<input type="hidden" name="book[id]" value="<?php echo $book->id; ?>" />
+		<div>
+			<label for="current_price">Current Price:</label>
+			<input type="number" step="0.1" id="current_price" name="book[current_price]" value="<?php echo $book->current_price; ?>" />
+		</div>
+		<div>
+			<label for="qty_in_stock">Quantity In Stock:</label>
+			<input type="number" step="1" id="qty_in_stock" name="book[qty_in_stock]" value="<?php echo $book->qty_in_stock; ?>" />
+		</div>
+		<div>
+			<label for="qty_on_order">Quantity On Order:</label>
+			<input type="number" step="1" id="qty_on_order" name="book[qty_on_order]" value="<?php echo $book->qty_on_order; ?>" />
+		</div>
+		<div>
+			<label for="title">Title:</label>
+			<input type="text" id="title" name="book[title]" value="<?php echo $book->title; ?>" />
+		</div>
+		<div>
+			<label for="tagline">Tagline:</label>
+			<input type="text" id="tagline" name="book[tagline]" value="<?php echo $book->tagline; ?>" />
+		</div>
+		<div>
+			<label for="number_of_pages">Number Of Pages:</label>
+			<input type="number" step="1" id="number_of_pages" name="book[number_of_pages]" value="<?php echo $book->number_of_pages; ?>" />
+		</div>
+		<div>
+			<label for="format">Format:</label>
+			<input type="text" id="format" name="book[format]" value="<?php echo $book->format; ?>" />
+		</div>
+<!--		todo: Add languages programmatically to the database and add a datalist to select the language. -->
+		<div>
+			<label for="language">Language:</label>
+			<input type="text" id="language" name="book[language]" value="<?php echo $book->language; ?>" />
+		</div>
+		<div>
+			<label for="synopsis">Synopsis:</label>
+			<textarea id="synopsis" name="book[synopsis]" value="<?php echo $book->synopsis; ?>"><?php echo trim($book->synopsis); ?></textarea>
+		</div>
+		<div>
+			<label for="cover_image_url">Cover Image URL:</label>
+			<input type="text" id="cover_image_url" name="book[cover_image_url]" value="<?php echo $book->cover_image_url; ?>" />
+		</div>
+		<div class="radio-buttons">
+			<label>Available:</label>
+			<div>
+				<label for="is_availableY">Yes</label>
+				<input type="radio" id="is_availableY" name="book[is_available]" value="1" <?php echo $book->is_available ? "checked" : ""; ?> />
+			</div>
+			<div>
+				<label for="is_availableN">No</label>
+				<input type="radio" id="is_availableN" name="book[is_available]" value="0" <?php echo !$book->is_available ? "checked" : ""; ?>/>
+			</div>
+		</div>
+<!--		genre checkbox-->
+		<div class="book-checkboxes book-genre-checkboxes">
+			<h3>Genres</h3>
+		<?php foreach($genres as $g){
+			$checked = (in_array($g->id, $book->genres)) ? "checked" : "";
 				echo "<div>";
-				echo "<label for=\"$k\">" . title_text($k) . ":</label>";
-				echo "<input type=\"text\" id=$k name=\"book[$k]\" value=\"$v\"/>";
+					echo "<label for=\"genre$g->id\">$g->name</label>";
+					echo "<input type=\"checkbox\" id=\"genre$g->id\" value=\"$g->id\" name='genres' $checked />";
 				echo "</div>";
-			}
 		}
 		?>
-		<button type="submit">Submit</button>
+		</div>
+		<!--		edition checkbox-->
+		<div class="book-checkboxes">
+			<h3>Editions</h3>
+			<?php foreach($editions as $e){
+				$checked = (in_array($e->id, $book->editions)) ? "checked" : "";
+				echo "<div>";
+				echo "<label for=\"category$e->id\">$e->name</label>";
+				echo "<input type=\"checkbox\" id=\"category$e->id\" value=\"$e->id\" name='editions' $checked />";
+				echo "</div>";
+			}
+			?>
+		</div>
+<!--		category checkbox-->
+		<div class="book-checkboxes">
+			<h3>Categories</h3>
+		<?php foreach($categories as $c){
+			$checked = (in_array($c->id, $book->categories)) ? "checked" : "";
+			echo "<div>";
+			echo "<label for=\"category$c->id\">$c->name</label>";
+			echo "<input type=\"checkbox\" id=\"category$c->id\" value=\"$c->id\" name='categories' $checked />";
+			echo "</div>";
+		}
+		?>
+		</div>
+<!--		author form (check if exists)-->
+<!--		publisher form (check if exists)-->
+		<div class="btn-container">
+			<button type="submit">Submit</button>
+		</div>
 	</form>
 <?php endif; ?>
 

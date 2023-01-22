@@ -1,0 +1,71 @@
+@import 'vars';
+body {
+	/*background-color: $lightColor;*/
+}
+
+:root {
+	--max-body-width: 92rem;
+}
+
+.edit-book-form {
+	display: flex;
+	flex-flow: wrap;
+	align-items: flex-start;
+	gap: 2rem;
+	h3 {
+		width: 100%;
+	}
+	div {
+		width: calc(50% - 1rem);
+	}
+	textarea {
+		resize: none;
+	}
+}
+
+.edit-book-form .book-checkboxes {
+	display: flex;
+	flex-flow: wrap;
+	gap: 0;
+	h3 {
+		width: 100%;
+	}
+	div {
+		display: flex;
+		align-items: center;
+		width: calc(50%);
+		margin-bottom: 0.25rem;
+	}
+	label {
+		margin-top: 0;
+		order: 1;
+		margin-left: 0.25rem;
+	}
+}
+
+.edit-book-form .book-genre-checkboxes {
+	width: 100%;
+	div {
+		width: calc(25%);
+	}
+}
+
+.edit-book-form .radio-buttons {
+	display: flex;
+	div {
+		display: flex;
+		width: fit-content;
+		label {
+			order: 1;
+		}
+	}
+	label {
+		margin-top: 0;
+		margin-right: 0.5rem;
+		width: fit-content;
+	}
+}
+
+.edit-book-form .btn-container {
+	width: 100%;
+}

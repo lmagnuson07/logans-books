@@ -11,7 +11,7 @@ if(!isset($page_heading)) { $page_heading = 'Logan\'s Books'; }
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title><?php echo $page_title; ?> - [Admin Area]</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/holiday.css@0.9.8" />
-	<link rel="stylesheet" media="all" href="<?php echo url_for('/css/style.css'); ?>">
+	<link rel="stylesheet" media="all" href="<?php echo url_for('/css/staff-styles.css'); ?>">
 </head>
 <body>
 <header>

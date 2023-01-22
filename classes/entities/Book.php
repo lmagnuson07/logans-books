@@ -15,6 +15,11 @@ class Book
 	public string $language;
 	public string $cover_image_url;
 	public bool $is_available;
+	public array $genres;
+	public array $categories;
+	public array $editions;
+	public array $authors;
+	public array $publishers;
 	public function __construct($args=[]) {
 		// dynamically set properties
 		foreach($args as $k=>$v) {
