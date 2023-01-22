@@ -14,25 +14,39 @@ $bookId = $_GET['id'] ?? null;
 if (isset($bookId)) {
 	// TODO: Refactor to store the genres, categories, and editions on an object
 	// Genres
-	$qry = "SELECT * FROM bookgenre ORDER BY name";
+	$qry = "SELECT id, name FROM bookgenre ORDER BY name";
 	$statement = $db->prepare($qry);
 
 	$statement->execute();
-	$genres = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\Genre');
+	$genres = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookGenre');
 
 	// Categories
-	$qry = "SELECT * FROM bookcategory ORDER BY name";
+	$qry = "SELECT id, name FROM bookcategory ORDER BY name";
 	$statement = $db->prepare($qry);
 
 	$statement->execute();
-	$categories = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\Category');
+	$categories = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookCategory');
 
 	// Editions
-	$qry = "SELECT * FROM bookedition ORDER BY name";
+	$qry = "SELECT id, name FROM bookedition ORDER BY name";
 	$statement = $db->prepare($qry);
 
 	$statement->execute();
-	$editions = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\Edition');
+	$editions = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookEdition');
+
+	// Authors
+	$qry = "SELECT id, first_name, last_name FROM bookauthor ORDER BY first_name";
+	$statement = $db->prepare($qry);
+
+	$statement->execute();
+	$authors = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookAuthor');
+
+	// Authors
+	$qry = "SELECT id, name FROM bookpublisher ORDER BY name";
+	$statement = $db->prepare($qry);
+
+	$statement->execute();
+	$publishers = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookPublisher');
 
 	// Many-to-many relationships
 	$qry = "SELECT b.id, b.current_price, b.qty_in_stock, b.qty_on_order, 
@@ -88,7 +102,7 @@ if (isset($bookId)) {
 			$bookObj['cover_image_url'] = $b->cover_image_url;
 			$bookObj['is_available'] = $b->is_available;
 		}
-		// Genre
+		// BookGenre
 		if(!empty($bookObj['genres'])) {
 				if (!in_array($b->genre_id, $bookObj['genres'])) {
 					$bookObj['genres'][] = $b->genre_id;
@@ -130,6 +144,28 @@ if (isset($bookId)) {
 		}
 	}
 	$book = new \App\Entities\Book($bookObj);
+
+	// Last author entered
+	$qry = "SELECT id, first_name, last_name
+		FROM bookauthor
+		WHERE id = :id";
+	$statement = $db->prepare($qry);
+	if (count($book->authors) > 0) { $statement->bindValue('id', $book->authors[count($book->authors)-1]); }
+
+	$statement->execute();
+	$statement->setFetchMode(PDO::FETCH_CLASS, 'App\\Entities\\BookAuthor');
+	$author = $statement->fetch();
+
+	// Last publisher entered
+	$qry = "SELECT id, name
+		FROM bookpublisher
+		WHERE id = :id";
+	$statement = $db->prepare($qry);
+	if (count($book->publishers) > 0) { $statement->bindValue('id', $book->publishers[count($book->publishers)-1]); }
+
+	$statement->execute();
+	$statement->setFetchMode(PDO::FETCH_CLASS, 'App\\Entities\\BookPublisher');
+	$publisher = $statement->fetch();
 
 // View books SQL
 } else {
@@ -195,6 +231,7 @@ require_once('../../../private/shared/staff_header.php');
 <h2>Book Form</h2>
 <h3><?php echo $book->title . " - [Book ID: " .  $bookId . "]"; ?></h3>
 	<form class="edit-book-form" action="index.php" method="post">
+<!--		TODO: Convert hidden inputs to ajax calls using jquery-->
 		<input type="hidden" name="book[id]" value="<?php echo $book->id; ?>" />
 		<div>
 			<label for="current_price">Current Price:</label>
@@ -284,8 +321,47 @@ require_once('../../../private/shared/staff_header.php');
 		}
 		?>
 		</div>
+<!--		TODO: Implement a way for the user to be able to select more than one author without using checkboxes (jquery)-->
 <!--		author form (check if exists)-->
+		<div>
+			<h3>Author</h3>
+			<div>
+				<label for="author">Select an author from the list</label>
+				<select name="author" id="author">
+					<?php
+					foreach($authors as $a) {
+						if ($a->id === $author->id) {
+							echo "<option value=\"$a->id\" selected disabled>$a->first_name $a->last_name</option>";
+						} elseif (in_array($a->id, $book->authors)) {
+							echo "<option value=\"$a->id\" disabled>$a->first_name $a->last_name</option>";
+						}else {
+							echo "<option value=\"$a->id\">$a->first_name $a->last_name</option>";
+						}
+					}
+					?>
+				</select>
+			</div>
+		</div>
 <!--		publisher form (check if exists)-->
+		<div>
+			<h3>Publisher</h3>
+			<div>
+				<label for="publisher">Select an author from the list</label>
+				<select name="publisher" id="publisher">
+					<?php
+					foreach($publishers as $p) {
+						if ($p->id === $publisher->id) {
+							echo "<option value=\"$p->id\" selected disabled>$p->name</option>";
+						} elseif (in_array($p->id, $book->publishers)) {
+							echo "<option value=\"$p->id\" disabled>$p->name</option>";
+						}else {
+							echo "<option value=\"$p->id\">$p->name</option>";
+						}
+					}
+					?>
+				</select>
+			</div>
+		</div>
 		<div class="btn-container">
 			<button type="submit">Submit</button>
 		</div>

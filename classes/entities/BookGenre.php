@@ -2,7 +2,7 @@
 
 namespace App\Entities;
 
-class Genre
+class BookGenre
 {
 	public int $id;
 	public string $description;
