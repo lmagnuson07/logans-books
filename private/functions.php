@@ -18,8 +18,17 @@ function raw_u($string="") {
 function h($string="") {
 	return htmlspecialchars($string);
 }
-
 function title_text($str) {
 	$result = preg_replace("/[\-_.]/", " ", $str);
 	return ucfirst($result);
+}
+function redirect_to($location) {
+	header("Location: " . $location);
+	exit;
+}
+function is_post_request() {
+	return $_SERVER['REQUEST_METHOD'] == 'POST';
+}
+function is_get_request() {
+	return $_SERVER['REQUEST_METHOD'] == 'GET';
 }

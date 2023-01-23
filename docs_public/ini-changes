@@ -1,0 +1,12 @@
+#Changes
+session.use_strict_mode=1 (enabled session strict mode)
+session.save_path="C:\xampp_8.0.25\tmp\htdocs\logans-books\tmp" (changed session save path to project dir)
+Set doc root (in httptd.config) to project root).
+
+# xdebug config
+zend_extension = xdebug
+xdebug.mode=debug
+xdebug.remote_enable = 1
+xdebug.remote_autostart = 1
+xdebug.discover_client_host = 1
+xdebug.start_with_request = yes

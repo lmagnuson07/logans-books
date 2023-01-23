@@ -31,4 +31,3 @@ INNER JOIN bookpublisher bp
 	ON bp.id = bpd.publisher_id
 WHERE b.id = 4
 ;
-

@@ -1,9 +1,11 @@
 <?php
 // composer dump-autoload -o
 require __DIR__ . '/../vendor/autoload.php';
+// Loads environment variables from .env to the $_ENV superglobal
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
 
 ob_start();
-require_once("db_credentials.php");
 require_once("db_functions.php");
 require_once('functions.php');
 

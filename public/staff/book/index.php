@@ -8,10 +8,147 @@ require_once('../../../private/initialize.php');
 
 $page_title = "Book CRUD";
 $bookId = $_GET['id'] ?? null;
-
 // SQL
-// Edit books SQL
-if (isset($bookId)) {
+// Submit new book
+if (is_post_request()) {
+	if(isset($bookId)) $bookId = null;
+	var_dump($_POST);
+	$db->beginTransaction();
+	try {
+		$book = new \App\Entities\Book($_POST['book']);
+
+		// Fix to read from session data.
+		// Insert the book
+		if($book->id === 0) {
+			$statement = $db->prepare(
+				'INSERT INTO book (current_price,qty_in_stock,qty_on_order,number_of_pages,title,tagline,format,language,synopsis,cover_image_url,is_available)
+							VALUES (:current_price,:qty_in_stock,:qty_on_order,:number_of_pages,:title,:tagline,:format,:language,:synopsis,:cover_image_url,:is_available)'
+			);
+			foreach($book as $k=>$v) {
+				if ($k !== 'id' && $k !== 'genres' && $k !== 'categories' && $k !== 'editions' && $k !== 'authors' && $k !== 'publishers') {
+					$statement->bindValue(":$k", h($v));
+				}
+			}
+			$statement->execute();
+			$newBookId = (int)$db->lastInsertId();
+
+			// Insert into Book Genre Details
+			if (isset($book->genres) && !empty($book->genres)) {
+				$rowCount = count($book->genres);
+				$insertData = [];
+				foreach($book->genres as $r){
+					$insertData[] = $newBookId;
+					$insertData[] = (int)h($r);
+				}
+				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
+
+				$statement = $db->prepare(
+					"INSERT INTO bookgenredetail (book_id, genre_id)
+							VALUES $values"
+				);
+				$statement->execute($insertData);
+			}
+
+			// Insert into Book Category Details
+			if (isset($book->categories) && !empty($book->categories)) {
+				$rowCount = count($book->categories);
+				$insertData = [];
+				foreach($book->categories as $r){
+					$insertData[] = $newBookId;
+					$insertData[] = (int)h($r);
+				}
+				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
+
+				$statement = $db->prepare(
+					"INSERT INTO bookcategorydetail (book_id, genre_id)
+							VALUES $values"
+				);
+				$statement->execute($insertData);
+			}
+
+			// Insert into Book Edition Details
+			if (isset($book->editions) && !empty($book->editions)) {
+				$rowCount = count($book->editions);
+				$insertData = [];
+				foreach($book->editions as $r){
+					$insertData[] = $newBookId;
+					$insertData[] = (int)h($r);
+				}
+				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
+
+				$statement = $db->prepare(
+					"INSERT INTO bookeditiondetail (book_id, genre_id)
+							VALUES $values"
+				);
+				$statement->execute($insertData);
+			}
+
+			// Insert into Book Author Details
+			if (isset($book->authors) && !empty($book->authors)) {
+				$rowCount = count($book->authors);
+				$insertData = [];
+				foreach($book->authors as $r){
+					$insertData[] = $newBookId;
+					$insertData[] = (int)h($r);
+				}
+				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
+
+				$statement = $db->prepare(
+					"INSERT INTO bookauthordetail (book_id, genre_id)
+							VALUES $values"
+				);
+				$statement->execute($insertData);
+			}
+
+			// Insert into Book Publisher Details
+			if (isset($book->publishers) && !empty($book->publishers)) {
+				$rowCount = count($book->publishers);
+				$insertData = [];
+				foreach($book->publishers as $r){
+					$insertData[] = $newBookId;
+					$insertData[] = (int)h($r);
+				}
+				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
+
+				$statement = $db->prepare(
+					"INSERT INTO bookpublisherdetail (book_id, genre_id)
+							VALUES $values"
+				);
+				$statement->execute($insertData);
+			}
+		}
+		// Update the book:
+		elseif ($book->id > 0) {
+			// Check if the book exists before performing update.
+			$statement = $db->prepare(
+				'UPDATE book SET current_price=:current_price,qty_in_stock=:qty_in_stock,qty_on_order=:qty_on_order,number_of_pages=:number_of_pages,
+                title=:title,tagline=:tagline,format=:format,language=:language,synopsis=:synopsis,cover_image_url=:cover_image_url,is_available=:is_available
+            	WHERE id=:id LIMIT 1'
+			);
+			foreach($book as $k=>$v) {
+				if ($k !== 'genres' && $k !== 'categories' && $k !== 'editions' && $k !== 'authors' && $k !== 'publishers') {
+					$statement->bindValue(":$k", h($v));
+				}
+			}
+			$statement->execute();
+			$newBookId = (int)$db->lastInsertId();
+			// Update Book Genre Details
+
+			// Update Book Category Details
+			// Update Book Edition Details
+			// Update Book Author Details
+			// Update Book Publisher Details
+		}
+		$db->commit();
+	} catch (\Throwable $e) {
+		if ($db->inTransaction()) {
+			$db->rollBack();
+		}
+	}
+}
+// Create new Book
+// TODO: Move sql to class and refactor to remove code duplication.
+if ((int)$bookId === 0 && !is_null($bookId)) {
 	// TODO: Refactor to store the genres, categories, and editions on an object
 	// Genres
 	$qry = "SELECT id, name FROM bookgenre ORDER BY name";
@@ -41,7 +178,66 @@ if (isset($bookId)) {
 	$statement->execute();
 	$authors = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookAuthor');
 
+	// Publishers
+	$qry = "SELECT id, name FROM bookpublisher ORDER BY name";
+	$statement = $db->prepare($qry);
+
+	$statement->execute();
+	$publishers = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookPublisher');
+
+	// Cant do default properties on the class in the constructor because of PDO FETCH_CLASS.
+	// TODO: Add a method on the book class that will be for setting up default properties.
+	$args['id'] = 0;
+	$args['current_price'] = 0;
+	$args['qty_in_stock'] = 0;
+	$args['qty_on_order'] = 0;
+	$args['title'] = '';
+	$args['tagline'] = '';
+	$args['synopsis'] = '';
+	$args['number_of_pages'] = 0;
+	$args['format'] = '';
+	$args['language'] = '';
+	$args['cover_image_url'] = '';
+	$args['is_available'] = true;
+	$args['genres'] = [];
+	$args['categories'] = [];
+	$args['editions'] = [];
+	$args['authors'] = [];
+	$args['publishers'] = [];
+
+	$book = new \App\Entities\Book($args);
+
+// Edit books SQL
+} elseif (isset($bookId)) {
+	// Genres
+	$qry = "SELECT id, name FROM bookgenre ORDER BY name";
+	$statement = $db->prepare($qry);
+
+	$statement->execute();
+	$genres = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookGenre');
+
+	// Categories
+	$qry = "SELECT id, name FROM bookcategory ORDER BY name";
+	$statement = $db->prepare($qry);
+
+	$statement->execute();
+	$categories = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookCategory');
+
+	// Editions
+	$qry = "SELECT id, name FROM bookedition ORDER BY name";
+	$statement = $db->prepare($qry);
+
+	$statement->execute();
+	$editions = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookEdition');
+
 	// Authors
+	$qry = "SELECT id, first_name, last_name FROM bookauthor ORDER BY first_name";
+	$statement = $db->prepare($qry);
+
+	$statement->execute();
+	$authors = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookAuthor');
+
+	// Publishers
 	$qry = "SELECT id, name FROM bookpublisher ORDER BY name";
 	$statement = $db->prepare($qry);
 
@@ -81,10 +277,30 @@ if (isset($bookId)) {
 	WHERE b.id = :id";
 
 	$statement = $db->prepare($qry);
-	$statement->bindValue('id', $bookId);
+	$statement->bindValue(':id', $bookId);
 
 	$statement->execute();
 	$book = $statement->fetchAll();
+	// TODO: Put query code into a class and make the method return false, and just check if book is false instead
+	// Catches errors if an id that doesn't exist is typed into url.
+	if (empty($book)) {
+		// For books that are recently added and have no many - many relationships
+		$qry = "SELECT b.id, b.current_price, b.qty_in_stock, b.qty_on_order, 
+			b.title, b.tagline, b.synopsis, b.number_of_pages, b.format, 
+			b.language, b.cover_image_url, b.is_available
+		FROM book b
+		WHERE b.id = :id";
+
+		$statement = $db->prepare($qry);
+		$statement->bindValue(':id', $bookId);
+
+		$statement->execute();
+		$book = $statement->fetchAll();
+
+		if (empty($book)) {
+			redirect_to(url_for('/staff/book/index.php'));
+		}
+	}
 
 	$bookObj = [];
 	foreach($book as $i=>$b) {
@@ -107,7 +323,7 @@ if (isset($bookId)) {
 				if (!in_array($b->genre_id, $bookObj['genres'])) {
 					$bookObj['genres'][] = $b->genre_id;
 				}
-		} else {
+		} elseif(isset($b->genre_id)) {
 			$bookObj['genres'][] = $b->genre_id;
 		}
 		// Categories
@@ -115,7 +331,7 @@ if (isset($bookId)) {
 				if (!in_array($b->category_id, $bookObj['categories'])) {
 					$bookObj['categories'][] = $b->category_id;
 				}
-		} else {
+		} elseif(isset($b->category_id)) {
 			$bookObj['categories'][] = $b->category_id;
 		}
 		// Editions
@@ -123,7 +339,7 @@ if (isset($bookId)) {
 				if (!in_array($b->edition_id, $bookObj['editions'])) {
 					$bookObj['editions'][] = $b->edition_id;
 				}
-		} else {
+		} elseif(isset($b->edition_id)) {
 			$bookObj['editions'][] = $b->edition_id;
 		}
 		// Authors
@@ -131,7 +347,7 @@ if (isset($bookId)) {
 				if (!in_array($b->author_id, $bookObj['authors'])) {
 					$bookObj['authors'][] = $b->author_id;
 				}
-		} else {
+		} elseif(isset($b->author_id)) {
 			$bookObj['authors'][] = $b->author_id;
 		}
 		// Publisher
@@ -139,36 +355,36 @@ if (isset($bookId)) {
 				if (!in_array($b->publisher_id, $bookObj['publishers'])) {
 					$bookObj['publishers'][] = $b->publisher_id;
 				}
-		} else {
+		} elseif(isset($b->publisher_id)) {
 			$bookObj['publishers'][] = $b->publisher_id;
 		}
 	}
 	$book = new \App\Entities\Book($bookObj);
 
 	// Last author entered
+	$where = (count($book->authors) > 0) ? " WHERE id = :id" : "";
 	$qry = "SELECT id, first_name, last_name
-		FROM bookauthor
-		WHERE id = :id";
+		FROM bookauthor" . $where;
 	$statement = $db->prepare($qry);
-	if (count($book->authors) > 0) { $statement->bindValue('id', $book->authors[count($book->authors)-1]); }
+	if (!empty($where)) { $statement->bindValue(':id', $book->authors[count($book->authors)-1]); }
 
 	$statement->execute();
 	$statement->setFetchMode(PDO::FETCH_CLASS, 'App\\Entities\\BookAuthor');
 	$author = $statement->fetch();
 
 	// Last publisher entered
+	$where = (count($book->authors) > 0) ? " WHERE id = :id" : "";
 	$qry = "SELECT id, name
-		FROM bookpublisher
-		WHERE id = :id";
+		FROM bookpublisher" . $where;
 	$statement = $db->prepare($qry);
-	if (count($book->publishers) > 0) { $statement->bindValue('id', $book->publishers[count($book->publishers)-1]); }
+	if (!empty($where)) { $statement->bindValue(':id', $book->publishers[count($book->publishers)-1]); }
 
 	$statement->execute();
 	$statement->setFetchMode(PDO::FETCH_CLASS, 'App\\Entities\\BookPublisher');
 	$publisher = $statement->fetch();
 
 // View books SQL
-} else {
+} else if (is_get_request()) {
 	$qry = "SELECT * FROM book";
 	$statement = $db->prepare($qry);
 
@@ -181,9 +397,9 @@ require_once('../../../private/shared/staff_header.php');
 ?>
 <h2>Books</h2>
 <!---------------- View Books-------------------->
-<?php if(!isset($bookId)): ?>
-<a href="<?php echo url_for('/staff/'); ?>">&laquo; Go back to Staff home page</a>
-<p>Create a new book >></p>
+<?php if(!isset($bookId) && is_get_request()): ?>
+<p><a href="<?php echo url_for('/staff/'); ?>">&laquo; Go back to Staff home page</a></p>
+<p><a href="<?php echo url_for('/staff/book/index.php?id=0'); ?>">Create a new book &raquo;</a></p>
 <p>List of books</p>
 <table>
 	<thead>
@@ -226,12 +442,13 @@ require_once('../../../private/shared/staff_header.php');
 </table>
 <!-- ----------------------------------------->
 <!-- Edit Book ------------------------------->
-<?php elseif($bookId > 0): ?>
+<?php elseif($bookId >= 0 && isset($bookId)): ?>
 <a href="<?php echo url_for('/staff/book/'); ?>">&laquo; Go back to Books</a>
 <h2>Book Form</h2>
+<!--TODO: Refactor to use jquery and ajax instead of an id of 0-->
 <h3><?php echo $book->title . " - [Book ID: " .  $bookId . "]"; ?></h3>
-	<form class="edit-book-form" action="index.php" method="post">
-<!--		TODO: Convert hidden inputs to ajax calls using jquery-->
+	<form class="edit-book-form" action="<?php echo url_for("/staff/book/index.php?id=" . u(h($bookId))); ?>" method="post">
+<!--		TODO: Convert hidden inputs to ajax calls using jquery, or store the id in the session data-->
 		<input type="hidden" name="book[id]" value="<?php echo $book->id; ?>" />
 		<div>
 			<label for="current_price">Current Price:</label>
@@ -246,6 +463,10 @@ require_once('../../../private/shared/staff_header.php');
 			<input type="number" step="1" id="qty_on_order" name="book[qty_on_order]" value="<?php echo $book->qty_on_order; ?>" />
 		</div>
 		<div>
+			<label for="number_of_pages">Number Of Pages:</label>
+			<input type="number" step="1" id="number_of_pages" name="book[number_of_pages]" value="<?php echo $book->number_of_pages; ?>" />
+		</div>
+		<div>
 			<label for="title">Title:</label>
 			<input type="text" id="title" name="book[title]" value="<?php echo $book->title; ?>" />
 		</div>
@@ -254,14 +475,13 @@ require_once('../../../private/shared/staff_header.php');
 			<input type="text" id="tagline" name="book[tagline]" value="<?php echo $book->tagline; ?>" />
 		</div>
 		<div>
-			<label for="number_of_pages">Number Of Pages:</label>
-			<input type="number" step="1" id="number_of_pages" name="book[number_of_pages]" value="<?php echo $book->number_of_pages; ?>" />
-		</div>
-		<div>
 			<label for="format">Format:</label>
-			<input type="text" id="format" name="book[format]" value="<?php echo $book->format; ?>" />
+			<select name="book[format]" id="format">
+				<option value="Hardcover" <?php echo $book->format == "Hardcover" ? "selected" : ""; ?>>Hardcover</option>
+				<option value="Softcover" <?php echo $book->format == "Softcover" ? "selected" : ""; ?>>Softcover</option>
+			</select>
 		</div>
-<!--		todo: Add languages programmatically to the database and add a datalist to select the language. -->
+<!--		TODO: Add languages programmatically to the database and add a datalist to select the language. -->
 		<div>
 			<label for="language">Language:</label>
 			<input type="text" id="language" name="book[language]" value="<?php echo $book->language; ?>" />
@@ -292,7 +512,7 @@ require_once('../../../private/shared/staff_header.php');
 			$checked = (in_array($g->id, $book->genres)) ? "checked" : "";
 				echo "<div>";
 					echo "<label for=\"genre$g->id\">$g->name</label>";
-					echo "<input type=\"checkbox\" id=\"genre$g->id\" value=\"$g->id\" name='genres' $checked />";
+					echo "<input type=\"checkbox\" id=\"genre$g->id\" value=\"$g->id\" name='book[genres][]' $checked />";
 				echo "</div>";
 		}
 		?>
@@ -303,8 +523,8 @@ require_once('../../../private/shared/staff_header.php');
 			<?php foreach($editions as $e){
 				$checked = (in_array($e->id, $book->editions)) ? "checked" : "";
 				echo "<div>";
-				echo "<label for=\"category$e->id\">$e->name</label>";
-				echo "<input type=\"checkbox\" id=\"category$e->id\" value=\"$e->id\" name='editions' $checked />";
+				echo "<label for=\"edition$e->id\">$e->name</label>";
+				echo "<input type=\"checkbox\" id=\"edition$e->id\" value=\"$e->id\" name='book[editions][]' $checked />";
 				echo "</div>";
 			}
 			?>
@@ -316,7 +536,7 @@ require_once('../../../private/shared/staff_header.php');
 			$checked = (in_array($c->id, $book->categories)) ? "checked" : "";
 			echo "<div>";
 			echo "<label for=\"category$c->id\">$c->name</label>";
-			echo "<input type=\"checkbox\" id=\"category$c->id\" value=\"$c->id\" name='categories' $checked />";
+			echo "<input type=\"checkbox\" id=\"category$c->id\" value=\"$c->id\" name='book[categories][]' $checked />";
 			echo "</div>";
 		}
 		?>
@@ -327,7 +547,8 @@ require_once('../../../private/shared/staff_header.php');
 			<h3>Author</h3>
 			<div>
 				<label for="author">Select an author from the list</label>
-				<select name="author" id="author">
+				<select name="book[authors][]" id="author">
+					<option value="none">No Author...</option>
 					<?php
 					foreach($authors as $a) {
 						if ($a->id === $author->id) {
@@ -347,7 +568,8 @@ require_once('../../../private/shared/staff_header.php');
 			<h3>Publisher</h3>
 			<div>
 				<label for="publisher">Select an author from the list</label>
-				<select name="publisher" id="publisher">
+				<select name="book[publishers][]" id="publisher">
+					<option value="none">No Publisher...</option>
 					<?php
 					foreach($publishers as $p) {
 						if ($p->id === $publisher->id) {
@@ -363,11 +585,12 @@ require_once('../../../private/shared/staff_header.php');
 			</div>
 		</div>
 		<div class="btn-container">
-			<button type="submit">Submit</button>
+			<button type="submit" name="book_submit">Submit</button>
 		</div>
 	</form>
 <?php endif; ?>
-
+<!-- ----------------------------------------->
+<!-- Submit/View Book ------------------------------->
 
 <?php
 require_once('../../../private/shared/staff_footer.php');

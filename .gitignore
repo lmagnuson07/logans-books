@@ -3,9 +3,11 @@
 # folders 
 /docs_private/
 /database_scripts_private/
+/tmp/
 
 /node_modules/
 /vendor/*
+/vendor/
 /config/app.php
 /phpMyAdmin/
 
@@ -29,3 +31,5 @@
 /app/Config/core.php
 /app/Config/database.php
 /vendors/*
+
+.env

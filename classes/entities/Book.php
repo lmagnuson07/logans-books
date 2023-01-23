@@ -15,15 +15,22 @@ class Book
 	public string $language;
 	public string $cover_image_url;
 	public bool $is_available;
-	public array $genres;
-	public array $categories;
-	public array $editions;
-	public array $authors;
-	public array $publishers;
+	public array $genres = [];
+	public array $categories = [];
+	public array $editions = [];
+	public array $authors = [];
+	public array $publishers = [];
 	public function __construct($args=[]) {
 		// dynamically set properties
 		foreach($args as $k=>$v) {
-			if(property_exists($this, $k)) {
+			// FIXME: Fix this when ability to add multiple authors/publishers is implemented.
+			if ($k == 'authors') {
+				$this->authors = $v;
+			}
+			elseif ($k == 'publishers') {
+				$this->publishers = $v;
+			}
+			elseif(property_exists($this, $k)) {
 				$this->$k = $v;
 			}
 		}
