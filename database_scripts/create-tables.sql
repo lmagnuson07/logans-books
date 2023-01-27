@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS bookauthordetail (
 CREATE TABLE IF NOT EXISTS bookpublisherdetail (
     book_id				INT 			NOT NULL
     ,publisher_id		INT 			NOT NULL
-    ,published_date		DATETIME		NOT NULL
+    ,published_date		DATETIME		DEFAULT (CURRENT_DATE)
     ,PRIMARY KEY(book_id, publisher_id)
 );
 -- 6

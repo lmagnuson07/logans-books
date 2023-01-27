@@ -140,13 +140,13 @@ if (is_post_request()) {
 
 			$statement = $db->prepare('SELECT id, genre_id FROM bookgenredetail WHERE book_id = ?');
 			$statement->execute([$book->id]);
-			$genresOld = $statement->fetchAll();
-			$genresOldIds = [];
-			foreach($genresOld as $g) {
-				$genresOldIds[] = $g->genre_id;
+			$oldRecords = $statement->fetchAll();
+			$oldRecordsIds = [];
+			foreach($oldRecords as $g) {
+				$oldRecordsIds[] = $g->genre_id;
 			}
 
-			$genresNew = $book->genres;
+			$newRecords = $book->genres;
 
 			function convertStringToArray ($v) {
 				$varInt = (int)$v;
@@ -154,13 +154,13 @@ if (is_post_request()) {
 					return $varInt;
 				}
 			}
-			$genresNew = array_map("convertStringToArray", $genresNew);
-			foreach($genresOld as $g) {
-				if (!in_array($g->genre_id, $genresNew)) { $deleteList[] = h($g->id); }
+			$newRecords = array_map("convertStringToArray", $newRecords);
+			foreach($oldRecords as $g) {
+				if (!in_array($g->genre_id, $newRecords)) { $deleteList[] = h($g->id); }
 			}
 
-			foreach($genresNew as $g) {
-				if (!in_array($g, $genresOldIds)) { $updateList[] = h($g); }
+			foreach($newRecords as $g) {
+				if (!in_array($g, $oldRecordsIds)) { $updateList[] = h($g); }
 			}
 
 			// insert
@@ -181,16 +181,169 @@ if (is_post_request()) {
 			}
 
 			// Update Book Category Details
+			$updateList = [];
+			$deleteList = [];
+
+			$statement = $db->prepare('SELECT id, category_id FROM bookcategorydetail WHERE book_id = ?');
+			$statement->execute([$book->id]);
+			$oldRecords = $statement->fetchAll();
+			$oldRecordsIds = [];
+			foreach($oldRecords as $g) {
+				$oldRecordsIds[] = $g->category_id;
+			}
+
+			$newRecords = $book->categories;
+			$newRecords = array_map("convertStringToArray", $newRecords);
+			foreach($oldRecords as $g) {
+				if (!in_array($g->category_id, $newRecords)) { $deleteList[] = h($g->id); }
+			}
+
+			foreach($newRecords as $g) {
+				if (!in_array($g, $oldRecordsIds)) { $updateList[] = h($g); }
+			}
+
+			// insert
+			if (!empty($updateList)) {
+				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
+				$values = explode(",",implode(",$book->id,", $updateList).",$book->id");
+
+				$statement = $db->prepare("INSERT INTO bookcategorydetail (category_id, book_id) VALUES " . $placeholders);
+				$statement->execute($values);
+			}
+
+			// delete
+			if (!empty($deleteList)) {
+				$placeholders = implode(" and ",array_map(fn () => "?", $deleteList));
+
+				$statement = $db->prepare("DELETE FROM bookcategorydetail WHERE id = " . $placeholders);
+				$statement->execute($deleteList);
+			}
 
 			// Update Book Edition Details
+			$updateList = [];
+			$deleteList = [];
+
+			$statement = $db->prepare('SELECT id, edition_id FROM bookeditiondetail WHERE book_id = ?');
+			$statement->execute([$book->id]);
+			$oldRecords = $statement->fetchAll();
+			$oldRecordsIds = [];
+			foreach($oldRecords as $g) {
+				$oldRecordsIds[] = $g->edition_id;
+			}
+
+			$newRecords = $book->editions;
+			$newRecords = array_map("convertStringToArray", $newRecords);
+			foreach($oldRecords as $g) {
+				if (!in_array($g->edition_id, $newRecords)) { $deleteList[] = h($g->id); }
+			}
+
+			foreach($newRecords as $g) {
+				if (!in_array($g, $oldRecordsIds)) { $updateList[] = h($g); }
+			}
+
+			// insert
+			if (!empty($updateList)) {
+				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
+				$values = explode(",",implode(",$book->id,", $updateList).",$book->id");
+
+				$statement = $db->prepare("INSERT INTO bookeditiondetail (edition_id, book_id) VALUES " . $placeholders);
+				$statement->execute($values);
+			}
+
+			// delete
+			if (!empty($deleteList)) {
+				$placeholders = implode(" and ",array_map(fn () => "?", $deleteList));
+
+				$statement = $db->prepare("DELETE FROM bookeditiondetail WHERE id = " . $placeholders);
+				$statement->execute($deleteList);
+			}
+
 			// Update Book Author Details
+			$updateList = [];
+			$deleteList = [];
+
+			$statement = $db->prepare('SELECT id, author_id FROM bookauthordetail WHERE book_id = ?');
+			$statement->execute([$book->id]);
+			$oldRecords = $statement->fetchAll();
+			$oldRecordsIds = [];
+			foreach($oldRecords as $g) {
+				$oldRecordsIds[] = $g->author_id;
+			}
+
+			$newRecords = $book->authors;
+			$newRecords = array_map("convertStringToArray", $newRecords);
+//			foreach($oldRecords as $g) {
+//				if (!empty($newRecords)) {
+//					if (!in_array($g->author_id, $newRecords)) { $deleteList[] = h($g->id); }
+//				}
+//			}
+
+			foreach($newRecords as $g) {
+				if (!in_array($g, $oldRecordsIds)) { $updateList[] = h($g); }
+			}
+
+			// insert
+			if (!empty($updateList)) {
+				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
+				$values = explode(",",implode(",$book->id,", $updateList).",$book->id");
+
+				$statement = $db->prepare("INSERT INTO bookauthordetail (author_id, book_id) VALUES " . $placeholders);
+				$statement->execute($values);
+			}
+
+			// delete (cant delete right now since existing authors are disabled)
+//			if (!empty($deleteList)) {
+//				$placeholders = implode(" and ",array_map(fn () => "?", $deleteList));
+//
+//				$statement = $db->prepare("DELETE FROM bookauthordetail WHERE id = " . $placeholders);
+//				$statement->execute($deleteList);
+//			}
+
 			// Update Book Publisher Details
+			$updateList = [];
+			$deleteList = [];
+
+			$statement = $db->prepare('SELECT book_id, publisher_id FROM bookpublisherdetail WHERE book_id = ?');
+			$statement->execute([$book->id]);
+			$oldRecords = $statement->fetchAll();
+			$oldRecordsIds = [];
+			foreach($oldRecords as $g) {
+				$oldRecordsIds[] = $g->publisher_id;
+			}
+
+			$newRecords = $book->publishers;
+			$newRecords = array_map("convertStringToArray", $newRecords);
+//			foreach($oldRecords as $g) {
+//				if (!empty($newRecords)) {
+//					if (!in_array($g->publisher_id, $newRecords)) { $deleteList[] = h($g->publisher_id); $deleteList[] = h($g->book_id); }
+//				}
+//			}
+
+			foreach($newRecords as $g) {
+				if (!in_array($g, $oldRecordsIds)) { $updateList[] = h($g); }
+			}
+
+			// insert
+			if (!empty($updateList)) {
+				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
+				$values = explode(",",implode(",$book->id,", $updateList).",$book->id");
+
+				$statement = $db->prepare("INSERT INTO bookpublisherdetail (publisher_id, book_id) VALUES " . $placeholders);
+				$statement->execute($values);
+			}
+
+			// delete (cant delete right now since existing publishers are disabled)
+//			if (!empty($deleteList)) {
+//				$placeholders = implode(" and ",array_map(fn () => "?", $deleteList));
+//
+//				$statement = $db->prepare("DELETE FROM bookpublisherdetail WHERE id = " . $placeholders);
+//				$statement->execute($deleteList);
+//			}
 		}
 		$db->commit();
 	} catch (\Throwable $e) {
 		if ($db->inTransaction()) {
 			$db->rollBack();
-			die("damn");
 		}
 	}
 }
