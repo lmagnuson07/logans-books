@@ -12,11 +12,10 @@ $bookId = $_GET['id'] ?? null;
 // Submit new book
 if (is_post_request()) {
 	if(isset($bookId)) $bookId = null;
-	var_dump($_POST);
-	$db->beginTransaction();
 	try {
 		$book = new \App\Entities\Book($_POST['book']);
 
+		$db->beginTransaction();
 		// Fix to read from session data.
 		// Insert the book
 		if($book->id === 0) {
@@ -117,7 +116,7 @@ if (is_post_request()) {
 				$statement->execute($insertData);
 			}
 		}
-		// Update the book:
+		// Update a book:
 		elseif ($book->id > 0) {
 			// Check if the book exists before performing update.
 			$statement = $db->prepare(
@@ -125,16 +124,64 @@ if (is_post_request()) {
                 title=:title,tagline=:tagline,format=:format,language=:language,synopsis=:synopsis,cover_image_url=:cover_image_url,is_available=:is_available
             	WHERE id=:id LIMIT 1'
 			);
-			foreach($book as $k=>$v) {
-				if ($k !== 'genres' && $k !== 'categories' && $k !== 'editions' && $k !== 'authors' && $k !== 'publishers') {
+			foreach ($book as $k=>$v) {
+				if ($k == 'is_available') {
+					$statement->bindValue(":$k", h((int)$v));
+				}
+				elseif ($k !== 'genres' && $k !== 'categories' && $k !== 'editions' && $k !== 'authors' && $k !== 'publishers') {
 					$statement->bindValue(":$k", h($v));
 				}
 			}
 			$statement->execute();
-			$newBookId = (int)$db->lastInsertId();
+
 			// Update Book Genre Details
+			$updateList = [];
+			$deleteList = [];
+
+			$statement = $db->prepare('SELECT id, genre_id FROM bookgenredetail WHERE book_id = ?');
+			$statement->execute([$book->id]);
+			$genresOld = $statement->fetchAll();
+			$genresOldIds = [];
+			foreach($genresOld as $g) {
+				$genresOldIds[] = $g->genre_id;
+			}
+
+			$genresNew = $book->genres;
+
+			function convertStringToArray ($v) {
+				$varInt = (int)$v;
+				if($varInt) {
+					return $varInt;
+				}
+			}
+			$genresNew = array_map("convertStringToArray", $genresNew);
+			foreach($genresOld as $g) {
+				if (!in_array($g->genre_id, $genresNew)) { $deleteList[] = h($g->id); }
+			}
+
+			foreach($genresNew as $g) {
+				if (!in_array($g, $genresOldIds)) { $updateList[] = h($g); }
+			}
+
+			// insert
+			if (!empty($updateList)) {
+				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
+				$values = explode(",",implode(",$book->id,", $updateList).",$book->id");
+
+				$statement = $db->prepare("INSERT INTO bookgenredetail (genre_id, book_id) VALUES " . $placeholders);
+				$statement->execute($values);
+			}
+
+			// delete
+			if (!empty($deleteList)) {
+				$placeholders = implode(" and ",array_map(fn () => "?", $deleteList));
+
+				$statement = $db->prepare("DELETE FROM bookgenredetail WHERE id = " . $placeholders);
+				$statement->execute($deleteList);
+			}
 
 			// Update Book Category Details
+
 			// Update Book Edition Details
 			// Update Book Author Details
 			// Update Book Publisher Details
@@ -143,6 +190,7 @@ if (is_post_request()) {
 	} catch (\Throwable $e) {
 		if ($db->inTransaction()) {
 			$db->rollBack();
+			die("damn");
 		}
 	}
 }
@@ -452,7 +500,7 @@ require_once('../../../private/shared/staff_header.php');
 		<input type="hidden" name="book[id]" value="<?php echo $book->id; ?>" />
 		<div>
 			<label for="current_price">Current Price:</label>
-			<input type="number" step="0.1" id="current_price" name="book[current_price]" value="<?php echo $book->current_price; ?>" />
+			<input type="number" step="any" min="0.0000" id="current_price" name="book[current_price]" value="<?php echo $book->current_price; ?>" />
 		</div>
 		<div>
 			<label for="qty_in_stock">Quantity In Stock:</label>
