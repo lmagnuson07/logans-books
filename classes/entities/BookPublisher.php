@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entities;
+namespace Entities;
 
 class BookPublisher
 {

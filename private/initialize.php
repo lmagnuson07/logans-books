@@ -7,7 +7,6 @@ $dotenv->load();
 
 ob_start();
 require_once("db_functions.php");
-require_once('functions.php');
 
 CONST PRIVATE_PATH = __DIR__;
 define("PROJECT_PATH", dirname(__DIR__));
@@ -20,7 +19,7 @@ CONST SHARED_PATH = PRIVATE_PATH . '\shared';
 
 // doc root is public folder
 $doc_root = substr($_SERVER['SCRIPT_NAME'], 0, 0);
-
+//define("WWW_ROOT", $doc_root);
 define("WWW_ROOT", $doc_root);
 
 try {

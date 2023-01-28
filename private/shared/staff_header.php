@@ -11,14 +11,14 @@ if(!isset($page_heading)) { $page_heading = 'Logan\'s Books'; }
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title><?php echo $page_title; ?> - [Admin Area]</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/holiday.css@0.9.8" />
-	<link rel="stylesheet" media="all" href="<?php echo url_for('/css/staff-styles.css'); ?>">
+	<link rel="stylesheet" media="all" href="<?php echo Functions\HelperFunctions::url_for('/css/staff-styles.css'); ?>">
 </head>
 <body>
 <header>
 	<h1><?php echo $page_heading; ?> - [Admin Area]</h1>
 	<nav>
 		<ul>
-			<li><a href="<?php echo url_for('staff/book'); ?>">Books</a></li>
+			<li><a href="<?php echo Functions\HelperFunctions::url_for('staff/book'); ?>">Books</a></li>
 		</ul>
 		<?php require('book_navigation.php'); ?>
 	</nav>

@@ -10,10 +10,10 @@ $page_title = "Book CRUD";
 $bookId = $_GET['id'] ?? null;
 // SQL
 // Submit new book
-if (is_post_request()) {
+if (Functions\HelperFunctions::is_post_request()) {
 	if(isset($bookId)) $bookId = null;
 	try {
-		$book = new \App\Entities\Book($_POST['book']);
+		$book = new \Entities\Book($_POST['book']);
 
 		$db->beginTransaction();
 		// Fix to read from session data.
@@ -25,7 +25,7 @@ if (is_post_request()) {
 			);
 			foreach($book as $k=>$v) {
 				if ($k !== 'id' && $k !== 'genres' && $k !== 'categories' && $k !== 'editions' && $k !== 'authors' && $k !== 'publishers') {
-					$statement->bindValue(":$k", h($v));
+					$statement->bindValue(":$k", Functions\HelperFunctions::h($v));
 				}
 			}
 			$statement->execute();
@@ -37,7 +37,7 @@ if (is_post_request()) {
 				$insertData = [];
 				foreach($book->genres as $r){
 					$insertData[] = $newBookId;
-					$insertData[] = (int)h($r);
+					$insertData[] = (int)Functions\HelperFunctions::h($r);
 				}
 				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
 
@@ -54,12 +54,12 @@ if (is_post_request()) {
 				$insertData = [];
 				foreach($book->categories as $r){
 					$insertData[] = $newBookId;
-					$insertData[] = (int)h($r);
+					$insertData[] = (int)Functions\HelperFunctions::h($r);
 				}
 				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
 
 				$statement = $db->prepare(
-					"INSERT INTO bookcategorydetail (book_id, genre_id)
+					"INSERT INTO bookcategorydetail (book_id, category_id)
 							VALUES $values"
 				);
 				$statement->execute($insertData);
@@ -71,12 +71,12 @@ if (is_post_request()) {
 				$insertData = [];
 				foreach($book->editions as $r){
 					$insertData[] = $newBookId;
-					$insertData[] = (int)h($r);
+					$insertData[] = (int)Functions\HelperFunctions::h($r);
 				}
 				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
 
 				$statement = $db->prepare(
-					"INSERT INTO bookeditiondetail (book_id, genre_id)
+					"INSERT INTO bookeditiondetail (book_id, edition_id)
 							VALUES $values"
 				);
 				$statement->execute($insertData);
@@ -88,12 +88,12 @@ if (is_post_request()) {
 				$insertData = [];
 				foreach($book->authors as $r){
 					$insertData[] = $newBookId;
-					$insertData[] = (int)h($r);
+					$insertData[] = (int)Functions\HelperFunctions::h($r);
 				}
 				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
 
 				$statement = $db->prepare(
-					"INSERT INTO bookauthordetail (book_id, genre_id)
+					"INSERT INTO bookauthordetail (book_id, author_id)
 							VALUES $values"
 				);
 				$statement->execute($insertData);
@@ -105,12 +105,12 @@ if (is_post_request()) {
 				$insertData = [];
 				foreach($book->publishers as $r){
 					$insertData[] = $newBookId;
-					$insertData[] = (int)h($r);
+					$insertData[] = (int)Functions\HelperFunctions::h($r);
 				}
 				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
 
 				$statement = $db->prepare(
-					"INSERT INTO bookpublisherdetail (book_id, genre_id)
+					"INSERT INTO bookpublisherdetail (book_id, publisher_id)
 							VALUES $values"
 				);
 				$statement->execute($insertData);
@@ -126,10 +126,10 @@ if (is_post_request()) {
 			);
 			foreach ($book as $k=>$v) {
 				if ($k == 'is_available') {
-					$statement->bindValue(":$k", h((int)$v));
+					$statement->bindValue(":$k", Functions\HelperFunctions::h((int)$v));
 				}
 				elseif ($k !== 'genres' && $k !== 'categories' && $k !== 'editions' && $k !== 'authors' && $k !== 'publishers') {
-					$statement->bindValue(":$k", h($v));
+					$statement->bindValue(":$k", Functions\HelperFunctions::h($v));
 				}
 			}
 			$statement->execute();
@@ -156,11 +156,11 @@ if (is_post_request()) {
 			}
 			$newRecords = array_map("convertStringToArray", $newRecords);
 			foreach($oldRecords as $g) {
-				if (!in_array($g->genre_id, $newRecords)) { $deleteList[] = h($g->id); }
+				if (!in_array($g->genre_id, $newRecords)) { $deleteList[] = Functions\HelperFunctions::h($g->id); }
 			}
 
 			foreach($newRecords as $g) {
-				if (!in_array($g, $oldRecordsIds)) { $updateList[] = h($g); }
+				if (!in_array($g, $oldRecordsIds)) { $updateList[] = Functions\HelperFunctions::h($g); }
 			}
 
 			// insert
@@ -174,9 +174,9 @@ if (is_post_request()) {
 
 			// delete
 			if (!empty($deleteList)) {
-				$placeholders = implode(" and ",array_map(fn () => "?", $deleteList));
+				$placeholders = implode(",",array_map(fn () => "?", $deleteList)) . ")";
 
-				$statement = $db->prepare("DELETE FROM bookgenredetail WHERE id = " . $placeholders);
+				$statement = $db->prepare("DELETE FROM bookgenredetail WHERE id IN ( " . $placeholders);
 				$statement->execute($deleteList);
 			}
 
@@ -195,11 +195,11 @@ if (is_post_request()) {
 			$newRecords = $book->categories;
 			$newRecords = array_map("convertStringToArray", $newRecords);
 			foreach($oldRecords as $g) {
-				if (!in_array($g->category_id, $newRecords)) { $deleteList[] = h($g->id); }
+				if (!in_array($g->category_id, $newRecords)) { $deleteList[] = Functions\HelperFunctions::h($g->id); }
 			}
 
 			foreach($newRecords as $g) {
-				if (!in_array($g, $oldRecordsIds)) { $updateList[] = h($g); }
+				if (!in_array($g, $oldRecordsIds)) { $updateList[] = Functions\HelperFunctions::h($g); }
 			}
 
 			// insert
@@ -213,9 +213,9 @@ if (is_post_request()) {
 
 			// delete
 			if (!empty($deleteList)) {
-				$placeholders = implode(" and ",array_map(fn () => "?", $deleteList));
+				$placeholders = implode(",",array_map(fn () => "?", $deleteList)) . ")";
 
-				$statement = $db->prepare("DELETE FROM bookcategorydetail WHERE id = " . $placeholders);
+				$statement = $db->prepare("DELETE FROM bookcategorydetail WHERE id IN (" . $placeholders);
 				$statement->execute($deleteList);
 			}
 
@@ -234,11 +234,11 @@ if (is_post_request()) {
 			$newRecords = $book->editions;
 			$newRecords = array_map("convertStringToArray", $newRecords);
 			foreach($oldRecords as $g) {
-				if (!in_array($g->edition_id, $newRecords)) { $deleteList[] = h($g->id); }
+				if (!in_array($g->edition_id, $newRecords)) { $deleteList[] = Functions\HelperFunctions::h($g->id); }
 			}
 
 			foreach($newRecords as $g) {
-				if (!in_array($g, $oldRecordsIds)) { $updateList[] = h($g); }
+				if (!in_array($g, $oldRecordsIds)) { $updateList[] = Functions\HelperFunctions::h($g); }
 			}
 
 			// insert
@@ -252,9 +252,9 @@ if (is_post_request()) {
 
 			// delete
 			if (!empty($deleteList)) {
-				$placeholders = implode(" and ",array_map(fn () => "?", $deleteList));
+				$placeholders = implode(",",array_map(fn () => "?", $deleteList)) . ")";
 
-				$statement = $db->prepare("DELETE FROM bookeditiondetail WHERE id = " . $placeholders);
+				$statement = $db->prepare("DELETE FROM bookeditiondetail WHERE id IN (" . $placeholders);
 				$statement->execute($deleteList);
 			}
 
@@ -279,7 +279,7 @@ if (is_post_request()) {
 //			}
 
 			foreach($newRecords as $g) {
-				if (!in_array($g, $oldRecordsIds)) { $updateList[] = h($g); }
+				if (!in_array($g, $oldRecordsIds)) { $updateList[] = Functions\HelperFunctions::h($g); }
 			}
 
 			// insert
@@ -291,7 +291,7 @@ if (is_post_request()) {
 				$statement->execute($values);
 			}
 
-			// delete (cant delete right now since existing authors are disabled)
+			// delete (cant delete right now since existing authors are disabled on the form)
 //			if (!empty($deleteList)) {
 //				$placeholders = implode(" and ",array_map(fn () => "?", $deleteList));
 //
@@ -320,7 +320,7 @@ if (is_post_request()) {
 //			}
 
 			foreach($newRecords as $g) {
-				if (!in_array($g, $oldRecordsIds)) { $updateList[] = h($g); }
+				if (!in_array($g, $oldRecordsIds)) { $updateList[] = Functions\HelperFunctions::h($g); }
 			}
 
 			// insert
@@ -332,7 +332,7 @@ if (is_post_request()) {
 				$statement->execute($values);
 			}
 
-			// delete (cant delete right now since existing publishers are disabled)
+			// delete (cant delete right now since existing publishers are disabled on the form)
 //			if (!empty($deleteList)) {
 //				$placeholders = implode(" and ",array_map(fn () => "?", $deleteList));
 //
@@ -356,35 +356,35 @@ if ((int)$bookId === 0 && !is_null($bookId)) {
 	$statement = $db->prepare($qry);
 
 	$statement->execute();
-	$genres = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookGenre');
+	$genres = $statement->fetchAll(PDO::FETCH_CLASS, 'Entities\\BookGenre');
 
 	// Categories
 	$qry = "SELECT id, name FROM bookcategory ORDER BY name";
 	$statement = $db->prepare($qry);
 
 	$statement->execute();
-	$categories = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookCategory');
+	$categories = $statement->fetchAll(PDO::FETCH_CLASS, 'Entities\\BookCategory');
 
 	// Editions
 	$qry = "SELECT id, name FROM bookedition ORDER BY name";
 	$statement = $db->prepare($qry);
 
 	$statement->execute();
-	$editions = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookEdition');
+	$editions = $statement->fetchAll(PDO::FETCH_CLASS, 'Entities\\BookEdition');
 
 	// Authors
 	$qry = "SELECT id, first_name, last_name FROM bookauthor ORDER BY first_name";
 	$statement = $db->prepare($qry);
 
 	$statement->execute();
-	$authors = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookAuthor');
+	$authors = $statement->fetchAll(PDO::FETCH_CLASS, 'Entities\\BookAuthor');
 
 	// Publishers
 	$qry = "SELECT id, name FROM bookpublisher ORDER BY name";
 	$statement = $db->prepare($qry);
 
 	$statement->execute();
-	$publishers = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookPublisher');
+	$publishers = $statement->fetchAll(PDO::FETCH_CLASS, 'Entities\\BookPublisher');
 
 	// Cant do default properties on the class in the constructor because of PDO FETCH_CLASS.
 	// TODO: Add a method on the book class that will be for setting up default properties.
@@ -406,7 +406,7 @@ if ((int)$bookId === 0 && !is_null($bookId)) {
 	$args['authors'] = [];
 	$args['publishers'] = [];
 
-	$book = new \App\Entities\Book($args);
+	$book = new \Entities\Book($args);
 
 // Edit books SQL
 } elseif (isset($bookId)) {
@@ -415,35 +415,35 @@ if ((int)$bookId === 0 && !is_null($bookId)) {
 	$statement = $db->prepare($qry);
 
 	$statement->execute();
-	$genres = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookGenre');
+	$genres = $statement->fetchAll(PDO::FETCH_CLASS, 'Entities\\BookGenre');
 
 	// Categories
 	$qry = "SELECT id, name FROM bookcategory ORDER BY name";
 	$statement = $db->prepare($qry);
 
 	$statement->execute();
-	$categories = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookCategory');
+	$categories = $statement->fetchAll(PDO::FETCH_CLASS, 'Entities\\BookCategory');
 
 	// Editions
 	$qry = "SELECT id, name FROM bookedition ORDER BY name";
 	$statement = $db->prepare($qry);
 
 	$statement->execute();
-	$editions = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookEdition');
+	$editions = $statement->fetchAll(PDO::FETCH_CLASS, 'Entities\\BookEdition');
 
 	// Authors
 	$qry = "SELECT id, first_name, last_name FROM bookauthor ORDER BY first_name";
 	$statement = $db->prepare($qry);
 
 	$statement->execute();
-	$authors = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookAuthor');
+	$authors = $statement->fetchAll(PDO::FETCH_CLASS, 'Entities\\BookAuthor');
 
 	// Publishers
 	$qry = "SELECT id, name FROM bookpublisher ORDER BY name";
 	$statement = $db->prepare($qry);
 
 	$statement->execute();
-	$publishers = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\BookPublisher');
+	$publishers = $statement->fetchAll(PDO::FETCH_CLASS, 'Entities\\BookPublisher');
 
 	// Many-to-many relationships
 	$qry = "SELECT b.id, b.current_price, b.qty_in_stock, b.qty_on_order, 
@@ -499,7 +499,7 @@ if ((int)$bookId === 0 && !is_null($bookId)) {
 		$book = $statement->fetchAll();
 
 		if (empty($book)) {
-			redirect_to(url_for('/staff/book/index.php'));
+			Functions\HelperFunctions::redirect_to(Functions\HelperFunctions::url_for('/staff/book/index.php'));
 		}
 	}
 
@@ -560,7 +560,7 @@ if ((int)$bookId === 0 && !is_null($bookId)) {
 			$bookObj['publishers'][] = $b->publisher_id;
 		}
 	}
-	$book = new \App\Entities\Book($bookObj);
+	$book = new \Entities\Book($bookObj);
 
 	// Last author entered
 	$where = (count($book->authors) > 0) ? " WHERE id = :id" : "";
@@ -570,7 +570,7 @@ if ((int)$bookId === 0 && !is_null($bookId)) {
 	if (!empty($where)) { $statement->bindValue(':id', $book->authors[count($book->authors)-1]); }
 
 	$statement->execute();
-	$statement->setFetchMode(PDO::FETCH_CLASS, 'App\\Entities\\BookAuthor');
+	$statement->setFetchMode(PDO::FETCH_CLASS, 'Entities\\BookAuthor');
 	$author = $statement->fetch();
 
 	// Last publisher entered
@@ -581,16 +581,16 @@ if ((int)$bookId === 0 && !is_null($bookId)) {
 	if (!empty($where)) { $statement->bindValue(':id', $book->publishers[count($book->publishers)-1]); }
 
 	$statement->execute();
-	$statement->setFetchMode(PDO::FETCH_CLASS, 'App\\Entities\\BookPublisher');
+	$statement->setFetchMode(PDO::FETCH_CLASS, 'Entities\\BookPublisher');
 	$publisher = $statement->fetch();
 
 // View books SQL
-} else if (is_get_request()) {
+} else if (Functions\HelperFunctions::is_get_request()) {
 	$qry = "SELECT * FROM book";
 	$statement = $db->prepare($qry);
 
 	$statement->execute();
-	$books = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\Book');
+	$books = $statement->fetchAll(PDO::FETCH_CLASS, 'Entities\\Book');
 }
 $count = 0;
 
@@ -598,9 +598,9 @@ require_once('../../../private/shared/staff_header.php');
 ?>
 <h2>Books</h2>
 <!---------------- View Books-------------------->
-<?php if(!isset($bookId) && is_get_request()): ?>
-<p><a href="<?php echo url_for('/staff/'); ?>">&laquo; Go back to Staff home page</a></p>
-<p><a href="<?php echo url_for('/staff/book/index.php?id=0'); ?>">Create a new book &raquo;</a></p>
+<?php if(!isset($bookId) && Functions\HelperFunctions::is_get_request()): ?>
+<p><a href="<?php echo Functions\HelperFunctions::url_for('/staff/'); ?>">&laquo; Go back to Staff home page</a></p>
+<p><a href="<?php echo Functions\HelperFunctions::url_for('/staff/book/index.php?id=0'); ?>">Create a new book &raquo;</a></p>
 <p>List of books</p>
 <table>
 	<thead>
@@ -634,7 +634,7 @@ require_once('../../../private/shared/staff_header.php');
 			echo "<td>" . $b->number_of_pages . "</td >";
 			echo "<td>" . $b->language . "</td >";
 			echo "<td>" . $b->format . "</td >";
-			echo "<td><a href=" . url_for("staff/book/index.php?id=" . h(u($b->id))) . ">Edit</a></td>";
+			echo "<td><a href=" . Functions\HelperFunctions::url_for("staff/book/index.php?id=" . Functions\HelperFunctions::h(Functions\HelperFunctions::u($b->id))) . ">Edit</a></td>";
 			echo "<td><a href=\"#\">Deactivate</a ></td >";
 			echo "</tr>";
 		}
@@ -644,11 +644,11 @@ require_once('../../../private/shared/staff_header.php');
 <!-- ----------------------------------------->
 <!-- Edit Book ------------------------------->
 <?php elseif($bookId >= 0 && isset($bookId)): ?>
-<a href="<?php echo url_for('/staff/book/'); ?>">&laquo; Go back to Books</a>
+<a href="<?php echo Functions\HelperFunctions::url_for('/staff/book/'); ?>">&laquo; Go back to Books</a>
 <h2>Book Form</h2>
 <!--TODO: Refactor to use jquery and ajax instead of an id of 0-->
 <h3><?php echo $book->title . " - [Book ID: " .  $bookId . "]"; ?></h3>
-	<form class="edit-book-form" action="<?php echo url_for("/staff/book/index.php?id=" . u(h($bookId))); ?>" method="post">
+	<form class="edit-book-form" action="<?php echo Functions\HelperFunctions::url_for("/staff/book/index.php?id=" . Functions\HelperFunctions::u(Functions\HelperFunctions::h($bookId))); ?>" method="post">
 <!--		TODO: Convert hidden inputs to ajax calls using jquery, or store the id in the session data-->
 		<input type="hidden" name="book[id]" value="<?php echo $book->id; ?>" />
 		<div>
@@ -689,7 +689,7 @@ require_once('../../../private/shared/staff_header.php');
 		</div>
 		<div>
 			<label for="synopsis">Synopsis:</label>
-			<textarea id="synopsis" name="book[synopsis]" value="<?php echo $book->synopsis; ?>"><?php echo trim($book->synopsis); ?></textarea>
+			<textarea id="synopsis" name="book[synopsis]"><?php echo trim($book->synopsis); ?></textarea>
 		</div>
 		<div>
 			<label for="cover_image_url">Cover Image URL:</label>
