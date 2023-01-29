@@ -1,6 +1,6 @@
 <?php
 
-namespace Functions;
+namespace App\Functions;
 use JetBrains\PhpStorm\NoReturn;
 
 class HelperFunctions

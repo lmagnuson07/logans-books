@@ -1,8 +1,9 @@
 <?php
 
-namespace Entities;
+namespace App\Entities;
+use App\Shared\DBObj;
 
-class BookCategory
+class BookCategory extends DBObj
 {
 	public int $id;
 	public string $name;

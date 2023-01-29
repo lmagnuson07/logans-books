@@ -11,5 +11,5 @@
 </html>
 
 <?php
-db_disconnect($db);
+\App\Shared\DBObj::disconn();
 ?>

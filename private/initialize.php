@@ -6,7 +6,6 @@ $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
 
 ob_start();
-require_once("db_functions.php");
 
 CONST PRIVATE_PATH = __DIR__;
 define("PROJECT_PATH", dirname(__DIR__));
@@ -23,13 +22,15 @@ $doc_root = substr($_SERVER['SCRIPT_NAME'], 0, 0);
 define("WWW_ROOT", $doc_root);
 
 try {
-	$db = db_connect();
+	$db = \App\Shared\DBObj::conn();
 } catch (\PDOException $e) {
 	// TODO: Display an error page with some navigation when there is an error with the db connection, then exit the script.
 	echo "<h1>Something went wrong with the database connection.</h1>";
+	echo "<p>" . $e->getMessage() . " - Error Code:" . (int)$e->getCode() . "</p>";
 	die("<p>Blame the developer!</p>");
 } catch (Exception $e) {
 	// Catching default exception. No need to show error page.
 	echo "<h1>Something went wrong with the database connection.</h1>";
 	die("<p>We're not sure what</p>");
 }
+

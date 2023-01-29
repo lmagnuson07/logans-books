@@ -1,7 +1,9 @@
 <?php
 
-namespace Entities;
-class Book
+namespace App\Entities;
+use App\Shared\DBObj;
+
+class Book extends DBObj
 {
 	public int $id;
 	public float $current_price;
