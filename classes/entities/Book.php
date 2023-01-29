@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Entities;
+use App\Functions\HelperFunctions;
 use App\Shared\EntityQueries;
 
 class Book extends EntityQueries
@@ -100,5 +101,40 @@ class Book extends EntityQueries
 		}
 
 		return $books;
+	}
+	static public function getBookObj(array $books): array {
+		$bookObj = [];
+		foreach($books as $i=>$b) {
+			if (!isset($bookObj['id'])) {
+				$bookObj['id'] = $b->id;
+				$bookObj['current_price'] = $b->current_price;
+				$bookObj['qty_in_stock'] = $b->qty_in_stock;
+				$bookObj['qty_on_order'] = $b->qty_on_order;
+				$bookObj['title'] = $b->title;
+				$bookObj['tagline'] = $b->tagline;
+				$bookObj['synopsis'] = $b->synopsis;
+				$bookObj['number_of_pages'] = $b->number_of_pages;
+				$bookObj['format'] = $b->format;
+				$bookObj['language'] = $b->language;
+				$bookObj['cover_image_url'] = $b->cover_image_url;
+				$bookObj['is_available'] = $b->is_available;
+			}
+			HelperFunctions::add_to_array_if_unique($bookObj, key: 'genres', value: $b->genre_id);
+			HelperFunctions::add_to_array_if_unique($bookObj, key: 'categories', value: $b->category_id);
+			HelperFunctions::add_to_array_if_unique($bookObj, key: 'editions', value: $b->edition_id);
+			HelperFunctions::add_to_array_if_unique($bookObj, key: 'authors', value: $b->author_id);
+			HelperFunctions::add_to_array_if_unique($bookObj, key: 'publishers', value: $b->publisher_id);
+		}
+		return $bookObj;
+	}
+	static public function getLists(): array {
+		$lists = [];
+		$lists['genres'] = BookGenre::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
+		$lists['categories'] = BookCategory::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
+		$lists['editions'] = BookEdition::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
+		$lists['authors'] = BookAuthor::fetchCols(cols: ['id', 'first_name', 'last_name'], orderBy: ['first_name']);
+		$lists['publishers'] = BookPublisher::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
+
+		return $lists;
 	}
 }

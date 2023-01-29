@@ -5,7 +5,7 @@ use PDO;
 
 class EntityQueries extends DBObj
 {
-	///////////////// Queries /////////////////////////////////////
+	///////////////// PDO Statements /////////////////////////////////////
 	static public function fetchAllBySql(string $sql, int $id): array {
 		$stmt = self::$db->prepare($sql);
 
@@ -15,7 +15,7 @@ class EntityQueries extends DBObj
 
 		return $result;
 	}
-	static public function fetchBySqlEntity(string $sql, int $id): \stdClass {
+	static public function fetchBySqlEntity(string $sql, int $id): object {
 		$stmt = self::$db->prepare($sql);
 		$stmt->setFetchMode(PDO::FETCH_CLASS, static::class);
 
@@ -34,6 +34,7 @@ class EntityQueries extends DBObj
 
 		return $result;
 	}
+	///////////////// Queries /////////////////////////////////////
 	static public function fetchAll(): array {
 		self::setTableName();
 
@@ -50,7 +51,7 @@ class EntityQueries extends DBObj
 		}
 		return static::fetchAllBySqlEntity($sql);
 	}
-	static public function fetchColsById(array $cols, int $id): \stdClass {
+	static public function fetchColsById(array $cols, int $id): object {
 		self::setTableName();
 
 		$sql = "SELECT " . join(',', array_values($cols))

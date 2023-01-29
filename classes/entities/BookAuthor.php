@@ -18,4 +18,9 @@ class BookAuthor extends EntityQueries
 			}
 		}
 	}
+	static public function fetchLastAuthor($id): object {
+		$sql = "SELECT id, first_name, last_name
+		FROM bookauthor WHERE id = ?";
+		return static::fetchBySqlEntity($sql, $id);
+	}
 }

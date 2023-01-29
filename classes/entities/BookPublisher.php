@@ -21,5 +21,9 @@ class BookPublisher extends EntityQueries
 			}
 		}
 	}
-
+	static public function fetchLastPublisher($id): object {
+		$sql = "SELECT id, name
+		FROM bookpublisher WHERE id = ?";
+		return static::fetchBySqlEntity($sql, $id);
+	}
 }

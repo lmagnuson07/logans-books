@@ -35,4 +35,13 @@ class HelperFunctions
 	public static function is_get_request(): string {
 		return $_SERVER['REQUEST_METHOD'] == 'GET';
 	}
+	public static function add_to_array_if_unique(array &$arr, string $key, int|string $value=null) {
+		if(!empty($arr[$key])) {
+			if (!in_array($value, $arr[$key])) {
+				$arr[$key][] = $value;
+			}
+		} elseif(isset($value)) {
+			$arr[$key][] = $value;
+		}
+	}
 }

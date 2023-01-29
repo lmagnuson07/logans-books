@@ -8,6 +8,7 @@ require_once('../../../private/initialize.php');
 
 $page_title = "Book CRUD";
 $bookId = $_GET['id'] ?? null;
+
 // SQL
 // Submit new book
 if (App\Functions\HelperFunctions::is_post_request()) {
@@ -297,112 +298,41 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 	}
 }
 // Create new Book
-// TODO: Move sql to class and refactor to remove code duplication.
 if ((int)$bookId === 0 && !is_null($bookId)) {
-	// TODO: Refactor to store the genres, categories, and editions on an object
-	$genres = \App\Entities\BookGenre::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
-	$categories = \App\Entities\BookCategory::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
-	$editions = \App\Entities\BookEdition::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
-	$authors = \App\Entities\BookAuthor::fetchCols(cols: ['id', 'first_name', 'last_name'], orderBy: ['first_name']);
-	$publishers = \App\Entities\BookPublisher::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
+	$lists = \App\Entities\Book::getLists();
+	$genres = $lists['genres'];
+	$categories = $lists['categories'];
+	$editions = $lists['editions'];
+	$authors = $lists['authors'];
+	$publishers = $lists['publishers'];
 
 	$book = new App\Entities\Book();
 	$book->setDefaults();
 
 // Edit books SQL
 } elseif (isset($bookId)) {
-	$genres = \App\Entities\BookGenre::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
-	$categories = \App\Entities\BookCategory::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
-	$editions = \App\Entities\BookEdition::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
-	$authors = \App\Entities\BookAuthor::fetchCols(cols: ['id', 'first_name', 'last_name'], orderBy: ['first_name']);
-	$publishers = \App\Entities\BookPublisher::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
+	$books = \App\Entities\Book::manyToManyRelationships($bookId);
 
-	$book = \App\Entities\Book::manyToManyRelationships($bookId);
-
-	if (empty($book)) {
+	if (empty($books)) {
 		App\Functions\HelperFunctions::redirect_to(App\Functions\HelperFunctions::url_for('/staff/book/index.php'));
 	}
 
-	$bookObj = [];
-	foreach($book as $i=>$b) {
-		if (!isset($bookObj['id'])) {
-			$bookObj['id'] = $b->id;
-			$bookObj['current_price'] = $b->current_price;
-			$bookObj['qty_in_stock'] = $b->qty_in_stock;
-			$bookObj['qty_on_order'] = $b->qty_on_order;
-			$bookObj['title'] = $b->title;
-			$bookObj['tagline'] = $b->tagline;
-			$bookObj['synopsis'] = $b->synopsis;
-			$bookObj['number_of_pages'] = $b->number_of_pages;
-			$bookObj['format'] = $b->format;
-			$bookObj['language'] = $b->language;
-			$bookObj['cover_image_url'] = $b->cover_image_url;
-			$bookObj['is_available'] = $b->is_available;
-		}
-		// BookGenre
-		if(!empty($bookObj['genres'])) {
-				if (!in_array($b->genre_id, $bookObj['genres'])) {
-					$bookObj['genres'][] = $b->genre_id;
-				}
-		} elseif(isset($b->genre_id)) {
-			$bookObj['genres'][] = $b->genre_id;
-		}
-		// Categories
-		if(!empty($bookObj['categories'])) {
-				if (!in_array($b->category_id, $bookObj['categories'])) {
-					$bookObj['categories'][] = $b->category_id;
-				}
-		} elseif(isset($b->category_id)) {
-			$bookObj['categories'][] = $b->category_id;
-		}
-		// Editions
-		if(!empty($bookObj['editions'])) {
-				if (!in_array($b->edition_id, $bookObj['editions'])) {
-					$bookObj['editions'][] = $b->edition_id;
-				}
-		} elseif(isset($b->edition_id)) {
-			$bookObj['editions'][] = $b->edition_id;
-		}
-		// Authors
-		if(!empty($bookObj['authors'])) {
-				if (!in_array($b->author_id, $bookObj['authors'])) {
-					$bookObj['authors'][] = $b->author_id;
-				}
-		} elseif(isset($b->author_id)) {
-			$bookObj['authors'][] = $b->author_id;
-		}
-		// Publisher
-		if(!empty($bookObj['publishers'])) {
-				if (!in_array($b->publisher_id, $bookObj['publishers'])) {
-					$bookObj['publishers'][] = $b->publisher_id;
-				}
-		} elseif(isset($b->publisher_id)) {
-			$bookObj['publishers'][] = $b->publisher_id;
-		}
+	$book = new App\Entities\Book(\App\Entities\Book::getBookObj($books));
+
+	$lists = \App\Entities\Book::getLists();
+	$genres = $lists['genres'];
+	$categories = $lists['categories'];
+	$editions = $lists['editions'];
+	$authors = $lists['authors'];
+	$publishers = $lists['publishers'];
+
+	if (count($book->authors) > 0) {
+		$author = \App\Entities\BookAuthor::fetchLastAuthor($book->authors[count($book->authors)-1]);
 	}
-	$book = new App\Entities\Book($bookObj);
 
-	// Last author entered
-	$where = (count($book->authors) > 0) ? " WHERE id = :id" : "";
-	$qry = "SELECT id, first_name, last_name
-		FROM bookauthor" . $where;
-	$statement = $db->prepare($qry);
-	if (!empty($where)) { $statement->bindValue(':id', $book->authors[count($book->authors)-1]); }
-
-	$statement->execute();
-	$statement->setFetchMode(PDO::FETCH_CLASS, 'App\\Entities\\BookAuthor');
-	$author = $statement->fetch();
-
-	// Last publisher entered
-	$where = (count($book->authors) > 0) ? " WHERE id = :id" : "";
-	$qry = "SELECT id, name
-		FROM bookpublisher" . $where;
-	$statement = $db->prepare($qry);
-	if (!empty($where)) { $statement->bindValue(':id', $book->publishers[count($book->publishers)-1]); }
-
-	$statement->execute();
-	$statement->setFetchMode(PDO::FETCH_CLASS, 'App\\Entities\\BookPublisher');
-	$publisher = $statement->fetch();
+	if (count($book->publishers) > 0) {
+		$publisher = \App\Entities\BookPublisher::fetchLastPublisher($book->publishers[count($book->publishers)-1]);
+	}
 
 // View books SQL
 } else if (App\Functions\HelperFunctions::is_get_request()) {
