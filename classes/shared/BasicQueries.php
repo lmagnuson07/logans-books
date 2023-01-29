@@ -9,7 +9,7 @@ use PDO;
 
 class BasicQueries extends DBObj
 {
-	///////////////// Queries /////////////////////////////////////
+	///////////////// PDO Statements /////////////////////////////////////
 	static public function fetchBySql(string $sql, int $id): \stdClass {
 		$stmt = self::$db->prepare($sql);
 
@@ -32,6 +32,7 @@ class BasicQueries extends DBObj
 
 		return $result;
 	}
+	///////////////// Queries /////////////////////////////////////
 	static public function fetchColsById(array $cols, int $id, string $tableName): \stdClass {
 		$sql = "SELECT " . join(',', array_values($cols))
 			. " FROM " . $tableName

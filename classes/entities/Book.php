@@ -23,6 +23,7 @@ class Book extends EntityQueries
 	public array $editions = [];
 	public array $authors = [];
 	public array $publishers = [];
+	//////////// Setup /////////////////////////////////////////////////////////
 	public function __construct($args=[]) {
 		// dynamically set properties
 		foreach($args as $k=>$v) {
@@ -53,6 +54,63 @@ class Book extends EntityQueries
 		$this->cover_image_url = '';
 		$this->is_available = true;
 	}
+	static public function getBookObj(array $books): array {
+		$bookObj = [];
+		foreach($books as $i=>$b) {
+			if (!isset($bookObj['id'])) {
+				$bookObj['id'] = $b->id;
+				$bookObj['current_price'] = $b->current_price;
+				$bookObj['qty_in_stock'] = $b->qty_in_stock;
+				$bookObj['qty_on_order'] = $b->qty_on_order;
+				$bookObj['title'] = $b->title;
+				$bookObj['tagline'] = $b->tagline;
+				$bookObj['synopsis'] = $b->synopsis;
+				$bookObj['number_of_pages'] = $b->number_of_pages;
+				$bookObj['format'] = $b->format;
+				$bookObj['language'] = $b->language;
+				$bookObj['cover_image_url'] = $b->cover_image_url;
+				$bookObj['is_available'] = $b->is_available;
+			}
+			HelperFunctions::add_to_array_if_unique($bookObj, key: 'genres', value: $b->genre_id);
+			HelperFunctions::add_to_array_if_unique($bookObj, key: 'categories', value: $b->category_id);
+			HelperFunctions::add_to_array_if_unique($bookObj, key: 'editions', value: $b->edition_id);
+			HelperFunctions::add_to_array_if_unique($bookObj, key: 'authors', value: $b->author_id);
+			HelperFunctions::add_to_array_if_unique($bookObj, key: 'publishers', value: $b->publisher_id);
+		}
+		return $bookObj;
+	}
+	// TODO: Remove this tempFlag when author and publisher form is implemented
+	static public function getUpdateAndDeleteLists(array $oldRecords, array $newRecords, bool $tempFlag=false): array {
+		$lists = [];
+
+		$oldRecordsIds = array_map(function($i) {
+			foreach($i as $k=>$v) {
+				if ($k !== 'id') {
+					return $v;
+				}
+			}
+		}, $oldRecords);
+
+		// Converts the string results from the form to integers and only returns integers (validates input values).
+		$newRecords = array_map(function ($v) {
+			$varInt = (int)$v;
+			if($varInt) {
+				return $varInt;
+			}
+		}, $newRecords);
+
+		if (!$tempFlag) {
+			foreach($oldRecordsIds as $k=>$v) {
+				if (!in_array($v, $newRecords)) { $lists['deleteList'][] = HelperFunctions::h($oldRecords[$k]->id); }
+			}
+		}
+
+		foreach($newRecords as $g) {
+			if (!in_array($g, $oldRecordsIds)) { $lists['updateList'][] = HelperFunctions::h($g); }
+		}
+		return $lists;
+	}
+	////////////////// Queries /////////////////////////////////////////
 	static public function manyToManyRelationships(int $bookId): array {
 		$books = [];
 		$sql = "SELECT b.id, b.current_price, b.qty_in_stock, b.qty_on_order, 
@@ -88,7 +146,6 @@ class Book extends EntityQueries
 
 		$books = static::fetchAllBySql(sql: $sql, id: $bookId);
 
-		// Catches errors if an id that doesn't exist is typed into url.
 		if (empty($books)) {
 			// For books that are recently added and have no many - many relationships
 			$sql = "SELECT b.id, b.current_price, b.qty_in_stock, b.qty_on_order, 
@@ -102,31 +159,6 @@ class Book extends EntityQueries
 
 		return $books;
 	}
-	static public function getBookObj(array $books): array {
-		$bookObj = [];
-		foreach($books as $i=>$b) {
-			if (!isset($bookObj['id'])) {
-				$bookObj['id'] = $b->id;
-				$bookObj['current_price'] = $b->current_price;
-				$bookObj['qty_in_stock'] = $b->qty_in_stock;
-				$bookObj['qty_on_order'] = $b->qty_on_order;
-				$bookObj['title'] = $b->title;
-				$bookObj['tagline'] = $b->tagline;
-				$bookObj['synopsis'] = $b->synopsis;
-				$bookObj['number_of_pages'] = $b->number_of_pages;
-				$bookObj['format'] = $b->format;
-				$bookObj['language'] = $b->language;
-				$bookObj['cover_image_url'] = $b->cover_image_url;
-				$bookObj['is_available'] = $b->is_available;
-			}
-			HelperFunctions::add_to_array_if_unique($bookObj, key: 'genres', value: $b->genre_id);
-			HelperFunctions::add_to_array_if_unique($bookObj, key: 'categories', value: $b->category_id);
-			HelperFunctions::add_to_array_if_unique($bookObj, key: 'editions', value: $b->edition_id);
-			HelperFunctions::add_to_array_if_unique($bookObj, key: 'authors', value: $b->author_id);
-			HelperFunctions::add_to_array_if_unique($bookObj, key: 'publishers', value: $b->publisher_id);
-		}
-		return $bookObj;
-	}
 	static public function getLists(): array {
 		$lists = [];
 		$lists['genres'] = BookGenre::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
@@ -137,45 +169,46 @@ class Book extends EntityQueries
 
 		return $lists;
 	}
-	public function insertPostData(array $ignoreList=[]): int {
-		$cols = [];
-		foreach($this as $k=>$v) {
-			if (!empty($ignoreList)) {
-				if (!in_array($k, $ignoreList)) {
-					$cols[] = $k;
-				}
-			} else {
-				$cols[] = $k;
-			}
-		}
+	//////////// Inserts /////////////////////////////////////////////////
+	public function insertPostData(array $ignoreList=[], array $convert=[]): int {
+		$cols = parent::getClassCols($ignoreList);
+
 		$sql = 'INSERT INTO book (' . join(',', array_values($cols))
 				. ') VALUES (' . join(',', array_values(array_map(fn ($i) => ":$i", $cols))) .')';
 
-		$statement = static::$db->prepare($sql);
-		foreach($this as $k=>$v) {
-			if (!in_array($k, $ignoreList)) {
-				$statement->bindValue(":$k", HelperFunctions::h($v));
-			}
-		}
-
-		$statement->execute();
+		parent::performInstanceDML($sql, ignoreList: $ignoreList, convert: $convert);
 		$insertId = (int)static::$db->lastInsertId();
 		$this->id = $insertId;
 
 		return $insertId;
 	}
-	public function getPostPlaceholderAndInsertData(array $items): array {
+	public function getPostPlaceholderAndInsertData(array $items, bool $isInsert=true): array {
 		$rowCount = count($items);
-		$insertData = [];
-		foreach($items as $r){
-			$insertData[] = $this->id;
-			$insertData[] = (int)HelperFunctions::h($r);
-		}
-		$placeHolders = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
 
-		$arr['insertData'] = $insertData;
-		$arr['placeHolders'] = $placeHolders;
+		if($isInsert) {
+			$insertData = [];
+			foreach($items as $r){
+				$insertData[] = $this->id;
+				$insertData[] = (int)HelperFunctions::h($r);
+			}
+			$placeHolders = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
+
+			$arr['insertData'] = $insertData;
+			$arr['placeHolders'] = $placeHolders;
+		} else {
+			$arr['placeHolders'] = implode(",",array_map(fn () => "?", $items));
+		}
 
 		return $arr;
+	}
+	//////////////// Updates ///////////////////////////////////////////////////
+	public function updateWithPostData(array $ignoreList=[], array $convert=[]): void {
+		// TODO: Check if the book exists before performing update.
+		$cols = parent::getClassCols($ignoreList);
+
+		$sql = 'UPDATE book SET ' . join(',', array_values(array_map(fn ($i) => "$i=:$i", $cols))) .
+            	' WHERE id=' . $this->id . ' LIMIT 1';
+
+		parent::performInstanceDML($sql, ignoreList: $ignoreList, convert: $convert);
 	}
 }

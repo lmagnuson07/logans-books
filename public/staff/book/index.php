@@ -54,200 +54,86 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 		}
 		// Update a book:
 		elseif ($book->id > 0) {
-			// Check if the book exists before performing update.
-			$statement = $db->prepare(
-				'UPDATE book SET current_price=:current_price,qty_in_stock=:qty_in_stock,qty_on_order=:qty_on_order,number_of_pages=:number_of_pages,
-                title=:title,tagline=:tagline,format=:format,language=:language,synopsis=:synopsis,cover_image_url=:cover_image_url,is_available=:is_available
-            	WHERE id=:id LIMIT 1'
-			);
-			foreach ($book as $k=>$v) {
-				if ($k == 'is_available') {
-					$statement->bindValue(":$k", App\Functions\HelperFunctions::h((int)$v));
-				}
-				elseif ($k !== 'genres' && $k !== 'categories' && $k !== 'editions' && $k !== 'authors' && $k !== 'publishers') {
-					$statement->bindValue(":$k", App\Functions\HelperFunctions::h($v));
-				}
-			}
-			$statement->execute();
+			$book->updateWithPostData(ignoreList: ['id', 'genres', 'categories', 'editions', 'authors', 'publishers'], convert: ['convert_bool'=>true, 'convert_item'=>'is_available']);
 
 			// Update Book Genre Details
-			$updateList = [];
-			$deleteList = [];
-
 			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['id', 'genre_id'], id: $book->id, tableName: "bookgenredetail", targetId: "book_id");
-			$oldRecordsIds = [];
-			foreach($oldRecords as $g) {
-				$oldRecordsIds[] = $g->genre_id;
-			}
-
-			$newRecords = $book->genres;
-
-			function convertStringToArray ($v) {
-				$varInt = (int)$v;
-				if($varInt) {
-					return $varInt;
-				}
-			}
-			$newRecords = array_map("convertStringToArray", $newRecords);
-			foreach($oldRecords as $g) {
-				if (!in_array($g->genre_id, $newRecords)) { $deleteList[] = App\Functions\HelperFunctions::h($g->id); }
-			}
-
-			foreach($newRecords as $g) {
-				if (!in_array($g, $oldRecordsIds)) { $updateList[] = App\Functions\HelperFunctions::h($g); }
-			}
+			$lists = \App\Entities\Book::getUpdateAndDeleteLists(oldRecords: $oldRecords, newRecords: $book->genres);
 
 			// insert
-			if (!empty($updateList)) {
-				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
-				$insertData = explode(",",implode(",$book->id,", $updateList).",$book->id");
-				\App\Shared\BasicQueries::insertCols(cols: ['genre_id', 'book_id'], placeHolders: $placeholders, tableName: "bookgenredetail", insertData: $insertData);
+			if (!empty($lists['updateList'])) {
+				$data = $book->getPostPlaceholderAndInsertData($lists['updateList']);
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'genre_id'], placeHolders: $data["placeHolders"], tableName: "bookgenredetail", insertData: $data["insertData"]);
 			}
 
 			// delete
-			if (!empty($deleteList)) {
-				$placeholders = implode(",",array_map(fn () => "?", $deleteList));
-				\App\Shared\BasicQueries::deleteRecords(placeHolders: $placeholders, tableName: "bookgenredetail", ids: $deleteList);
+			if (!empty($lists['deleteList'])) {
+				$data = $book->getPostPlaceholderAndInsertData(items: $lists['deleteList'], isInsert: false);
+				\App\Shared\BasicQueries::deleteRecords(placeHolders: $data["placeHolders"], tableName: "bookgenredetail", ids: $lists['deleteList']);
 			}
 
 			// Update Book Category Details
-			$updateList = [];
-			$deleteList = [];
-
 			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['id', 'category_id'], id: $book->id, tableName: "bookcategorydetail", targetId: "book_id");
-			$oldRecordsIds = [];
-			foreach($oldRecords as $g) {
-				$oldRecordsIds[] = $g->category_id;
-			}
-
-			$newRecords = $book->categories;
-			$newRecords = array_map("convertStringToArray", $newRecords);
-			foreach($oldRecords as $g) {
-				if (!in_array($g->category_id, $newRecords)) { $deleteList[] = App\Functions\HelperFunctions::h($g->id); }
-			}
-
-			foreach($newRecords as $g) {
-				if (!in_array($g, $oldRecordsIds)) { $updateList[] = App\Functions\HelperFunctions::h($g); }
-			}
+			$lists = \App\Entities\Book::getUpdateAndDeleteLists(oldRecords: $oldRecords, newRecords: $book->categories);
 
 			// insert
-			if (!empty($updateList)) {
-				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
-				$insertData = explode(",",implode(",$book->id,", $updateList).",$book->id");
-				\App\Shared\BasicQueries::insertCols(cols: ['category_id', 'book_id'], placeHolders: $placeholders, tableName: "bookcategorydetail", insertData: $insertData);
+			if (!empty($lists['updateList'])) {
+				$data = $book->getPostPlaceholderAndInsertData($lists['updateList']);
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'category_id'], placeHolders: $data["placeHolders"], tableName: "bookcategorydetail", insertData: $data["insertData"]);
 			}
 
 			// delete
-			if (!empty($deleteList)) {
-				$placeholders = implode(",",array_map(fn () => "?", $deleteList)) . ")";
-				\App\Shared\BasicQueries::deleteRecords(placeHolders: $placeholders, tableName: "bookcategorydetail", ids: $deleteList);
+			if (!empty($lists['deleteList'])) {
+				$data = $book->getPostPlaceholderAndInsertData(items: $lists['deleteList'], isInsert: false);
+				\App\Shared\BasicQueries::deleteRecords(placeHolders: $data["placeHolders"], tableName: "bookcategorydetail", ids: $lists['deleteList']);
 			}
 
 			// Update Book Edition Details
-			$updateList = [];
-			$deleteList = [];
-
 			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['id', 'edition_id'], id: $book->id, tableName: "bookeditiondetail", targetId: "book_id");
-			$oldRecordsIds = [];
-			foreach($oldRecords as $g) {
-				$oldRecordsIds[] = $g->edition_id;
-			}
-
-			$newRecords = $book->editions;
-			$newRecords = array_map("convertStringToArray", $newRecords);
-			foreach($oldRecords as $g) {
-				if (!in_array($g->edition_id, $newRecords)) { $deleteList[] = App\Functions\HelperFunctions::h($g->id); }
-			}
-
-			foreach($newRecords as $g) {
-				if (!in_array($g, $oldRecordsIds)) { $updateList[] = App\Functions\HelperFunctions::h($g); }
-			}
+			$lists = \App\Entities\Book::getUpdateAndDeleteLists(oldRecords: $oldRecords, newRecords: $book->editions);
 
 			// insert
-			if (!empty($updateList)) {
-				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
-				$insertData = explode(",",implode(",$book->id,", $updateList).",$book->id");
-				\App\Shared\BasicQueries::insertCols(cols: ['edition_id', 'book_id'], placeHolders: $placeholders, tableName: "bookeditiondetail", insertData: $insertData);
+			if (!empty($lists['updateList'])) {
+				$data = $book->getPostPlaceholderAndInsertData($lists['updateList']);
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'edition_id'], placeHolders: $data["placeHolders"], tableName: "bookeditiondetail", insertData: $data["insertData"]);
 			}
 
 			// delete
-			if (!empty($deleteList)) {
-				$placeholders = implode(",",array_map(fn () => "?", $deleteList)) . ")";
-				\App\Shared\BasicQueries::deleteRecords(placeHolders: $placeholders, tableName: "bookeditiondetail", ids: $deleteList);
+			if (!empty($lists['deleteList'])) {
+				$data = $book->getPostPlaceholderAndInsertData(items: $lists['deleteList'], isInsert: false);
+				\App\Shared\BasicQueries::deleteRecords(placeHolders: $data["placeHolders"], tableName: "bookeditiondetail", ids: $lists['deleteList']);
 			}
 
 			// Update Book Author Details
-			$updateList = [];
-			$deleteList = [];
-
 			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['id', 'author_id'], id: $book->id, tableName: "bookauthordetail", targetId: "book_id");
-			$oldRecordsIds = [];
-			foreach($oldRecords as $g) {
-				$oldRecordsIds[] = $g->author_id;
-			}
-
-			$newRecords = $book->authors;
-			$newRecords = array_map("convertStringToArray", $newRecords);
-//			foreach($oldRecords as $g) {
-//				if (!empty($newRecords)) {
-//					if (!in_array($g->author_id, $newRecords)) { $deleteList[] = h($g->id); }
-//				}
-//			}
-
-			foreach($newRecords as $g) {
-				if (!in_array($g, $oldRecordsIds)) { $updateList[] = App\Functions\HelperFunctions::h($g); }
-			}
+			$lists = \App\Entities\Book::getUpdateAndDeleteLists(oldRecords: $oldRecords, newRecords: $book->authors, tempFlag: true);
 
 			// insert
-			if (!empty($updateList)) {
-				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
-				$insertData = explode(",",implode(",$book->id,", $updateList).",$book->id");
-				\App\Shared\BasicQueries::insertCols(cols: ['author_id', 'book_id'], placeHolders: $placeholders, tableName: "bookauthordetail", insertData: $insertData);
+			if (!empty($lists['updateList'])) {
+				$data = $book->getPostPlaceholderAndInsertData($lists['updateList']);
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'author_id'], placeHolders: $data["placeHolders"], tableName: "bookauthordetail", insertData: $data["insertData"]);
 			}
 
 			// delete (cant delete right now since existing authors are disabled on the form)
-//			if (!empty($deleteList)) {
-//				$placeholders = implode(" and ",array_map(fn () => "?", $deleteList));
-//
-//				$statement = $db->prepare("DELETE FROM bookauthordetail WHERE id = " . $placeholders);
-//				$statement->execute($deleteList);
+//			if (!empty($lists['deleteList'])) {
+//				$data = $book->getPostPlaceholderAndInsertData(items: $lists['deleteList'], isInsert: false);
+//				\App\Shared\BasicQueries::deleteRecords(placeHolders: $data["placeHolders"], tableName: "bookauthordetail", ids: $lists['deleteList']);
 //			}
 
 			// Update Book Publisher Details
-			$updateList = [];
-			$deleteList = [];
-
 			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['book_id', 'publisher_id'], id: $book->id, tableName: "bookpublisherdetail", targetId: "book_id");
-			$oldRecordsIds = [];
-			foreach($oldRecords as $g) {
-				$oldRecordsIds[] = $g->publisher_id;
-			}
-
-			$newRecords = $book->publishers;
-			$newRecords = array_map("convertStringToArray", $newRecords);
-//			foreach($oldRecords as $g) {
-//				if (!empty($newRecords)) {
-//					if (!in_array($g->publisher_id, $newRecords)) { $deleteList[] = h($g->publisher_id); $deleteList[] = h($g->book_id); }
-//				}
-//			}
-
-			foreach($newRecords as $g) {
-				if (!in_array($g, $oldRecordsIds)) { $updateList[] = App\Functions\HelperFunctions::h($g); }
-			}
+			$lists = \App\Entities\Book::getUpdateAndDeleteLists(oldRecords: $oldRecords, newRecords: $book->publishers, tempFlag: true);
 
 			// insert
-			if (!empty($updateList)) {
-				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
-				$insertData = explode(",",implode(",$book->id,", $updateList).",$book->id");
-				\App\Shared\BasicQueries::insertCols(cols: ['publisher_id', 'book_id'], placeHolders: $placeholders, tableName: "bookpublisherdetail", insertData: $insertData);
+			if (!empty($lists['updateList'])) {
+				$data = $book->getPostPlaceholderAndInsertData($lists['updateList']);
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'publisher_id'], placeHolders: $data["placeHolders"], tableName: "bookpublisherdetail", insertData: $data["insertData"]);
 			}
 
 			// delete (cant delete right now since existing publishers are disabled on the form)
-//			if (!empty($deleteList)) {
-//				$placeholders = implode(" and ",array_map(fn () => "?", $deleteList));
-//
-//				$statement = $db->prepare("DELETE FROM bookpublisherdetail WHERE id = " . $placeholders);
-//				$statement->execute($deleteList);
+//			if (!empty($lists['deleteList'])) {
+//				$data = $book->getPostPlaceholderAndInsertData(items: $lists['deleteList'], isInsert: false);
+//				\App\Shared\BasicQueries::deleteRecords(placeHolders: $data["placeHolders"], tableName: "bookpublisherdetail", ids: $lists['deleteList']);
 //			}
 		}
 		$db->commit();
@@ -273,6 +159,7 @@ if ((int)$bookId === 0 && !is_null($bookId)) {
 } elseif (isset($bookId)) {
 	$books = \App\Entities\Book::manyToManyRelationships($bookId);
 
+	// Catches errors if an id that doesn't exist is typed into url.
 	if (empty($books)) {
 		App\Functions\HelperFunctions::redirect_to(App\Functions\HelperFunctions::url_for('/staff/book/index.php'));
 	}

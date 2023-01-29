@@ -1,10 +1,44 @@
 <?php
 
 namespace App\Shared;
+use App\Functions\HelperFunctions;
 use PDO;
 
 class EntityQueries extends DBObj
 {
+	///////////////// Shared /////////////////////////////////////
+	public function getClassCols(array $ignoreList=[]): array {
+		$cols = [];
+		foreach($this as $k=>$v) {
+			if (!empty($ignoreList)) {
+				if (!in_array($k, $ignoreList)) {
+					$cols[] = $k;
+				}
+			} else {
+				$cols[] = $k;
+			}
+		}
+		return $cols;
+	}
+	public function performInstanceDML(string $sql, array $ignoreList=[], $convert=[]) {
+		$stmt = static::$db->prepare($sql);
+
+		foreach ($this as $k=>$v) {
+			if (!empty($convert) && $convert['convert_bool']) {
+				if (!in_array($k, $ignoreList)) {
+					if ($k == $convert['convert_item']) {
+						$stmt->bindValue(":$k", HelperFunctions::h((int)$v));
+					} else {
+						$stmt->bindValue(":$k", HelperFunctions::h($v));
+					}
+				}
+			}
+			elseif (!in_array($k, $ignoreList)) {
+				$stmt->bindValue(":$k", HelperFunctions::h($v));
+			}
+		}
+		$stmt->execute();
+	}
 	///////////////// PDO Statements /////////////////////////////////////
 	static public function fetchAllBySql(string $sql, int $id): array {
 		$stmt = self::$db->prepare($sql);
