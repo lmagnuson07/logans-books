@@ -137,4 +137,45 @@ class Book extends EntityQueries
 
 		return $lists;
 	}
+	public function insertPostData(array $ignoreList=[]): int {
+		$cols = [];
+		foreach($this as $k=>$v) {
+			if (!empty($ignoreList)) {
+				if (!in_array($k, $ignoreList)) {
+					$cols[] = $k;
+				}
+			} else {
+				$cols[] = $k;
+			}
+		}
+		$sql = 'INSERT INTO book (' . join(',', array_values($cols))
+				. ') VALUES (' . join(',', array_values(array_map(fn ($i) => ":$i", $cols))) .')';
+
+		$statement = static::$db->prepare($sql);
+		foreach($this as $k=>$v) {
+			if (!in_array($k, $ignoreList)) {
+				$statement->bindValue(":$k", HelperFunctions::h($v));
+			}
+		}
+
+		$statement->execute();
+		$insertId = (int)static::$db->lastInsertId();
+		$this->id = $insertId;
+
+		return $insertId;
+	}
+	public function getPostPlaceholderAndInsertData(array $items): array {
+		$rowCount = count($items);
+		$insertData = [];
+		foreach($items as $r){
+			$insertData[] = $this->id;
+			$insertData[] = (int)HelperFunctions::h($r);
+		}
+		$placeHolders = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
+
+		$arr['insertData'] = $insertData;
+		$arr['placeHolders'] = $placeHolders;
+
+		return $arr;
+	}
 }

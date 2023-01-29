@@ -58,7 +58,7 @@ class BasicQueries extends DBObj
 	///////////////// Deletes /////////////////////////////////////
 	static public function deleteRecords(string $placeHolders, string $tableName, array $ids): void {
 		$stmt = self::$db->prepare(
-			"DELETE FROM $tableName WHERE id IN ($placeHolders)"
+			"DELETE FROM $tableName WHERE id IN ( $placeHolders)"
 		);
 		$stmt->execute($ids);
 	}

@@ -20,76 +20,36 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 		// Fix to read from session data.
 		// Insert the book
 		if($book->id === 0) {
-			$statement = $db->prepare(
-				'INSERT INTO book (current_price,qty_in_stock,qty_on_order,number_of_pages,title,tagline,format,language,synopsis,cover_image_url,is_available)
-							VALUES (:current_price,:qty_in_stock,:qty_on_order,:number_of_pages,:title,:tagline,:format,:language,:synopsis,:cover_image_url,:is_available)'
-			);
-			foreach($book as $k=>$v) {
-				if ($k !== 'id' && $k !== 'genres' && $k !== 'categories' && $k !== 'editions' && $k !== 'authors' && $k !== 'publishers') {
-					$statement->bindValue(":$k", App\Functions\HelperFunctions::h($v));
-				}
-			}
-			$statement->execute();
-			$newBookId = (int)$db->lastInsertId();
+			$newBookId = $book->insertPostData(ignoreList: ['id','genres','categories','editions','authors','publishers']);
 
 			// Insert into Book Genre Details
 			if (isset($book->genres) && !empty($book->genres)) {
-				$rowCount = count($book->genres);
-				$insertData = [];
-				foreach($book->genres as $r){
-					$insertData[] = $newBookId;
-					$insertData[] = (int)App\Functions\HelperFunctions::h($r);
-				}
-				$placeHolders = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'genre_id'], placeHolders: $placeHolders, tableName: "bookgenredetail", insertData: $insertData);
+				$data = $book->getPostPlaceholderAndInsertData($book->genres);
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'genre_id'], placeHolders: $data["placeHolders"], tableName: "bookgenredetail", insertData: $data["insertData"]);
 			}
 
 			// Insert into Book Category Details
 			if (isset($book->categories) && !empty($book->categories)) {
-				$rowCount = count($book->categories);
-				$insertData = [];
-				foreach($book->categories as $r){
-					$insertData[] = $newBookId;
-					$insertData[] = (int)App\Functions\HelperFunctions::h($r);
-				}
-				$placeHolders = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'category_id'], placeHolders: $placeHolders, tableName: "bookcategorydetail", insertData: $insertData);
+				$data = $book->getPostPlaceholderAndInsertData($book->categories);
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'category_id'], placeHolders: $data["placeHolders"], tableName: "bookcategorydetail", insertData: $data["insertData"]);
 			}
 
 			// Insert into Book Edition Details
 			if (isset($book->editions) && !empty($book->editions)) {
-				$rowCount = count($book->editions);
-				$insertData = [];
-				foreach($book->editions as $r){
-					$insertData[] = $newBookId;
-					$insertData[] = (int)App\Functions\HelperFunctions::h($r);
-				}
-				$placeHolders = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'edition_id'], placeHolders: $placeHolders, tableName: "bookeditiondetail", insertData: $insertData);
+				$data = $book->getPostPlaceholderAndInsertData($book->editions);
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'edition_id'], placeHolders: $data["placeHolders"], tableName: "bookeditiondetail", insertData: $data["insertData"]);
 			}
 
 			// Insert into Book Author Details
-			if (isset($book->authors) && !empty($book->authors)) {
-				$rowCount = count($book->authors);
-				$insertData = [];
-				foreach($book->authors as $r){
-					$insertData[] = $newBookId;
-					$insertData[] = (int)App\Functions\HelperFunctions::h($r);
-				}
-				$placeHolders = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'author_id'], placeHolders: $placeHolders, tableName: "bookauthordetail", insertData: $insertData);
+			if (isset($book->authors) && !empty($book->authors) && !in_array("none", $book->authors)) {
+				$data = $book->getPostPlaceholderAndInsertData($book->authors);
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'author_id'], placeHolders: $data["placeHolders"], tableName: "bookauthordetail", insertData: $data["insertData"]);
 			}
 
 			// Insert into Book Publisher Details
-			if (isset($book->publishers) && !empty($book->publishers)) {
-				$rowCount = count($book->publishers);
-				$insertData = [];
-				foreach($book->publishers as $r){
-					$insertData[] = $newBookId;
-					$insertData[] = (int)App\Functions\HelperFunctions::h($r);
-				}
-				$placeHolders = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'publisher_id'], placeHolders: $placeHolders, tableName: "bookpublisherdetail", insertData: $insertData);
+			if (isset($book->publishers) && !empty($book->publishers)  && !in_array("none", $book->publishers)) {
+				$data = $book->getPostPlaceholderAndInsertData($book->publishers);
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'publisher_id'], placeHolders: $data["placeHolders"], tableName: "bookpublisherdetail", insertData: $data["insertData"]);
 			}
 		}
 		// Update a book:
