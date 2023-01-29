@@ -39,13 +39,8 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 					$insertData[] = $newBookId;
 					$insertData[] = (int)App\Functions\HelperFunctions::h($r);
 				}
-				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
-
-				$statement = $db->prepare(
-					"INSERT INTO bookgenredetail (book_id, genre_id)
-							VALUES $values"
-				);
-				$statement->execute($insertData);
+				$placeHolders = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'genre_id'], placeHolders: $placeHolders, tableName: "bookgenredetail", insertData: $insertData);
 			}
 
 			// Insert into Book Category Details
@@ -56,13 +51,8 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 					$insertData[] = $newBookId;
 					$insertData[] = (int)App\Functions\HelperFunctions::h($r);
 				}
-				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
-
-				$statement = $db->prepare(
-					"INSERT INTO bookcategorydetail (book_id, category_id)
-							VALUES $values"
-				);
-				$statement->execute($insertData);
+				$placeHolders = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'category_id'], placeHolders: $placeHolders, tableName: "bookcategorydetail", insertData: $insertData);
 			}
 
 			// Insert into Book Edition Details
@@ -73,13 +63,8 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 					$insertData[] = $newBookId;
 					$insertData[] = (int)App\Functions\HelperFunctions::h($r);
 				}
-				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
-
-				$statement = $db->prepare(
-					"INSERT INTO bookeditiondetail (book_id, edition_id)
-							VALUES $values"
-				);
-				$statement->execute($insertData);
+				$placeHolders = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'edition_id'], placeHolders: $placeHolders, tableName: "bookeditiondetail", insertData: $insertData);
 			}
 
 			// Insert into Book Author Details
@@ -90,13 +75,8 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 					$insertData[] = $newBookId;
 					$insertData[] = (int)App\Functions\HelperFunctions::h($r);
 				}
-				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
-
-				$statement = $db->prepare(
-					"INSERT INTO bookauthordetail (book_id, author_id)
-							VALUES $values"
-				);
-				$statement->execute($insertData);
+				$placeHolders = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'author_id'], placeHolders: $placeHolders, tableName: "bookauthordetail", insertData: $insertData);
 			}
 
 			// Insert into Book Publisher Details
@@ -107,13 +87,8 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 					$insertData[] = $newBookId;
 					$insertData[] = (int)App\Functions\HelperFunctions::h($r);
 				}
-				$values = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
-
-				$statement = $db->prepare(
-					"INSERT INTO bookpublisherdetail (book_id, publisher_id)
-							VALUES $values"
-				);
-				$statement->execute($insertData);
+				$placeHolders = "(" . implode('),(', array_fill(0, $rowCount, '?,?')) . ")";
+				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'publisher_id'], placeHolders: $placeHolders, tableName: "bookpublisherdetail", insertData: $insertData);
 			}
 		}
 		// Update a book:
@@ -138,9 +113,7 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 			$updateList = [];
 			$deleteList = [];
 
-			$statement = $db->prepare('SELECT id, genre_id FROM bookgenredetail WHERE book_id = ?');
-			$statement->execute([$book->id]);
-			$oldRecords = $statement->fetchAll();
+			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['id', 'genre_id'], id: $book->id, tableName: "bookgenredetail", targetId: "book_id");
 			$oldRecordsIds = [];
 			foreach($oldRecords as $g) {
 				$oldRecordsIds[] = $g->genre_id;
@@ -166,27 +139,21 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 			// insert
 			if (!empty($updateList)) {
 				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
-				$values = explode(",",implode(",$book->id,", $updateList).",$book->id");
-
-				$statement = $db->prepare("INSERT INTO bookgenredetail (genre_id, book_id) VALUES " . $placeholders);
-				$statement->execute($values);
+				$insertData = explode(",",implode(",$book->id,", $updateList).",$book->id");
+				\App\Shared\BasicQueries::insertCols(cols: ['genre_id', 'book_id'], placeHolders: $placeholders, tableName: "bookgenredetail", insertData: $insertData);
 			}
 
 			// delete
 			if (!empty($deleteList)) {
-				$placeholders = implode(",",array_map(fn () => "?", $deleteList)) . ")";
-
-				$statement = $db->prepare("DELETE FROM bookgenredetail WHERE id IN ( " . $placeholders);
-				$statement->execute($deleteList);
+				$placeholders = implode(",",array_map(fn () => "?", $deleteList));
+				\App\Shared\BasicQueries::deleteRecords(placeHolders: $placeholders, tableName: "bookgenredetail", ids: $deleteList);
 			}
 
 			// Update Book Category Details
 			$updateList = [];
 			$deleteList = [];
 
-			$statement = $db->prepare('SELECT id, category_id FROM bookcategorydetail WHERE book_id = ?');
-			$statement->execute([$book->id]);
-			$oldRecords = $statement->fetchAll();
+			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['id', 'category_id'], id: $book->id, tableName: "bookcategorydetail", targetId: "book_id");
 			$oldRecordsIds = [];
 			foreach($oldRecords as $g) {
 				$oldRecordsIds[] = $g->category_id;
@@ -205,27 +172,21 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 			// insert
 			if (!empty($updateList)) {
 				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
-				$values = explode(",",implode(",$book->id,", $updateList).",$book->id");
-
-				$statement = $db->prepare("INSERT INTO bookcategorydetail (category_id, book_id) VALUES " . $placeholders);
-				$statement->execute($values);
+				$insertData = explode(",",implode(",$book->id,", $updateList).",$book->id");
+				\App\Shared\BasicQueries::insertCols(cols: ['category_id', 'book_id'], placeHolders: $placeholders, tableName: "bookcategorydetail", insertData: $insertData);
 			}
 
 			// delete
 			if (!empty($deleteList)) {
 				$placeholders = implode(",",array_map(fn () => "?", $deleteList)) . ")";
-
-				$statement = $db->prepare("DELETE FROM bookcategorydetail WHERE id IN (" . $placeholders);
-				$statement->execute($deleteList);
+				\App\Shared\BasicQueries::deleteRecords(placeHolders: $placeholders, tableName: "bookcategorydetail", ids: $deleteList);
 			}
 
 			// Update Book Edition Details
 			$updateList = [];
 			$deleteList = [];
 
-			$statement = $db->prepare('SELECT id, edition_id FROM bookeditiondetail WHERE book_id = ?');
-			$statement->execute([$book->id]);
-			$oldRecords = $statement->fetchAll();
+			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['id', 'edition_id'], id: $book->id, tableName: "bookeditiondetail", targetId: "book_id");
 			$oldRecordsIds = [];
 			foreach($oldRecords as $g) {
 				$oldRecordsIds[] = $g->edition_id;
@@ -244,27 +205,21 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 			// insert
 			if (!empty($updateList)) {
 				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
-				$values = explode(",",implode(",$book->id,", $updateList).",$book->id");
-
-				$statement = $db->prepare("INSERT INTO bookeditiondetail (edition_id, book_id) VALUES " . $placeholders);
-				$statement->execute($values);
+				$insertData = explode(",",implode(",$book->id,", $updateList).",$book->id");
+				\App\Shared\BasicQueries::insertCols(cols: ['edition_id', 'book_id'], placeHolders: $placeholders, tableName: "bookeditiondetail", insertData: $insertData);
 			}
 
 			// delete
 			if (!empty($deleteList)) {
 				$placeholders = implode(",",array_map(fn () => "?", $deleteList)) . ")";
-
-				$statement = $db->prepare("DELETE FROM bookeditiondetail WHERE id IN (" . $placeholders);
-				$statement->execute($deleteList);
+				\App\Shared\BasicQueries::deleteRecords(placeHolders: $placeholders, tableName: "bookeditiondetail", ids: $deleteList);
 			}
 
 			// Update Book Author Details
 			$updateList = [];
 			$deleteList = [];
 
-			$statement = $db->prepare('SELECT id, author_id FROM bookauthordetail WHERE book_id = ?');
-			$statement->execute([$book->id]);
-			$oldRecords = $statement->fetchAll();
+			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['id', 'author_id'], id: $book->id, tableName: "bookauthordetail", targetId: "book_id");
 			$oldRecordsIds = [];
 			foreach($oldRecords as $g) {
 				$oldRecordsIds[] = $g->author_id;
@@ -285,10 +240,8 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 			// insert
 			if (!empty($updateList)) {
 				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
-				$values = explode(",",implode(",$book->id,", $updateList).",$book->id");
-
-				$statement = $db->prepare("INSERT INTO bookauthordetail (author_id, book_id) VALUES " . $placeholders);
-				$statement->execute($values);
+				$insertData = explode(",",implode(",$book->id,", $updateList).",$book->id");
+				\App\Shared\BasicQueries::insertCols(cols: ['author_id', 'book_id'], placeHolders: $placeholders, tableName: "bookauthordetail", insertData: $insertData);
 			}
 
 			// delete (cant delete right now since existing authors are disabled on the form)
@@ -303,9 +256,7 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 			$updateList = [];
 			$deleteList = [];
 
-			$statement = $db->prepare('SELECT book_id, publisher_id FROM bookpublisherdetail WHERE book_id = ?');
-			$statement->execute([$book->id]);
-			$oldRecords = $statement->fetchAll();
+			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['book_id', 'publisher_id'], id: $book->id, tableName: "bookpublisherdetail", targetId: "book_id");
 			$oldRecordsIds = [];
 			foreach($oldRecords as $g) {
 				$oldRecordsIds[] = $g->publisher_id;
@@ -326,10 +277,8 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 			// insert
 			if (!empty($updateList)) {
 				$placeholders = implode(",",array_map(fn () => "(?,?)", $updateList));
-				$values = explode(",",implode(",$book->id,", $updateList).",$book->id");
-
-				$statement = $db->prepare("INSERT INTO bookpublisherdetail (publisher_id, book_id) VALUES " . $placeholders);
-				$statement->execute($values);
+				$insertData = explode(",",implode(",$book->id,", $updateList).",$book->id");
+				\App\Shared\BasicQueries::insertCols(cols: ['publisher_id', 'book_id'], placeHolders: $placeholders, tableName: "bookpublisherdetail", insertData: $insertData);
 			}
 
 			// delete (cant delete right now since existing publishers are disabled on the form)
@@ -351,99 +300,27 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 // TODO: Move sql to class and refactor to remove code duplication.
 if ((int)$bookId === 0 && !is_null($bookId)) {
 	// TODO: Refactor to store the genres, categories, and editions on an object
-	$genres = \App\Entities\BookGenre::fetchColsOrderBy(cols: ['id', 'name'], orderBy: ['name']);
-	$categories = \App\Entities\BookCategory::fetchColsOrderBy(cols: ['id', 'name'], orderBy: ['name']);
-	$editions = \App\Entities\BookEdition::fetchColsOrderBy(cols: ['id', 'name'], orderBy: ['name']);
-	$authors = \App\Entities\BookAuthor::fetchColsOrderBy(cols: ['id', 'first_name', 'last_name'], orderBy: ['first_name']);
-	$publishers = \App\Entities\BookPublisher::fetchColsOrderBy(cols: ['id', 'name'], orderBy: ['name']);
+	$genres = \App\Entities\BookGenre::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
+	$categories = \App\Entities\BookCategory::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
+	$editions = \App\Entities\BookEdition::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
+	$authors = \App\Entities\BookAuthor::fetchCols(cols: ['id', 'first_name', 'last_name'], orderBy: ['first_name']);
+	$publishers = \App\Entities\BookPublisher::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
 
-	// Cant do default properties on the class in the constructor because of PDO FETCH_CLASS.
-	// TODO: Add a method on the book class that will be for setting up default properties.
-	$args['id'] = 0;
-	$args['current_price'] = 0;
-	$args['qty_in_stock'] = 0;
-	$args['qty_on_order'] = 0;
-	$args['title'] = '';
-	$args['tagline'] = '';
-	$args['synopsis'] = '';
-	$args['number_of_pages'] = 0;
-	$args['format'] = '';
-	$args['language'] = '';
-	$args['cover_image_url'] = '';
-	$args['is_available'] = true;
-	$args['genres'] = [];
-	$args['categories'] = [];
-	$args['editions'] = [];
-	$args['authors'] = [];
-	$args['publishers'] = [];
-
-	$book = new App\Entities\Book($args);
+	$book = new App\Entities\Book();
+	$book->setDefaults();
 
 // Edit books SQL
 } elseif (isset($bookId)) {
-	// Genres
-	$genres = \App\Entities\BookGenre::fetchColsOrderBy(cols: ['id', 'name'], orderBy: ['name']);
-	$categories = \App\Entities\BookCategory::fetchColsOrderBy(cols: ['id', 'name'], orderBy: ['name']);
-	$editions = \App\Entities\BookEdition::fetchColsOrderBy(cols: ['id', 'name'], orderBy: ['name']);
-	$authors = \App\Entities\BookAuthor::fetchColsOrderBy(cols: ['id', 'first_name', 'last_name'], orderBy: ['first_name']);
-	$publishers = \App\Entities\BookPublisher::fetchColsOrderBy(cols: ['id', 'name'], orderBy: ['name']);
+	$genres = \App\Entities\BookGenre::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
+	$categories = \App\Entities\BookCategory::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
+	$editions = \App\Entities\BookEdition::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
+	$authors = \App\Entities\BookAuthor::fetchCols(cols: ['id', 'first_name', 'last_name'], orderBy: ['first_name']);
+	$publishers = \App\Entities\BookPublisher::fetchCols(cols: ['id', 'name'], orderBy: ['name']);
 
-	// Many-to-many relationships
-	$qry = "SELECT b.id, b.current_price, b.qty_in_stock, b.qty_on_order, 
-	b.title, b.tagline, b.synopsis, b.number_of_pages, b.format, 
-	b.language, b.cover_image_url, b.is_available,
-	bgd.genre_id, bg.name AS genre_name, 
-    bcd.category_id, bc.name AS category_name, 
-    bed.edition_id, be.name AS edition_name,
-    bad.author_id, CONCAT(ba.first_name, \" \", ba.last_name) AS author_fullname,
-    bpd.publisher_id, bp.name AS publisher_name
-	FROM book b
-	INNER JOIN bookgenredetail bgd
-		ON bgd.book_id = b.id
-	INNER JOIN bookgenre bg
-		ON bg.id = bgd.genre_id
-	INNER JOIN bookcategorydetail bcd
-		ON bcd.book_id = b.id
-	INNER JOIN bookcategory bc
-		ON bc.id = bcd.category_id
-	INNER JOIN bookeditiondetail bed
-		ON bed.book_id = b.id
-	INNER JOIN bookedition be
-		ON be.id = bed.edition_id
-	INNER JOIN bookauthordetail bad
-		ON bad.book_id = b.id
-	INNER JOIN bookauthor ba
-		ON ba.id = bad.author_id
-	INNER JOIN bookpublisherdetail bpd
-		ON bpd.book_id = b.id
-	INNER JOIN bookpublisher bp
-		ON bp.id = bpd.publisher_id
-	WHERE b.id = :id";
+	$book = \App\Entities\Book::manyToManyRelationships($bookId);
 
-	$statement = $db->prepare($qry);
-	$statement->bindValue(':id', $bookId);
-
-	$statement->execute();
-	$book = $statement->fetchAll();
-	// TODO: Put query code into a class and make the method return false, and just check if book is false instead
-	// Catches errors if an id that doesn't exist is typed into url.
 	if (empty($book)) {
-		// For books that are recently added and have no many - many relationships
-		$qry = "SELECT b.id, b.current_price, b.qty_in_stock, b.qty_on_order, 
-			b.title, b.tagline, b.synopsis, b.number_of_pages, b.format, 
-			b.language, b.cover_image_url, b.is_available
-		FROM book b
-		WHERE b.id = :id";
-
-		$statement = $db->prepare($qry);
-		$statement->bindValue(':id', $bookId);
-
-		$statement->execute();
-		$book = $statement->fetchAll();
-
-		if (empty($book)) {
-			App\Functions\HelperFunctions::redirect_to(App\Functions\HelperFunctions::url_for('/staff/book/index.php'));
-		}
+		App\Functions\HelperFunctions::redirect_to(App\Functions\HelperFunctions::url_for('/staff/book/index.php'));
 	}
 
 	$bookObj = [];
@@ -529,11 +406,7 @@ if ((int)$bookId === 0 && !is_null($bookId)) {
 
 // View books SQL
 } else if (App\Functions\HelperFunctions::is_get_request()) {
-	$qry = "SELECT * FROM book";
-	$statement = $db->prepare($qry);
-
-	$statement->execute();
-	$books = $statement->fetchAll(PDO::FETCH_CLASS, 'App\\Entities\\Book');
+	$books = \App\Entities\Book::fetchAll();
 }
 $count = 0;
 

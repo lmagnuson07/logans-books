@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Entities;
-use App\Shared\DBObj;
+use App\Shared\EntityQueries;
 
-class BookEdition extends DBObj
+class BookEdition extends EntityQueries
 {
 	public int $id;
 	public string $name;
