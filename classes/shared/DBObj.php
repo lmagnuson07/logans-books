@@ -12,7 +12,7 @@ class DBObj
 		self::$tableName = strtolower($className[count($className)-1] . $tablePrefix);
 	}
 	/////////////// Connection /////////////////////////////////////
-	static public function conn() {
+	static public function conn(): void {
 		if (!self::$db) {
 			// FETCH_ASSOC, FETCH_CLASS, default fetch array
 			// TODO: Create a class that will read the ENV superglobal and cache the values in it. See Programming with gio PHP PDO tutorial part 2
@@ -20,9 +20,7 @@ class DBObj
 				PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
 				PDO::ATTR_EMULATE_PREPARES => false, // performance boost. placeholders in other clauses (limit). Returns int not string.
 			]);
-			return self::$db = $conn;
-		} else {
-			return self::$db;
+			self::$db = $conn;
 		}
 	}
 	static public function disconn(): void {

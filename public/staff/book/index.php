@@ -13,135 +13,19 @@ $bookId = $_GET['id'] ?? null;
 // Submit new book
 if (App\Functions\HelperFunctions::is_post_request()) {
 	if(isset($bookId)) $bookId = null;
-	try {
 		$book = new \App\Entities\Book($_POST['book']);
+		$bookGateway = new \App\Entities\Book();
+		$bookGateway->setDefaults();
 
-		$db->beginTransaction();
 		// Fix to read from session data.
-		// Insert the book
+		$bookTransactions = new \App\Transactions\BookTransactions($bookGateway);
 		if($book->id === 0) {
-			$newBookId = $book->insertPostData(ignoreList: ['id','genres','categories','editions','authors','publishers']);
-
-			// Insert into Book Genre Details
-			if (isset($book->genres) && !empty($book->genres)) {
-				$data = $book->getPostPlaceholderAndInsertData($book->genres);
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'genre_id'], placeHolders: $data["placeHolders"], tableName: "bookgenredetail", insertData: $data["insertData"]);
-			}
-
-			// Insert into Book Category Details
-			if (isset($book->categories) && !empty($book->categories)) {
-				$data = $book->getPostPlaceholderAndInsertData($book->categories);
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'category_id'], placeHolders: $data["placeHolders"], tableName: "bookcategorydetail", insertData: $data["insertData"]);
-			}
-
-			// Insert into Book Edition Details
-			if (isset($book->editions) && !empty($book->editions)) {
-				$data = $book->getPostPlaceholderAndInsertData($book->editions);
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'edition_id'], placeHolders: $data["placeHolders"], tableName: "bookeditiondetail", insertData: $data["insertData"]);
-			}
-
-			// Insert into Book Author Details
-			if (isset($book->authors) && !empty($book->authors) && !in_array("none", $book->authors)) {
-				$data = $book->getPostPlaceholderAndInsertData($book->authors);
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'author_id'], placeHolders: $data["placeHolders"], tableName: "bookauthordetail", insertData: $data["insertData"]);
-			}
-
-			// Insert into Book Publisher Details
-			if (isset($book->publishers) && !empty($book->publishers)  && !in_array("none", $book->publishers)) {
-				$data = $book->getPostPlaceholderAndInsertData($book->publishers);
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'publisher_id'], placeHolders: $data["placeHolders"], tableName: "bookpublisherdetail", insertData: $data["insertData"]);
-			}
+			$bookTransactions->submitNewBook($_POST['book']);
 		}
 		// Update a book:
 		elseif ($book->id > 0) {
-			$book->updateWithPostData(ignoreList: ['id', 'genres', 'categories', 'editions', 'authors', 'publishers'], convert: ['convert_bool'=>true, 'convert_item'=>'is_available']);
-
-			// Update Book Genre Details
-			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['id', 'genre_id'], id: $book->id, tableName: "bookgenredetail", targetId: "book_id");
-			$lists = \App\Entities\Book::getUpdateAndDeleteLists(oldRecords: $oldRecords, newRecords: $book->genres);
-
-			// insert
-			if (!empty($lists['updateList'])) {
-				$data = $book->getPostPlaceholderAndInsertData($lists['updateList']);
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'genre_id'], placeHolders: $data["placeHolders"], tableName: "bookgenredetail", insertData: $data["insertData"]);
-			}
-
-			// delete
-			if (!empty($lists['deleteList'])) {
-				$data = $book->getPostPlaceholderAndInsertData(items: $lists['deleteList'], isInsert: false);
-				\App\Shared\BasicQueries::deleteRecords(placeHolders: $data["placeHolders"], tableName: "bookgenredetail", ids: $lists['deleteList']);
-			}
-
-			// Update Book Category Details
-			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['id', 'category_id'], id: $book->id, tableName: "bookcategorydetail", targetId: "book_id");
-			$lists = \App\Entities\Book::getUpdateAndDeleteLists(oldRecords: $oldRecords, newRecords: $book->categories);
-
-			// insert
-			if (!empty($lists['updateList'])) {
-				$data = $book->getPostPlaceholderAndInsertData($lists['updateList']);
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'category_id'], placeHolders: $data["placeHolders"], tableName: "bookcategorydetail", insertData: $data["insertData"]);
-			}
-
-			// delete
-			if (!empty($lists['deleteList'])) {
-				$data = $book->getPostPlaceholderAndInsertData(items: $lists['deleteList'], isInsert: false);
-				\App\Shared\BasicQueries::deleteRecords(placeHolders: $data["placeHolders"], tableName: "bookcategorydetail", ids: $lists['deleteList']);
-			}
-
-			// Update Book Edition Details
-			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['id', 'edition_id'], id: $book->id, tableName: "bookeditiondetail", targetId: "book_id");
-			$lists = \App\Entities\Book::getUpdateAndDeleteLists(oldRecords: $oldRecords, newRecords: $book->editions);
-
-			// insert
-			if (!empty($lists['updateList'])) {
-				$data = $book->getPostPlaceholderAndInsertData($lists['updateList']);
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'edition_id'], placeHolders: $data["placeHolders"], tableName: "bookeditiondetail", insertData: $data["insertData"]);
-			}
-
-			// delete
-			if (!empty($lists['deleteList'])) {
-				$data = $book->getPostPlaceholderAndInsertData(items: $lists['deleteList'], isInsert: false);
-				\App\Shared\BasicQueries::deleteRecords(placeHolders: $data["placeHolders"], tableName: "bookeditiondetail", ids: $lists['deleteList']);
-			}
-
-			// Update Book Author Details
-			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['id', 'author_id'], id: $book->id, tableName: "bookauthordetail", targetId: "book_id");
-			$lists = \App\Entities\Book::getUpdateAndDeleteLists(oldRecords: $oldRecords, newRecords: $book->authors, tempFlag: true);
-
-			// insert
-			if (!empty($lists['updateList'])) {
-				$data = $book->getPostPlaceholderAndInsertData($lists['updateList']);
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'author_id'], placeHolders: $data["placeHolders"], tableName: "bookauthordetail", insertData: $data["insertData"]);
-			}
-
-			// delete (cant delete right now since existing authors are disabled on the form)
-//			if (!empty($lists['deleteList'])) {
-//				$data = $book->getPostPlaceholderAndInsertData(items: $lists['deleteList'], isInsert: false);
-//				\App\Shared\BasicQueries::deleteRecords(placeHolders: $data["placeHolders"], tableName: "bookauthordetail", ids: $lists['deleteList']);
-//			}
-
-			// Update Book Publisher Details
-			$oldRecords = \App\Shared\BasicQueries::fetchBridgingTableColsById(cols: ['book_id', 'publisher_id'], id: $book->id, tableName: "bookpublisherdetail", targetId: "book_id");
-			$lists = \App\Entities\Book::getUpdateAndDeleteLists(oldRecords: $oldRecords, newRecords: $book->publishers, tempFlag: true);
-
-			// insert
-			if (!empty($lists['updateList'])) {
-				$data = $book->getPostPlaceholderAndInsertData($lists['updateList']);
-				\App\Shared\BasicQueries::insertCols(cols: ['book_id', 'publisher_id'], placeHolders: $data["placeHolders"], tableName: "bookpublisherdetail", insertData: $data["insertData"]);
-			}
-
-			// delete (cant delete right now since existing publishers are disabled on the form)
-//			if (!empty($lists['deleteList'])) {
-//				$data = $book->getPostPlaceholderAndInsertData(items: $lists['deleteList'], isInsert: false);
-//				\App\Shared\BasicQueries::deleteRecords(placeHolders: $data["placeHolders"], tableName: "bookpublisherdetail", ids: $lists['deleteList']);
-//			}
+			$bookTransactions->updateExistingBook($_POST['book']);
 		}
-		$db->commit();
-	} catch (\Throwable $e) {
-		if ($db->inTransaction()) {
-			$db->rollBack();
-		}
-	}
 }
 // Create new Book
 if ((int)$bookId === 0 && !is_null($bookId)) {
@@ -164,6 +48,7 @@ if ((int)$bookId === 0 && !is_null($bookId)) {
 		App\Functions\HelperFunctions::redirect_to(App\Functions\HelperFunctions::url_for('/staff/book/index.php'));
 	}
 
+	// bug
 	$book = new App\Entities\Book(\App\Entities\Book::getBookObj($books));
 
 	$lists = \App\Entities\Book::getLists();

@@ -22,7 +22,7 @@ $doc_root = substr($_SERVER['SCRIPT_NAME'], 0, 0);
 define("WWW_ROOT", $doc_root);
 
 try {
-	$db = \App\Shared\DBObj::conn();
+	\App\Shared\DBObj::conn();
 } catch (\PDOException $e) {
 	// TODO: Display an error page with some navigation when there is an error with the db connection, then exit the script.
 	echo "<h1>Something went wrong with the database connection.</h1>";

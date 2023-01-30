@@ -44,7 +44,7 @@ class EntityQueries extends DBObj
 		$stmt = self::$db->prepare($sql);
 
 		$stmt->execute([$id]);
-		$result = $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
+		$result = $stmt->fetchAll();
 		$stmt->closeCursor();
 
 		return $result;

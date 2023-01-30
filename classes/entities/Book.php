@@ -39,6 +39,21 @@ class Book extends EntityQueries
 			}
 		}
 	}
+	public function __invoke($args=[]) {
+		// dynamically set properties
+		foreach($args as $k=>$v) {
+			// FIXME: Fix this when ability to add multiple authors/publishers is implemented.
+			if ($k == 'authors') {
+				$this->authors = $v;
+			}
+			elseif ($k == 'publishers') {
+				$this->publishers = $v;
+			}
+			elseif(property_exists($this, $k)) {
+				$this->$k = $v;
+			}
+		}
+	}
 	public function setDefaults(): void {
 		// Cant do default properties on the class in the constructor because of PDO FETCH_CLASS. So this method is needed.
 		$this->id = 0;
@@ -71,11 +86,11 @@ class Book extends EntityQueries
 				$bookObj['cover_image_url'] = $b->cover_image_url;
 				$bookObj['is_available'] = $b->is_available;
 			}
-			HelperFunctions::add_to_array_if_unique($bookObj, key: 'genres', value: $b->genre_id);
-			HelperFunctions::add_to_array_if_unique($bookObj, key: 'categories', value: $b->category_id);
-			HelperFunctions::add_to_array_if_unique($bookObj, key: 'editions', value: $b->edition_id);
-			HelperFunctions::add_to_array_if_unique($bookObj, key: 'authors', value: $b->author_id);
-			HelperFunctions::add_to_array_if_unique($bookObj, key: 'publishers', value: $b->publisher_id);
+			!isset($b->genre_id) ?: HelperFunctions::add_to_array_if_unique($bookObj, key: 'genres', value: $b->genre_id);
+			!isset($b->category_id) ?: HelperFunctions::add_to_array_if_unique($bookObj, key: 'categories', value: $b->category_id);
+			!isset($b->edition_id) ?: HelperFunctions::add_to_array_if_unique($bookObj, key: 'editions', value: $b->edition_id);
+			!isset($b->author_id) ?: HelperFunctions::add_to_array_if_unique($bookObj, key: 'authors', value: $b->author_id);
+			!isset($b->publisher_id) ?: HelperFunctions::add_to_array_if_unique($bookObj, key: 'publishers', value: $b->publisher_id);
 		}
 		return $bookObj;
 	}
