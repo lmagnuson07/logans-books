@@ -1,16 +1,26 @@
 <?php
 // composer dump-autoload -o
 require __DIR__ . '/../vendor/autoload.php';
-// Loads environment variables from .env to the $_ENV superglobal
-$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
-$dotenv->load();
-
-ob_start();
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 CONST PRIVATE_PATH = __DIR__;
 define("PROJECT_PATH", dirname(__DIR__));
 CONST PUBLIC_PATH = PROJECT_PATH . '\public';
 CONST SHARED_PATH = PRIVATE_PATH . '\shared';
+
+// Loads environment variables from .env to the $_ENV superglobal
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
+
+// Setup for
+$loader = new FilesystemLoader(PROJECT_PATH . '\views');
+$twig = new Environment($loader, [
+//	'cache' => PROJECT_PATH . '\storage\cache',
+]);
+ob_start();
+
+
 
 // doc root is htdocs
 //$public_end = strpos($_SERVER['SCRIPT_NAME'], '/public') + 7;

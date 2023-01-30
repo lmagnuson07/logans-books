@@ -3,26 +3,28 @@
  * @var $db
  */
 // setup
-if(!isset($page_title)) { $page_title = 'Logan\'s Books'; }
-if(!isset($page_heading)) { $page_heading = 'Logan\'s Books'; }
-
 $formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
 require_once('../../../private/initialize.php');
 
+//if(!isset($page_title)) { $page_title = 'Logan\'s Books'; }
+if(!isset($page_heading)) { $page_heading = 'Logan\'s Books'; }
 $page_title = "Book CRUD";
+
+/* DEPENDENCY */
+$bookGateway = new \App\Entities\Book();
+$bookGateway->setDefaults();
+$bookTransactions = new \App\Transactions\BookTransactions($bookGateway);
+$response = new \App\Response(PROJECT_PATH . '\\views\\staff');
+
+/* CONTROLLER */
 $bookId = $_GET['id'] ?? null;
 $action = $_SERVER['PHP_SELF'];
-
-// SQL
 // Submit new book
 if (App\Functions\HelperFunctions::is_post_request()) {
 	if(isset($bookId)) $bookId = null;
 		$book = new \App\Entities\Book($_POST['book']);
-		$bookGateway = new \App\Entities\Book();
-		$bookGateway->setDefaults();
 
 		// Fix to read from session data.
-		$bookTransactions = new \App\Transactions\BookTransactions($bookGateway);
 		if($book->id === 0) {
 			$bookTransactions->submitNewBook($_POST['book']);
 		}
@@ -31,6 +33,7 @@ if (App\Functions\HelperFunctions::is_post_request()) {
 			$bookTransactions->updateExistingBook($_POST['book']);
 		}
 }
+
 // Create new Book
 if ((int)$bookId === 0 && !is_null($bookId)) {
 	$lists = \App\Entities\Book::getLists();
@@ -52,7 +55,6 @@ if ((int)$bookId === 0 && !is_null($bookId)) {
 		App\Functions\HelperFunctions::redirect_to(App\Functions\HelperFunctions::url_for('/staff/book/index.php'));
 	}
 
-	// bug
 	$book = new App\Entities\Book(\App\Entities\Book::getBookObj($books));
 
 	$lists = \App\Entities\Book::getLists();
@@ -71,13 +73,11 @@ if ((int)$bookId === 0 && !is_null($bookId)) {
 	}
 
 // View books SQL
-} else if (App\Functions\HelperFunctions::is_get_request()) {
+} elseif (App\Functions\HelperFunctions::is_get_request()) {
 	$books = \App\Entities\Book::fetchAll();
 }
-$count = 0;
 
 ///////////////////// Header //////////////////////////////////////
-$response = new \App\Response(PROJECT_PATH . '\\views\\staff');
 $response->setView('shared\\header.php');
 $response->setVars(['page_title'=>$page_title, 'page_heading'=>$page_heading]);
 $response->send();
@@ -85,25 +85,48 @@ $response->send();
 ///////////////////// View Books //////////////////////////////////
 
 if(!isset($bookId) && App\Functions\HelperFunctions::is_get_request()) {
-	$response->setView('books\\ViewBooks.php');
-	$response->setVars(['books'=>$books, 'count'=>$count, 'formatter'=>$formatter]);
-	$response->send();
+//	$response->setView('books\\ViewBooks.php');
+//	$response->setVars(['books'=>$books, 'count'=>$count, 'formatter'=>$formatter]);
+//	$response->send();
+	$template = $twig->load('staff/books/ViewBook.twig');
+	$return =  $template->render([
+		'books'=>$books,
+		'editUrl'=>\App\Functions\HelperFunctions::url_for('staff/book/index.php?id='),
+		'staffUrl'=>\App\Functions\HelperFunctions::url_for('/staff/')
+	]);
+	echo $return;
 }
 ///////////////////// Edit Books /////////////////////////////////////
 elseif($bookId >= 0 && isset($bookId)) {
-	$response->setView('books\\BookForm.php');
-	$response->setVars([
+//	$response->setView('books\\BookForm.php');
+//	$response->setVars([
+//		'book'=>$book,
+//		'bookId'=>$bookId,
+//		'action'=>$action,
+//		'genres'=>$genres,
+//		'editions'=>$editions,
+//		'categories'=>$categories,
+//		'authors'=>$authors,
+//		'publishers'=>$publishers
+//	]);
+//	$response->send();
+	$template = $twig->load('staff/books/BookForm.twig');
+	$return =  $template->render([
 		'book'=>$book,
+		'booksUrl'=>App\Functions\HelperFunctions::url_for('/staff/book/'),
 		'bookId'=>$bookId,
 		'action'=>$action,
 		'genres'=>$genres,
 		'editions'=>$editions,
 		'categories'=>$categories,
 		'authors'=>$authors,
-		'publishers'=>$publishers
+		'publishers'=>$publishers,
+		'author'=>$author,
+		'publisher'=>$publisher,
 	]);
-	$response->send();
+	echo $return;
 }
 
+/* FINISHED */
 $response->setView('shared\\footer.php');
 $response->send();

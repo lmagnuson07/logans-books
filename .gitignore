@@ -4,6 +4,7 @@
 /docs_private/
 /database_scripts_private/
 /tmp/
+/storage/
 
 /node_modules/
 /vendor/*
