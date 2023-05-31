@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/database_scripts/create-tables.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/database_scripts/alter-tables.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/database_scripts/create-tables.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/database_scripts/drop-alters.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/database_scripts/drop-tables.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/database_scripts/inserts.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/database_scripts/truncate-tables.sql" dialect="MariaDB" />
     <file url="file://$PROJECT_DIR$/database_scripts_private/create-database-and-user-script.sql" dialect="MySQL" />
   </component>
 </project>

@@ -6,9 +6,10 @@
   "scripts": {
     "watchs:css": "postcss private/scss/staff.css -o public/css/staff-styles.css -w",
     "builds:css": "postcss private/scss/staff.css -o public/css/staff-styles.css",
-		"lint:css": "stylelint \"**/public/css/*.css\"",
-		"watchp:css": "postcss private/scss/public.css -o public/css/public-styles.css -w",
-		"buildp:css": "postcss private/scss/public.css -o public/css/public-styles.css",
+    "lint:css": "stylelint \"**/public/css/*.css\"",
+    "lintp:css": "stylelint \"**/private/scss/*.css\"",
+    "watchp:css": "postcss private/scss/public.css -o public/css/public-styles.css -w",
+    "buildp:css": "postcss private/scss/public.css -o public/css/public-styles.css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,14 +24,17 @@
   },
   "homepage": "https://github.com/lmagnuson07/logans-books#readme",
   "devDependencies": {
+    "@csstools/postcss-stepped-value-functions": "^2.1.1",
     "autoprefixer": "^10.4.13",
+    "css-prefers-color-scheme": "^8.0.2",
     "cssnano": "^5.1.14",
-    "postcss": "^8.4.21",
-    "postcss-assets": "^6.0.0",
+    "postcss": "^8.4.24",
     "postcss-cli": "^10.1.0",
     "postcss-import": "^15.1.0",
-    "postcss-preset-env": "^7.8.3",
-    "precss": "^4.0.0",
+    "postcss-mixins": "^9.0.4",
+    "postcss-nesting": "^11.2.2",
+    "postcss-preset-env": "^8.4.1",
+    "postcss-simple-vars": "^7.0.1",
     "stylelint": "^14.16.1",
     "stylelint-config-standard": "^29.0.0"
   }

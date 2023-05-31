@@ -12,9 +12,12 @@ if(!isset($page_heading)) { $page_heading = 'Logan\'s Books'; }
 	<title><?php echo $page_title; ?> - [Admin Area]</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/holiday.css@0.9.8" />
 	<link rel="stylesheet" media="all" href="<?php echo App\Functions\HelperFunctions::url_for('/css/staff-styles.css'); ?>">
+	<!-- When using a CDN url you will have to manually update the version number -->
+	<script src="https://unpkg.com/css-prefers-color-scheme@8.0.2/dist/browser-global.js"></script>
+	<script>prefersColorSchemeInit()</script>
 </head>
 <body>
-<header>
+<header class="header">
 	<h1><?php echo $page_heading; ?> - [Admin Area]</h1>
 	<nav>
 		<ul>

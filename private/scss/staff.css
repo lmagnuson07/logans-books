@@ -1,71 +1,88 @@
-@import 'vars';
+@import 'vars.css';
+
+@define-mixin backgroundColor $color {
+	.foo {
+		color: $color;
+		@mixin-content;
+	}
+}
+
 body {
-	/*background-color: $lightColor;*/
+	@mixin backgroundColor #a34532 {
+		font-size: 200px;
+	}
+}
+
+p:not(:first-child):not(.special) {
+	color: red;
+}
+
+body {
+  /* $white comes from the vars.js file thats added as a plugin option */
+	/*background-color: $white;*/
+
+	/* $color is imported from vars.css */
+	/*background-color: $color;*/
+}
+
+@custom-selector :--heading h1, h2, h3, h4, h5, h6;
+@custom-media --viewport-small (width <= 500px);
+
+input::placeholder {
+	color: red;
+}
+
+:--heading {
+	@media(--viewport-small) {
+		font-size: 40px;
+	}
 }
 
 :root {
 	--max-body-width: 92rem;
 }
 
-.edit-book-form {
-	display: flex;
-	flex-flow: wrap;
-	align-items: flex-start;
-	gap: 2rem;
-	h3 {
-		width: 100%;
+.foo {
+	color: red;
+
+	&:hover {
+		color: blue;
 	}
-	div {
-		width: calc(50% - 1rem);
+
+	& span {
+		color: pink;
 	}
-	textarea {
-		resize: none;
+/*	:is(span) {
+		color: pink;
+	}*/
+}
+
+/* PostCSS stepped Value Functions */
+.test-functions {
+	padding: 8px mod(18px, 5px) 1px calc(rem(15px, 6px) + 50%);
+	transform: rotate(mod(-140deg, -90deg));
+	top: round(15px, 4px);
+	right: round(nearest, 15px, 4px);
+	bottom: round(up, 15px, 7px);
+	left: round(down, 15px, 4px);
+	width: round(to-zero, 15px, 4px);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--site-bgcolor: $color;
+		--site-color: #fff;
 	}
 }
 
-.edit-book-form .book-checkboxes {
-	display: flex;
-	flex-flow: wrap;
-	gap: 0;
-	h3 {
-		width: 100%;
-	}
-	div {
-		display: flex;
-		align-items: center;
-		width: calc(50%);
-		margin-bottom: 0.25rem;
-	}
-	label {
-		margin-top: 0;
-		order: 1;
-		margin-left: 0.25rem;
+@media (prefers-color-scheme: light) {
+	:root {
+		--site-bgcolor: #fff;
+		--site-color: #222;
 	}
 }
+$siteBg: var(--site-bgcolor);
 
-.edit-book-form .book-genre-checkboxes {
-	width: 100%;
-	div {
-		width: calc(25%);
-	}
-}
-
-.edit-book-form .radio-buttons {
-	display: flex;
-	div {
-		display: flex;
-		width: fit-content;
-		label {
-			order: 1;
-		}
-	}
-	label {
-		margin-top: 0;
-		margin-right: 0.5rem;
-		width: fit-content;
-	}
-}
-
-.edit-book-form .btn-container {
-	width: 100%;
+body {
+	background-color: $siteBg;
 }

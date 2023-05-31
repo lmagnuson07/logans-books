@@ -74,8 +74,8 @@ FOREIGN KEY (employee_id) REFERENCES employee(id);
 -- -----------------------------------------------------------------------------------------------------
 -- Customer/Sale ---------------------------------------------------------------------------------------
 -- 1
-ALTER TABLE customer ADD CONSTRAINT fk_city_customer_city_id
-FOREIGN KEY (city_id) REFERENCES residence(id);
+# ALTER TABLE customer ADD CONSTRAINT fk_city_customer_city_id
+# FOREIGN KEY (city_id) REFERENCES residence(id);
 -- 2 	
 ALTER TABLE paymentcard ADD CONSTRAINT fk_customer_paymentcard_customer_id
 FOREIGN KEY (customer_id) REFERENCES customer(id);

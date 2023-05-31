@@ -23,4 +23,31 @@ Logan's Books is a **PHP/MySql** database driven application for a fictious book
 ### Store/Warehouse Locations
 - Store/Warehouse CRUD (only top level admin - Company CEO)
 ---
-### Mockaroo Links
+
+## PostCSS Install
+### Reference: [PostCss Crash Course](https://www.youtube.com/watch?v=SP8mSVSAh6s)
+1) npm i -D postcss postcss-cli
+2) add ["build:css": "postcss public/styles/styles.css -o src/index.css"] to package-json file under scripts
+3) add ["watch:css": "postcss public/styles/styles.css -o src/index.css -w"] to package-json file under scripts
+	- Change the target and source files to match your needs.
+4) Install the plugins
+	- npm -i -D autoprefixer
+5) Create the postcss.config.js file in the root of public. Add the following code:
+```js
+module.exports = {
+    plugins: [
+        require('autoprefixer')
+    ]
+};
+```
+
+## PostCSS Plugins
+- ### Autoprefixer
+> - Adds vendor prefixes for styles that don't have full browser support
+- ### postcss-preset-env
+> - Converts new css features to supported css, allowing you to specify the current stage
+- precss
+> - Enables SASS like markup
+- Stylelint
+- PostCSS Assets
+- CSSNano

@@ -5,6 +5,9 @@
 /database_scripts_private/
 /tmp/
 /storage/
+.htaccess
+.editorconfig
+/old
 
 /node_modules/
 /vendor/*
@@ -23,6 +26,7 @@
 /tmp/tests/*
 !/tmp/tests/empty
 
+/logs
 /logs/*
 !/logs/empty
 

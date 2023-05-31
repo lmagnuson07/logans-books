@@ -1,8 +1,26 @@
 <?php
 /**
  * @var $db
+ * @var $twig
  */
 // setup
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+die();
 $formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
 require_once('../../../private/initialize.php');
 

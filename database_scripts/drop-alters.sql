@@ -26,7 +26,7 @@ ALTER TABLE employeepositiondetail DROP CONSTRAINT fk_position_employee_employee
 ALTER TABLE employeemanagerdetail DROP CONSTRAINT fk_manager_employee_manager_id;
 ALTER TABLE employeemanagerdetail DROP CONSTRAINT fk_manager_employee_employee_id;
 
-ALTER TABLE customer DROP CONSTRAINT fk_city_customer_city_id;
+# ALTER TABLE customer DROP CONSTRAINT fk_city_customer_city_id;
 ALTER TABLE paymentcard DROP CONSTRAINT fk_customer_paymentcard_customer_id;
 ALTER TABLE sale DROP CONSTRAINT fk_employee_sale_employee_id;
 ALTER TABLE sale DROP CONSTRAINT fk_customer_sale_customer_id;

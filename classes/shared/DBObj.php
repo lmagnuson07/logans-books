@@ -7,7 +7,8 @@ class DBObj
 {
 	static protected $db;
 	static protected string $tableName = "";
-	protected static function setTableName(string $tablePrefix = ""): void {
+	// TODO: Change table prefix to suffix and add a prefix option to make the class more portable
+	static protected function setTableName(string $tablePrefix = ""): void {
 		$className = explode("\\",static::class);
 		self::$tableName = strtolower($className[count($className)-1] . $tablePrefix);
 	}

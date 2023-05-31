@@ -9,6 +9,9 @@
         }
 
     },
+		"scripts": {
+				"dump": ["composer dump-autoload -o"]
+		},
     "authors": [
         {
             "name": "lmagnuson07",
@@ -17,7 +20,8 @@
     ],
     "require": {
         "vlucas/phpdotenv": "^5.5",
+        "twig/twig": "^3.5",
 				"ext-pdo": "*",
-        "twig/twig": "^3.5"
-		}
+      	"ext-intl": "*"
+    }
 }
