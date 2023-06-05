@@ -1,19 +1,37 @@
 USE logans_books;
 
-TRUNCATE bookgenre;
-TRUNCATE bookcategory;    
-TRUNCATE bookedition;
-TRUNCATE bookauthor;
-TRUNCATE city;
-TRUNCATE state;
-TRUNCATE country;
-TRUNCATE bookpublisher;
-TRUNCATE book;
-TRUNCATE bookprice;
+TRUNCATE Book;
+TRUNCATE Category;
+TRUNCATE Contribution;
+TRUNCATE Author;
+TRUNCATE AuthorPhoto;
+TRUNCATE Series;
+TRUNCATE PublisherLocation;
+TRUNCATE Language;
+TRUNCATE Publisher;
 
-TRUNCATE bookgenredetail;
-TRUNCATE bookcategorydetail;
-TRUNCATE bookeditiondetail;
-TRUNCATE bookauthordetail;
-TRUNCATE bookpublisherdetail;
-TRUNCATE bookpricedetail;
+TRUNCATE BookCategoryDetail;
+TRUNCATE BookContributionDetail;
+TRUNCATE AuthorCategoryDetail;
+TRUNCATE BookAuthorDetail;
+TRUNCATE BookSeriesDetail;
+TRUNCATE PublisherLocationDetail;
+TRUNCATE BookLanguageDetail;
+TRUNCATE BookPublisherDetail;
+
+TRUNCATE Country;
+TRUNCATE State;
+TRUNCATE City;
+TRUNCATE Residence;
+
+TRUNCATE Admin;
+TRUNCATE AccessLevel;
+
+TRUNCATE User;
+TRUNCATE Bookshelf;
+TRUNCATE BookshelfBookDetail;
+
+TRUNCATE OpenlibBookEndpoints;
+TRUNCATE GoogleBookEndpoints;
+
+TRUNCATE Pagination;

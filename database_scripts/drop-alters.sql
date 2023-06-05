@@ -2,111 +2,70 @@ USE logans_books;
 
 -- ---------------------- Drop constraints -----------------------------------------------
 -- Drop Foreign keys
-ALTER TABLE bookpublisher DROP CONSTRAINT fk_publisher_city_city_id;
-ALTER TABLE bookgenredetail DROP CONSTRAINT fk_genre_book_genre_id;
-ALTER TABLE bookgenredetail DROP CONSTRAINT fk_genre_book_book_id;
-ALTER TABLE bookcategorydetail DROP CONSTRAINT fk_category_book_category_id;
-ALTER TABLE bookcategorydetail DROP CONSTRAINT fk_category_book_book_id;
-ALTER TABLE bookeditiondetail DROP CONSTRAINT fk_edition_book_edition_id;
-ALTER TABLE bookeditiondetail DROP CONSTRAINT fk_edition_book_book_id;
-ALTER TABLE bookauthordetail DROP CONSTRAINT fk_author_book_author_id;
-ALTER TABLE bookauthordetail DROP CONSTRAINT fk_author_book_book_id;
-ALTER TABLE bookpublisherdetail DROP CONSTRAINT fk_publisher_book_publisher_id;
-ALTER TABLE bookpublisherdetail DROP CONSTRAINT fk_publisher_book_book_id;
-ALTER TABLE bookpricedetail DROP CONSTRAINT fk_price_book_price_id;
-ALTER TABLE bookpricedetail DROP CONSTRAINT fk_price_book_book_id;
+ALTER TABLE AuthorPhoto DROP CONSTRAINT fk_authorphoto_author_author_id;
+ALTER TABLE BookContributionDetail DROP CONSTRAINT fk_contribution_book_contribution_id;
+ALTER TABLE BookContributionDetail DROP CONSTRAINT fk_contribution_book_book_id;
+ALTER TABLE BookCategoryDetail DROP CONSTRAINT fk_category_book_category_id;
+ALTER TABLE BookCategoryDetail DROP CONSTRAINT fk_category_book_book_id;
+ALTER TABLE AuthorCategoryDetail DROP CONSTRAINT fk_category_author_category_id;
+ALTER TABLE AuthorCategoryDetail DROP CONSTRAINT fk_category_author_author_id;
+ALTER TABLE BookAuthorDetail DROP CONSTRAINT fk_author_book_author_id;
+ALTER TABLE BookAuthorDetail DROP CONSTRAINT fk_author_book_book_id;
+ALTER TABLE BookSeriesDetail DROP CONSTRAINT fk_series_book_series_id;
+ALTER TABLE BookSeriesDetail DROP CONSTRAINT fk_series_book_book_id;
+ALTER TABLE PublisherLocationDetail DROP CONSTRAINT fk_location_book_location_id;
+ALTER TABLE PublisherLocationDetail DROP CONSTRAINT fk_location_book_book_id;
+ALTER TABLE BookLanguageDetail DROP CONSTRAINT fk_language_book_language_id;
+ALTER TABLE BookLanguageDetail DROP CONSTRAINT fk_language_book_book_id;
+ALTER TABLE BookPublisherDetail DROP CONSTRAINT fk_publisher_book_publisher_id;
+ALTER TABLE BookPublisherDetail DROP CONSTRAINT fk_publisher_book_book_id;
 
-ALTER TABLE state DROP CONSTRAINT fk_country_state_country_id;
-ALTER TABLE city DROP CONSTRAINT fk_state_city_state_id;
-ALTER TABLE city DROP CONSTRAINT fk_country_city_country_id;
+ALTER TABLE State DROP CONSTRAINT fk_country_state_country_id;
+ALTER TABLE City DROP CONSTRAINT fk_state_city_state_id;
+ALTER TABLE City DROP CONSTRAINT fk_country_city_country_id;
+ALTER TABLE Residence DROP CONSTRAINT fk_country_residence_country_id;
+ALTER TABLE Residence DROP CONSTRAINT fk_state_residence_state_id;
+ALTER TABLE Residence DROP CONSTRAINT fk_city_residence_city_id;
 
-ALTER TABLE employee DROP CONSTRAINT fk_city_employee_city_id;
-ALTER TABLE employeepositiondetail DROP CONSTRAINT fk_position_employee_position_id;
-ALTER TABLE employeepositiondetail DROP CONSTRAINT fk_position_employee_employee_id;
-ALTER TABLE employeemanagerdetail DROP CONSTRAINT fk_manager_employee_manager_id;
-ALTER TABLE employeemanagerdetail DROP CONSTRAINT fk_manager_employee_employee_id;
+ALTER TABLE Admin DROP CONSTRAINT fk_residence_admin_residence_id;
+ALTER TABLE Admin DROP CONSTRAINT fk_access_level_admin_access_level_id;
 
-# ALTER TABLE customer DROP CONSTRAINT fk_city_customer_city_id;
-ALTER TABLE paymentcard DROP CONSTRAINT fk_customer_paymentcard_customer_id;
-ALTER TABLE sale DROP CONSTRAINT fk_employee_sale_employee_id;
-ALTER TABLE sale DROP CONSTRAINT fk_customer_sale_customer_id;
-ALTER TABLE salecoupondetail DROP CONSTRAINT fk_coupon_sale_coupon_id;
-ALTER TABLE salecoupondetail DROP CONSTRAINT fk_coupon_sale_sale_id;
-ALTER TABLE salepaymentcarddetail DROP CONSTRAINT fk_payment_card_sale_payment_card_id;
-ALTER TABLE salepaymentcarddetail DROP CONSTRAINT fk_payment_card_sale_sale_id;
-ALTER TABLE saleitemdetail DROP CONSTRAINT fk_book_sale_book_id;
-ALTER TABLE saleitemdetail DROP CONSTRAINT fk_book_sale_sale_id;
-
-ALTER TABLE vendorcontact DROP CONSTRAINT fk_vendor_contact_vendor_id;
-ALTER TABLE purchaseorder DROP CONSTRAINT fk_employee_purchaseorder_employee_id;
-ALTER TABLE purchaseorder DROP CONSTRAINT fk_vendor_purchaseorder_vendor_id;
-ALTER TABLE vendorcontactdetail DROP CONSTRAINT fk_vendor_vendorcontact_vendor_id;
-ALTER TABLE vendorcontactdetail DROP CONSTRAINT fk_vendor_vendorcontact_vendor_contact_id;
-ALTER TABLE bookvendordetail DROP CONSTRAINT fk_vendor_book_vendor_id;
-ALTER TABLE bookvendordetail DROP CONSTRAINT fk_vendor_book_book_id;
-ALTER TABLE purchaseorderdetail DROP CONSTRAINT fk_purchaseorder_book_purchase_order_id;
-ALTER TABLE purchaseorderdetail DROP CONSTRAINT fk_purchaseorder_book_book_id;
-
-ALTER TABLE receiveorder DROP CONSTRAINT fk_purchaseorder_receiveorder_purchase_order_id;
-ALTER TABLE receiveorder DROP CONSTRAINT fk_employee_receiveorder_employee_id;
-ALTER TABLE receivedatedetail DROP CONSTRAINT fk_receiveorder_receivedatedetail_receive_order_id;
-ALTER TABLE receiveorderdetail DROP CONSTRAINT fk_podetail_ro_purchase_order_detail_id;
-ALTER TABLE receiveorderdetail DROP CONSTRAINT fk_receiveorder_rodetail_receive_order_id;
-
-ALTER TABLE rental DROP CONSTRAINT fk_employee_rental_employee_id;
-ALTER TABLE rental DROP CONSTRAINT fk_customer_rental_customer_id;
-ALTER TABLE rentalbook DROP CONSTRAINT fk_purchaseorder_rentalbook_purchase_order_detail_id;
-ALTER TABLE rentalcoupondetail DROP CONSTRAINT fk_rental_rentalcoupon_rental_id;
-ALTER TABLE rentalcoupondetail DROP CONSTRAINT fk_coupon_rentalcoupon_coupon_id;
-ALTER TABLE rentaldetail DROP CONSTRAINT fk_rental_rentaldetail_rental_id;
-ALTER TABLE rentaldetail DROP CONSTRAINT fk_rentalbook_rentaldetail_rental_book_id;
-
-ALTER TABLE salerefund DROP CONSTRAINT fk_employee_salerefund_employee_id;
-ALTER TABLE salerefund DROP CONSTRAINT fk_customer_salerefund_customer_id;
-ALTER TABLE salerefund DROP CONSTRAINT fk_sale_salerefund_sale_id;
-ALTER TABLE salerefunddetail DROP CONSTRAINT fk_salerefund_salerefunddetal_sale_refund_id;
-ALTER TABLE salerefunddetail DROP CONSTRAINT fk_book_salerefunddetal_sale_book_id;
-
-ALTER TABLE store DROP CONSTRAINT fk_city_store_city_id;
-ALTER TABLE storeemployeedetail DROP CONSTRAINT fk_store_storeemployeedetail_store_id;
-ALTER TABLE storeemployeedetail DROP CONSTRAINT fk_employee_storeemployeedetail_employee_id;
+ALTER TABLE User DROP CONSTRAINT fk_residence_user_residence_id;
+ALTER TABLE Bookshelf DROP CONSTRAINT fk_user_bookshelf_user_id;
+ALTER TABLE BookshelfBookDetail DROP CONSTRAINT fk_bookshelf_book_bookshelf_id;
+ALTER TABLE BookshelfBookDetail DROP CONSTRAINT fk_bookshelf_book_book_id;
 
 -- Drop Indexes
-ALTER TABLE book DROP INDEX i_book_title;
+ALTER TABLE Book DROP INDEX i_book_title;
 
-ALTER TABLE country DROP INDEX i_country_alpha_2_code;
-ALTER TABLE country DROP INDEX i_country_alpha_3_code;
-ALTER TABLE state DROP INDEX i_state_state_code;
+ALTER TABLE Country DROP INDEX i_country_alpha_2_code;
+ALTER TABLE Country DROP INDEX i_country_alpha_3_code;
+ALTER TABLE State DROP INDEX i_state_state_code;
 
-ALTER TABLE employee DROP INDEX i_employee_username;
+ALTER TABLE Admin DROP INDEX i_admin_username;
 
-ALTER TABLE paymentcard DROP INDEX i_paymentcard_primary_account_number;
-ALTER TABLE coupon DROP INDEX i_coupon_coupon_code;
-
-ALTER TABLE vendor DROP INDEX i_vendor_vendor_name;
-
-ALTER TABLE receivedatedetail DROP INDEX i_recevedatedetail_receive_status;
+ALTER TABLE User DROP INDEX i_user_username;
+ALTER TABLE Contribution DROP INDEX i_contribution_title;
+ALTER TABLE Category DROP INDEX i_category_title;
+ALTER TABLE Author DROP INDEX i_author_name;
+ALTER TABLE Series DROP INDEX i_series_title;
+ALTER TABLE PublisherLocation DROP INDEX i_publisher_location_title;
+ALTER TABLE Language DROP INDEX i_language_title;
+ALTER TABLE Publisher DROP INDEX i_publisher_name;
 
 -- Drop Unique
-ALTER TABLE bookgenre DROP CONSTRAINT uc_genre_book_is_fiction;
-ALTER TABLE country DROP CONSTRAINT uc_country_alpha_2_code;
-ALTER TABLE country DROP CONSTRAINT uc_country_alpha_3_code;
-ALTER TABLE state DROP CONSTRAINT uc_state_state_code;
-ALTER TABLE employee DROP CONSTRAINT uc_employee_username;
-ALTER TABLE customer DROP CONSTRAINT uc_customer_username;
-ALTER TABLE paymentcard DROP CONSTRAINT uc_paymentcard_primary_account_number;
+ALTER TABLE Contribution DROP CONSTRAINT uc_contribution_title;
+ALTER TABLE Category DROP CONSTRAINT uc_category_title;
+ALTER TABLE Author DROP CONSTRAINT uc_author_name;
+ALTER TABLE Series DROP CONSTRAINT uc_series_title;
+ALTER TABLE PublisherLocation DROP CONSTRAINT uc_publisher_location_title;
+ALTER TABLE Language DROP CONSTRAINT uc_language_title;
+ALTER TABLE Publisher DROP CONSTRAINT uc_publisher_name;
+ALTER TABLE BookAuthorDetail DROP CONSTRAINT uc_book_id_author_id;
 
+ALTER TABLE Country DROP CONSTRAINT uc_country_alpha_2_code;
+ALTER TABLE Country DROP CONSTRAINT uc_country_alpha_3_code;
+ALTER TABLE State DROP CONSTRAINT uc_state_state_code;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+ALTER TABLE Admin DROP CONSTRAINT uc_admin_username;
+ALTER TABLE User DROP CONSTRAINT uc_user_username;

@@ -8,6 +8,7 @@
 .htaccess
 .editorconfig
 /old
+.idea
 
 /node_modules/
 /vendor/*
