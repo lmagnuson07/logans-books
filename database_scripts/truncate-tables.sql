@@ -20,7 +20,7 @@ TRUNCATE BookLanguageDetail;
 TRUNCATE BookPublisherDetail;
 
 TRUNCATE Country;
-TRUNCATE State;
+TRUNCATE Region;
 TRUNCATE City;
 TRUNCATE Residence;
 

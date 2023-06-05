@@ -14,6 +14,7 @@ if(!isset($page_heading)) { $page_heading = 'Logan\'s Books'; }
 	<link rel="stylesheet" media="all" href="<?php echo App\Functions\HelperFunctions::url_for('/css/staff-styles.css'); ?>">
 	<!-- When using a CDN url you will have to manually update the version number -->
 	<script src="https://unpkg.com/css-prefers-color-scheme@8.0.2/dist/browser-global.js"></script>
+	<script src="<?php echo App\Functions\HelperFunctions::url_for('/js/main.min.js'); ?>"></script>
 	<script>prefersColorSchemeInit()</script>
 </head>
 <body>

@@ -78,7 +78,7 @@ input::placeholder {
 @media (prefers-color-scheme: light) {
 	:root {
 		--site-bgcolor: #fff;
-		--site-color: #222;
+		--site-color: gray;
 	}
 }
 $siteBg: var(--site-bgcolor);

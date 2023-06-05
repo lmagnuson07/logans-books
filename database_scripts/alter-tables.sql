@@ -58,11 +58,11 @@ FOREIGN KEY (book_id) REFERENCES Book(id);
 -- -----------------------------------------------------------------------------------------------------
 -- Residence ---------------------------------------------------------------------------------------
 -- 1
-ALTER TABLE State ADD CONSTRAINT fk_country_state_country_id
+ALTER TABLE Region ADD CONSTRAINT fk_country_region_country_id
 FOREIGN KEY (country_id) REFERENCES Country(id);
 -- 2
-ALTER TABLE City ADD CONSTRAINT fk_state_city_state_id
-FOREIGN KEY (state_id) REFERENCES State(id);
+ALTER TABLE City ADD CONSTRAINT fk_region_city_region_id
+FOREIGN KEY (region_id) REFERENCES Region(id);
 -- 3
 ALTER TABLE City ADD CONSTRAINT fk_country_city_country_id
 FOREIGN KEY (country_id) REFERENCES Country(id);
@@ -70,8 +70,8 @@ FOREIGN KEY (country_id) REFERENCES Country(id);
 ALTER TABLE Residence ADD CONSTRAINT fk_country_residence_country_id
 FOREIGN KEY (country_id) REFERENCES Country(id);
 -- 3
-ALTER TABLE Residence ADD CONSTRAINT fk_state_residence_state_id
-FOREIGN KEY (state_id) REFERENCES State(id);
+ALTER TABLE Residence ADD CONSTRAINT fk_state_residence_region_id
+FOREIGN KEY (region_id) REFERENCES Region(id);
 -- 3
 ALTER TABLE Residence ADD CONSTRAINT fk_city_residence_city_id
 FOREIGN KEY (city_id) REFERENCES City(id);
@@ -104,9 +104,7 @@ ALTER TABLE Book ADD INDEX i_book_title (title);
 -- 1
 ALTER TABLE Country ADD INDEX i_country_alpha_2_code (alpha_2_code);
 -- 2
-ALTER TABLE Country ADD INDEX i_country_alpha_3_code (alpha_3_code);
--- 3
-ALTER TABLE State ADD INDEX i_state_state_code (code);
+ALTER TABLE Region ADD INDEX i_region_region_abbr (region_abbr);
 -- Employee
 ALTER TABLE Admin ADD INDEX i_admin_username (username);
 -- Customer/sale
@@ -137,8 +135,7 @@ ALTER TABLE Publisher ADD CONSTRAINT UNIQUE uc_publisher_name (name);
 ALTER TABLE BookAuthorDetail ADD CONSTRAINT UNIQUE uc_book_id_author_id (book_id, author_id);
 -- residence
 ALTER TABLE Country ADD CONSTRAINT UNIQUE uc_country_alpha_2_code (alpha_2_code);
-ALTER TABLE Country ADD CONSTRAINT UNIQUE uc_country_alpha_3_code (alpha_3_code);
-ALTER TABLE State ADD CONSTRAINT UNIQUE uc_state_state_code (code);
+ALTER TABLE Region ADD CONSTRAINT UNIQUE uc_region_region_abbr (region_abbr);
 -- Employee
 ALTER TABLE Admin ADD CONSTRAINT uc_admin_username UNIQUE (username);
 -- Customer/sale

@@ -14,6 +14,8 @@ CONST SHARED_PATH = PRIVATE_PATH . '\shared';
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
 
+define('CSV_DOCUMENT_PATH', $_ENV['CSV_DOCUMENT_PATH']);
+
 // Setup for
 $loader = new FilesystemLoader(PROJECT_PATH . '\views');
 $twig = new Environment($loader, [

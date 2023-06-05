@@ -20,11 +20,11 @@ ALTER TABLE BookLanguageDetail DROP CONSTRAINT fk_language_book_book_id;
 ALTER TABLE BookPublisherDetail DROP CONSTRAINT fk_publisher_book_publisher_id;
 ALTER TABLE BookPublisherDetail DROP CONSTRAINT fk_publisher_book_book_id;
 
-ALTER TABLE State DROP CONSTRAINT fk_country_state_country_id;
-ALTER TABLE City DROP CONSTRAINT fk_state_city_state_id;
+ALTER TABLE Region DROP CONSTRAINT fk_country_region_country_id;
+ALTER TABLE City DROP CONSTRAINT fk_region_city_region_id;
 ALTER TABLE City DROP CONSTRAINT fk_country_city_country_id;
 ALTER TABLE Residence DROP CONSTRAINT fk_country_residence_country_id;
-ALTER TABLE Residence DROP CONSTRAINT fk_state_residence_state_id;
+ALTER TABLE Residence DROP CONSTRAINT fk_state_residence_region_id;
 ALTER TABLE Residence DROP CONSTRAINT fk_city_residence_city_id;
 
 ALTER TABLE Admin DROP CONSTRAINT fk_residence_admin_residence_id;
@@ -39,8 +39,7 @@ ALTER TABLE BookshelfBookDetail DROP CONSTRAINT fk_bookshelf_book_book_id;
 ALTER TABLE Book DROP INDEX i_book_title;
 
 ALTER TABLE Country DROP INDEX i_country_alpha_2_code;
-ALTER TABLE Country DROP INDEX i_country_alpha_3_code;
-ALTER TABLE State DROP INDEX i_state_state_code;
+ALTER TABLE Region DROP INDEX i_region_region_abbr;
 
 ALTER TABLE Admin DROP INDEX i_admin_username;
 
@@ -64,8 +63,7 @@ ALTER TABLE Publisher DROP CONSTRAINT uc_publisher_name;
 ALTER TABLE BookAuthorDetail DROP CONSTRAINT uc_book_id_author_id;
 
 ALTER TABLE Country DROP CONSTRAINT uc_country_alpha_2_code;
-ALTER TABLE Country DROP CONSTRAINT uc_country_alpha_3_code;
-ALTER TABLE State DROP CONSTRAINT uc_state_state_code;
+ALTER TABLE Region DROP CONSTRAINT uc_region_region_abbr;
 
 ALTER TABLE Admin DROP CONSTRAINT uc_admin_username;
 ALTER TABLE User DROP CONSTRAINT uc_user_username;

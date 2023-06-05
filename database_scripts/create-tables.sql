@@ -175,14 +175,14 @@ CREATE TABLE IF NOT EXISTS Country (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,name										VARCHAR(255)	NOT NULL
     ,alpha_2_code								CHAR(2)			NOT NULL
-    ,alpha_3_code								CHAR(3)			NOT NULL
     ,priority									INT				DEFAULT NULL
 );
 -- 2
-CREATE TABLE IF NOT EXISTS State (
+CREATE TABLE IF NOT EXISTS Region (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,name										VARCHAR(255) 	NOT NULL
-    ,code										VARCHAR(50)		DEFAULT NULL
+    ,region_abbr								VARCHAR(50)		DEFAULT NULL
+    ,region_type								VARCHAR(255)	DEFAULT NULL
     ,country_id									INT				NOT NULL
 	,priority									INT				DEFAULT NULL
 );
@@ -190,14 +190,20 @@ CREATE TABLE IF NOT EXISTS State (
 CREATE TABLE IF NOT EXISTS City (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,name										VARCHAR(255)	NOT NULL
-    ,state_id									INT 			NOT NULL
+    ,city_abbr									VARCHAR(50)		NOT NULL
+	,coordinates								VARCHAR(50)		NOT NULL
+	,code1										VARCHAR(50)		NOT NULL
+	,code2										VARCHAR(50)		NOT NULL
+	,code3										VARCHAR(50)		NOT NULL
+	,code4										VARCHAR(50)		NOT NULL
+    ,region_id									INT 			NOT NULL
     ,country_id									INT 			NOT NULL
 );
 -- 4
 CREATE TABLE IF NOT EXISTS Residence (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
 	,country_id									INT				NOT NULL
-    ,state_id									INT				NOT NULL
+    ,region_id									INT				NOT NULL
     ,city_id									INT 			NOT NULL
 );
 -- -----------------------------------------------------------------------------------------------------
