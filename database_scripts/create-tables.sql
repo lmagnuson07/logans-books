@@ -4,7 +4,7 @@ USE logans_books;
 -- ---------------------------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------
 -- 1
-CREATE TABLE IF NOT EXISTS Book (
+CREATE TABLE IF NOT EXISTS book (
 	id 											INT 			NOT NULL 			AUTO_INCREMENT 	PRIMARY KEY
 	,google_id									VARCHAR(255)	DEFAULT NULL
 	,etag										VARCHAR(255)	DEFAULT NULL
@@ -67,19 +67,19 @@ CREATE TABLE IF NOT EXISTS Book (
     ,quote_sharing_allowed						BOOL			DEFAULT NULL
 );
 -- 2
-CREATE TABLE IF NOT EXISTS Category (
+CREATE TABLE IF NOT EXISTS category (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,title										VARCHAR(255)	NOT NULL
     ,last_fetch_time							DATETIME		NOT NULL			DEFAULT (CURRENT_DATE)
 );
 -- 3
-CREATE TABLE IF NOT EXISTS Contribution (
+CREATE TABLE IF NOT EXISTS contribution (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,title										VARCHAR(255)	NOT NULL
 	,last_fetch_time							DATETIME		NOT NULL			DEFAULT (CURRENT_DATE)
 );
 -- 4
-CREATE TABLE IF NOT EXISTS Author (
+CREATE TABLE IF NOT EXISTS author (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,name										VARCHAR(255)	NOT NULL
     ,alternative_names							JSON			DEFAULT NULL
@@ -91,79 +91,79 @@ CREATE TABLE IF NOT EXISTS Author (
 	,last_fetch_time							DATETIME		NOT NULL			DEFAULT (CURRENT_DATE)
 );
 -- 5
-CREATE TABLE IF NOT EXISTS AuthorPhoto (
+CREATE TABLE IF NOT EXISTS authorphoto (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,image_path									VARCHAR(500) 	NOT NULL
     ,author_id									INT				NOT NULL
 );
 -- 6
-CREATE TABLE IF NOT EXISTS Series (
+CREATE TABLE IF NOT EXISTS series (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,title										VARCHAR(255)	NOT NULL
 	,last_fetch_time							DATETIME		NOT NULL			DEFAULT (CURRENT_DATE)
 );
 -- 7 
-CREATE TABLE IF NOT EXISTS PublisherLocation (
+CREATE TABLE IF NOT EXISTS publisherlocation (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,title										VARCHAR(255)	NOT NULL
 );
 -- 8
-CREATE TABLE IF NOT EXISTS Language (
+CREATE TABLE IF NOT EXISTS language (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,title										VARCHAR(255) 	NOT NULL
 	,last_fetch_time							DATETIME		NOT NULL			DEFAULT (CURRENT_DATE)
 );
 -- 9
-CREATE TABLE IF NOT EXISTS Publisher (
+CREATE TABLE IF NOT EXISTS publisher (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,name										VARCHAR(255) 	NOT NULL
 	,last_fetch_time							DATETIME		NOT NULL			DEFAULT (CURRENT_DATE)
 );
 -- bridging tables
 -- 10
-CREATE TABLE IF NOT EXISTS BookCategoryDetail (
+CREATE TABLE IF NOT EXISTS bookcategorydetail (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,book_id									INT 			NOT NULL
     ,category_id								INT 			NOT NULL
 );
 -- 11
-CREATE TABLE IF NOT EXISTS BookContributionDetail (
+CREATE TABLE IF NOT EXISTS bookcontributiondetail (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,book_id									INT 			NOT NULL
     ,contribution_id							INT 			NOT NULL
 );
 -- 12
-CREATE TABLE IF NOT EXISTS AuthorCategoryDetail (
+CREATE TABLE IF NOT EXISTS authorcategorydetail (
     id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,author_id									INT 			NOT NULL
     ,category_id								INT 			NOT NULL
 );
 -- 13
-CREATE TABLE IF NOT EXISTS BookAuthorDetail (
+CREATE TABLE IF NOT EXISTS bookauthordetail (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,book_id									INT 			NOT NULL
     ,author_id									INT 			NOT NULL
 );
 -- 14
-CREATE TABLE IF NOT EXISTS BookSeriesDetail (
+CREATE TABLE IF NOT EXISTS bookseriesdetail (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
 	,book_id									INT 			NOT NULL
 	,series_id									INT 			NOT NULL
 );
 -- 15
-CREATE TABLE IF NOT EXISTS PublisherLocationDetail (
+CREATE TABLE IF NOT EXISTS publisherlocationdetail (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
 	,book_id									INT 			NOT NULL
 	,publisher_location_id						INT 			NOT NULL
 );
 -- 16
-CREATE TABLE IF NOT EXISTS BookLanguageDetail (
+CREATE TABLE IF NOT EXISTS booklanguagedetail (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
 	,book_id									INT 			NOT NULL
 	,language_id								INT 			NOT NULL
 );
 -- 17
-CREATE TABLE IF NOT EXISTS BookPublisherDetail (
+CREATE TABLE IF NOT EXISTS bookpublisherdetail (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
 	,book_id									INT 			NOT NULL
 	,publisher_id								INT 			NOT NULL
@@ -171,14 +171,14 @@ CREATE TABLE IF NOT EXISTS BookPublisherDetail (
 -- -----------------------------------------------------------------------------------------------------
 -- Residence ------------------------------------------------------------------------------------------
 -- 1
-CREATE TABLE IF NOT EXISTS Country (
+CREATE TABLE IF NOT EXISTS country (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,name										VARCHAR(255)	NOT NULL
     ,alpha_2_code								CHAR(2)			NOT NULL
     ,priority									INT				DEFAULT NULL
 );
 -- 2
-CREATE TABLE IF NOT EXISTS Region (
+CREATE TABLE IF NOT EXISTS region (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,name										VARCHAR(255) 	NOT NULL
     ,region_abbr								VARCHAR(50)		DEFAULT NULL
@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS Region (
 	,priority									INT				DEFAULT NULL
 );
 -- 3
-CREATE TABLE IF NOT EXISTS City (
+CREATE TABLE IF NOT EXISTS city (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,name										VARCHAR(255)	NOT NULL
     ,city_abbr									VARCHAR(50)		NOT NULL
@@ -200,7 +200,7 @@ CREATE TABLE IF NOT EXISTS City (
     ,country_id									INT 			NOT NULL
 );
 -- 4
-CREATE TABLE IF NOT EXISTS Residence (
+CREATE TABLE IF NOT EXISTS residence (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
 	,country_id									INT				NOT NULL
     ,region_id									INT				NOT NULL
@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS Residence (
 -- -----------------------------------------------------------------------------------------------------
 -- Employee/Admin --------------------------------------------------------------------------------------
 -- 1
-CREATE TABLE IF NOT EXISTS Admin (
+CREATE TABLE IF NOT EXISTS admin (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,first_name									VARCHAR(255)	NOT NULL
     ,last_name									VARCHAR(255)	NOT NULL
@@ -234,7 +234,7 @@ CREATE TABLE IF NOT EXISTS Admin (
 	,access_level_id							INT				NOT NULL
 );
 -- 2
-CREATE TABLE IF NOT EXISTS AccessLevel (
+CREATE TABLE IF NOT EXISTS accesslevel (
 	id											INT 			NOT NULL 			AUTO_INCREMENT	PRIMARY KEY
     ,title										VARCHAR(255)	NOT NULL
     ,access_level								TINYINT 		NOT NULL
@@ -242,7 +242,7 @@ CREATE TABLE IF NOT EXISTS AccessLevel (
 -- -----------------------------------------------------------------------------------------------------
 -- Customer - Sale -------------------------------------------------------------------------------------
 -- 1
-CREATE TABLE IF NOT EXISTS User (
+CREATE TABLE IF NOT EXISTS user (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
     ,first_name									VARCHAR(255)	NOT NULL
     ,last_name									VARCHAR(255)	NOT NULL
@@ -261,7 +261,7 @@ CREATE TABLE IF NOT EXISTS User (
     ,security_answer_two						VARCHAR(255) 	NOT NULL
 );
 -- 2
-CREATE TABLE IF NOT EXISTS Bookshelf (
+CREATE TABLE IF NOT EXISTS bookshelf (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
 	,title										VARCHAR(255)	NOT NULL
     ,description								VARCHAR(1000)	NOT NULL
@@ -270,7 +270,7 @@ CREATE TABLE IF NOT EXISTS Bookshelf (
 );
 -- Bridging tables
 -- 3
-CREATE TABLE IF NOT EXISTS BookshelfBookDetail (
+CREATE TABLE IF NOT EXISTS bookshelfbookdetail (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
 	,bookshelf_id								INT				NOT NULL
 	,book_id									INT				NOT NULL
@@ -278,14 +278,14 @@ CREATE TABLE IF NOT EXISTS BookshelfBookDetail (
 -- -----------------------------------------------------------------------------------------------------
 -- API links and endpoints -----------------------------------------------------------------------------
 -- 1
-CREATE TABLE IF NOT EXISTS OpenlibBookEndpoints (
+CREATE TABLE IF NOT EXISTS openlibbookendpoints (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
 	,title										VARCHAR(255)	NOT NULL
 	,base_url									VARCHAR(255)	NOT NULL
 	,api_version								VARCHAR(50)		DEFAULT NULL
     ,api_endpoint								VARCHAR(255)	DEFAULT NULL
 );
-CREATE TABLE IF NOT EXISTS GoogleBookEndpoints (
+CREATE TABLE IF NOT EXISTS googlebookendpoints (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
 	,title										VARCHAR(255)	NOT NULL
 	,base_url									VARCHAR(255)	NOT NULL
@@ -295,7 +295,7 @@ CREATE TABLE IF NOT EXISTS GoogleBookEndpoints (
 -- -----------------------------------------------------------------------------------------------------
 -- Pagination ------------------------------------------------------------------------------------------
 -- 1
-CREATE TABLE IF NOT EXISTS Pagination (
+CREATE TABLE IF NOT EXISTS pagination (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
 	,google_api_start_index						INT				NOT NULL
 	,google_api_max_results						INT				NOT NULL

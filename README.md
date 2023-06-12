@@ -1,6 +1,6 @@
 # Logan's Books
 Logan's Books is a **PHP/MySql** database driven application meant to provide a user-friendly interface for book data. 
-The book data for the application is acquired from the **Google Books** and **OpenLibrary** APIs and loaded into a **MySQL** database. 
+The book data for the application is acquired from the [**Google Books**](https://developers.google.com/books/docs/v1/reference/) and [**OpenLibrary**](https://openlibrary.org/developers/api) APIs and loaded into a **MySQL** database. 
 Presentation and business logic is separated via **Twig Templates** templating engine along with **OOP** principles and **MVC** paradigm. 
 SCSS is compiled using **PostCSS**. CSS is also minified and translated for maximum browser support using **PostCSS**. 
 JavaScript is minified using **UglifyJS**. Plugins and extensions are installed via **Composer**.
@@ -76,3 +76,18 @@ module.exports = {
 
 > ### postcss-stepped-value-functions
 > - Adds more math functions for css
+
+---
+## Notes
+Added the following to the vhost for this application to rewrite traffic to an index.php page in the public directory to allow for custom routing.
+This can also be added in a .htaccess file, but since I have access to configuration files, I put it in the vhost config file.
+```text
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond ${REQUEST_FILENAME} !-f
+
+	RewriteRule ^ index.php [L]
+</IfModule>
+```

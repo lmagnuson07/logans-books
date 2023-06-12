@@ -1,38 +1,38 @@
 USE logans_books;
 
 -- Drop Tables
-DROP TABLE IF EXISTS Book;
-DROP TABLE IF EXISTS Category;
-DROP TABLE IF EXISTS Contribution;
-DROP TABLE IF EXISTS Author;
-DROP TABLE IF EXISTS AuthorPhoto;
-DROP TABLE IF EXISTS Series;
-DROP TABLE IF EXISTS PublisherLocation;
-DROP TABLE IF EXISTS Language;
-DROP TABLE IF EXISTS Publisher;
+DROP TABLE IF EXISTS book;
+DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS contribution;
+DROP TABLE IF EXISTS author;
+DROP TABLE IF EXISTS authorphoto;
+DROP TABLE IF EXISTS series;
+DROP TABLE IF EXISTS publisherlocation;
+DROP TABLE IF EXISTS language;
+DROP TABLE IF EXISTS publisher;
 
-DROP TABLE IF EXISTS BookCategoryDetail;
-DROP TABLE IF EXISTS BookContributionDetail;
-DROP TABLE IF EXISTS AuthorCategoryDetail;
-DROP TABLE IF EXISTS BookAuthorDetail;
-DROP TABLE IF EXISTS BookSeriesDetail;
-DROP TABLE IF EXISTS PublisherLocationDetail;
-DROP TABLE IF EXISTS BookLanguageDetail;
-DROP TABLE IF EXISTS BookPublisherDetail;
+DROP TABLE IF EXISTS bookcategorydetail;
+DROP TABLE IF EXISTS bookcontributiondetail;
+DROP TABLE IF EXISTS authorcategorydetail;
+DROP TABLE IF EXISTS bookauthordetail;
+DROP TABLE IF EXISTS bookseriesdetail;
+DROP TABLE IF EXISTS publisherlocationdetail;
+DROP TABLE IF EXISTS booklanguagedetail;
+DROP TABLE IF EXISTS bookpublisherdetail;
 
-DROP TABLE IF EXISTS Country;
-DROP TABLE IF EXISTS Region;
-DROP TABLE IF EXISTS City;
-DROP TABLE IF EXISTS Residence;
+DROP TABLE IF EXISTS country;
+DROP TABLE IF EXISTS region;
+DROP TABLE IF EXISTS city;
+DROP TABLE IF EXISTS residence;
 
-DROP TABLE IF EXISTS Admin;
-DROP TABLE IF EXISTS AccessLevel;
+DROP TABLE IF EXISTS admin;
+DROP TABLE IF EXISTS accesslevel;
 
-DROP TABLE IF EXISTS User;
-DROP TABLE IF EXISTS Bookshelf;
-DROP TABLE IF EXISTS BookshelfBookDetail;
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS bookshelf;
+DROP TABLE IF EXISTS bookshelfbookdetail;
 
-DROP TABLE IF EXISTS OpenlibBookEndpoints;
-DROP TABLE IF EXISTS GoogleBookEndpoints;
+DROP TABLE IF EXISTS openlibbookendpoints;
+DROP TABLE IF EXISTS googlebookendpoints;
 
-DROP TABLE IF EXISTS Pagination;
+DROP TABLE IF EXISTS pagination;

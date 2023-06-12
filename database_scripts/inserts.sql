@@ -1,6 +1,6 @@
 USE logans_books;
 
-INSERT INTO OpenlibBookEndpoints
+INSERT INTO openlibbookendpoints
 	(title, base_url, api_version, api_endpoint)
 VALUES
     ('isbn endpoint', 'https://openlibrary.org/', '', 'isbn/'),
@@ -8,7 +8,7 @@ VALUES
     ('authors endpoint', 'https://openlibrary.org/', '', 'authors/')
 ;
 
-INSERT INTO GoogleBookEndpoints
+INSERT INTO googlebookendpoints
 	(title, base_url, api_version, api_endpoint)
 VALUES
 	('volumes endpoint', 'https://www.googleapis.com/books/', 'v1', 'volumes/')

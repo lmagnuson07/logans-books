@@ -11,5 +11,5 @@
 </html>
 
 <?php
-\App\Shared\DBObj::disconn();
+\classes\Shared\DBObj::disconn();
 ?>

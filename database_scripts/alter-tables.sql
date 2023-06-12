@@ -2,141 +2,141 @@ USE logans_books;
 
 -- ---------------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------
--- ------ Books --------------------------------------------------------------------------
+-- ------ books --------------------------------------------------------------------------
 -- 1
-ALTER TABLE AuthorPhoto ADD CONSTRAINT fk_authorphoto_author_author_id
-FOREIGN KEY (author_id) REFERENCES Author(id);
+ALTER TABLE authorphoto ADD CONSTRAINT fk_authorphoto_author_author_id
+FOREIGN KEY (author_id) REFERENCES author(id);
 -- bridging tables
 -- 2
-ALTER TABLE BookContributionDetail ADD CONSTRAINT fk_contribution_book_contribution_id
-FOREIGN KEY (contribution_id) REFERENCES Contribution(id);
+ALTER TABLE bookcontributiondetail ADD CONSTRAINT fk_contribution_book_contribution_id
+FOREIGN KEY (contribution_id) REFERENCES contribution(id);
 -- 3
-ALTER TABLE BookContributionDetail ADD CONSTRAINT fk_contribution_book_book_id
-FOREIGN KEY (book_id) REFERENCES Book(id);
+ALTER TABLE bookcontributiondetail ADD CONSTRAINT fk_contribution_book_book_id
+FOREIGN KEY (book_id) REFERENCES book(id);
 -- 4 
-ALTER TABLE BookCategoryDetail ADD CONSTRAINT fk_category_book_category_id
-FOREIGN KEY (category_id) REFERENCES Category(id);
+ALTER TABLE bookcategorydetail ADD CONSTRAINT fk_category_book_category_id
+FOREIGN KEY (category_id) REFERENCES category(id);
 -- 5
-ALTER TABLE BookCategoryDetail ADD CONSTRAINT fk_category_book_book_id
-FOREIGN KEY (book_id) REFERENCES Book(id);
+ALTER TABLE bookcategorydetail ADD CONSTRAINT fk_category_book_book_id
+FOREIGN KEY (book_id) REFERENCES book(id);
 -- 6
-ALTER TABLE AuthorCategoryDetail ADD CONSTRAINT fk_category_author_category_id
-FOREIGN KEY (category_id) REFERENCES Category(id);
+ALTER TABLE authorcategorydetail ADD CONSTRAINT fk_category_author_category_id
+FOREIGN KEY (category_id) REFERENCES category(id);
 -- 7
-ALTER TABLE AuthorCategoryDetail ADD CONSTRAINT fk_category_author_author_id
-FOREIGN KEY (author_id) REFERENCES Author(id);
+ALTER TABLE authorcategorydetail ADD CONSTRAINT fk_category_author_author_id
+FOREIGN KEY (author_id) REFERENCES author(id);
 -- 8
-ALTER TABLE BookAuthorDetail ADD CONSTRAINT fk_author_book_author_id
-FOREIGN KEY (author_id) REFERENCES Author(id);
+ALTER TABLE bookauthordetail ADD CONSTRAINT fk_author_book_author_id
+FOREIGN KEY (author_id) REFERENCES author(id);
 -- 9
-ALTER TABLE BookAuthorDetail ADD CONSTRAINT fk_author_book_book_id
-FOREIGN KEY (book_id) REFERENCES Book(id);
+ALTER TABLE bookauthordetail ADD CONSTRAINT fk_author_book_book_id
+FOREIGN KEY (book_id) REFERENCES book(id);
 -- 10
-ALTER TABLE BookSeriesDetail ADD CONSTRAINT fk_series_book_series_id
-FOREIGN KEY (series_id) REFERENCES Series(id);
+ALTER TABLE bookseriesdetail ADD CONSTRAINT fk_series_book_series_id
+FOREIGN KEY (series_id) REFERENCES series(id);
 -- 11
-ALTER TABLE BookSeriesDetail ADD CONSTRAINT fk_series_book_book_id
-FOREIGN KEY (book_id) REFERENCES Book(id);
+ALTER TABLE bookseriesdetail ADD CONSTRAINT fk_series_book_book_id
+FOREIGN KEY (book_id) REFERENCES book(id);
 -- 12
-ALTER TABLE PublisherLocationDetail ADD CONSTRAINT fk_location_book_location_id
-FOREIGN KEY (publisher_location_id) REFERENCES PublisherLocation(id);
+ALTER TABLE publisherlocationdetail ADD CONSTRAINT fk_location_book_location_id
+FOREIGN KEY (publisher_location_id) REFERENCES publisherlocation(id);
 -- 13
-ALTER TABLE PublisherLocationDetail ADD CONSTRAINT fk_location_book_book_id
-FOREIGN KEY (book_id) REFERENCES Book(id);
+ALTER TABLE publisherlocationdetail ADD CONSTRAINT fk_location_book_book_id
+FOREIGN KEY (book_id) REFERENCES book(id);
 -- 14
-ALTER TABLE BookLanguageDetail ADD CONSTRAINT fk_language_book_language_id
-FOREIGN KEY (language_id) REFERENCES Language(id);
+ALTER TABLE booklanguagedetail ADD CONSTRAINT fk_language_book_language_id
+FOREIGN KEY (language_id) REFERENCES language(id);
 -- 15
-ALTER TABLE BookLanguageDetail ADD CONSTRAINT fk_language_book_book_id
-FOREIGN KEY (book_id) REFERENCES Book(id);
+ALTER TABLE booklanguagedetail ADD CONSTRAINT fk_language_book_book_id
+FOREIGN KEY (book_id) REFERENCES book(id);
 -- 16
-ALTER TABLE BookPublisherDetail ADD CONSTRAINT fk_publisher_book_publisher_id
+ALTER TABLE bookpublisherdetail ADD CONSTRAINT fk_publisher_book_publisher_id
 FOREIGN KEY (publisher_id) REFERENCES publisher(id);
 -- 17
-ALTER TABLE BookPublisherDetail ADD CONSTRAINT fk_publisher_book_book_id
-FOREIGN KEY (book_id) REFERENCES Book(id);
+ALTER TABLE bookpublisherdetail ADD CONSTRAINT fk_publisher_book_book_id
+FOREIGN KEY (book_id) REFERENCES book(id);
 -- -----------------------------------------------------------------------------------------------------
--- Residence ---------------------------------------------------------------------------------------
+-- residence ---------------------------------------------------------------------------------------
 -- 1
-ALTER TABLE Region ADD CONSTRAINT fk_country_region_country_id
-FOREIGN KEY (country_id) REFERENCES Country(id);
+ALTER TABLE region ADD CONSTRAINT fk_country_region_country_id
+FOREIGN KEY (country_id) REFERENCES country(id);
 -- 2
-ALTER TABLE City ADD CONSTRAINT fk_region_city_region_id
-FOREIGN KEY (region_id) REFERENCES Region(id);
+ALTER TABLE city ADD CONSTRAINT fk_region_city_region_id
+FOREIGN KEY (region_id) REFERENCES region(id);
 -- 3
-ALTER TABLE City ADD CONSTRAINT fk_country_city_country_id
-FOREIGN KEY (country_id) REFERENCES Country(id);
+ALTER TABLE city ADD CONSTRAINT fk_country_city_country_id
+FOREIGN KEY (country_id) REFERENCES country(id);
 -- 3
-ALTER TABLE Residence ADD CONSTRAINT fk_country_residence_country_id
-FOREIGN KEY (country_id) REFERENCES Country(id);
+ALTER TABLE residence ADD CONSTRAINT fk_country_residence_country_id
+FOREIGN KEY (country_id) REFERENCES country(id);
 -- 3
-ALTER TABLE Residence ADD CONSTRAINT fk_state_residence_region_id
-FOREIGN KEY (region_id) REFERENCES Region(id);
+ALTER TABLE residence ADD CONSTRAINT fk_state_residence_region_id
+FOREIGN KEY (region_id) REFERENCES region(id);
 -- 3
-ALTER TABLE Residence ADD CONSTRAINT fk_city_residence_city_id
-FOREIGN KEY (city_id) REFERENCES City(id);
+ALTER TABLE residence ADD CONSTRAINT fk_city_residence_city_id
+FOREIGN KEY (city_id) REFERENCES city(id);
 -- -----------------------------------------------------------------------------------------------------
--- Admin -----------------------------------------------------------------------------------------------
+-- admin -----------------------------------------------------------------------------------------------
 -- 1
-ALTER TABLE Admin ADD CONSTRAINT fk_residence_admin_residence_id
-FOREIGN KEY (residence_id) REFERENCES Residence(id);
+ALTER TABLE admin ADD CONSTRAINT fk_residence_admin_residence_id
+FOREIGN KEY (residence_id) REFERENCES residence(id);
 -- 2
-ALTER TABLE Admin ADD CONSTRAINT fk_access_level_admin_access_level_id
-FOREIGN KEY (access_level_id) REFERENCES AccessLevel(id);
+ALTER TABLE admin ADD CONSTRAINT fk_access_level_admin_access_level_id
+FOREIGN KEY (access_level_id) REFERENCES accesslevel(id);
 -- -----------------------------------------------------------------------------------------------------
--- User ------------------------------------------------------------------------------------------------
+-- user ------------------------------------------------------------------------------------------------
 -- 1
-ALTER TABLE User ADD CONSTRAINT fk_residence_user_residence_id
-FOREIGN KEY (residence_id) REFERENCES Residence(id);
+ALTER TABLE user ADD CONSTRAINT fk_residence_user_residence_id
+FOREIGN KEY (residence_id) REFERENCES residence(id);
 -- 2 	
-ALTER TABLE Bookshelf ADD CONSTRAINT fk_user_bookshelf_user_id
-FOREIGN KEY (user_id) REFERENCES User(id);
+ALTER TABLE bookshelf ADD CONSTRAINT fk_user_bookshelf_user_id
+FOREIGN KEY (user_id) REFERENCES user(id);
 -- 3 
-ALTER TABLE BookshelfBookDetail ADD CONSTRAINT fk_bookshelf_book_bookshelf_id
-FOREIGN KEY (bookshelf_id) REFERENCES Bookshelf(id);
+ALTER TABLE bookshelfbookdetail ADD CONSTRAINT fk_bookshelf_book_bookshelf_id
+FOREIGN KEY (bookshelf_id) REFERENCES bookshelf(id);
 -- 4 
-ALTER TABLE BookshelfBookDetail ADD CONSTRAINT fk_bookshelf_book_book_id
-FOREIGN KEY (book_id) REFERENCES Book(id);
+ALTER TABLE bookshelfbookdetail ADD CONSTRAINT fk_bookshelf_book_book_id
+FOREIGN KEY (book_id) REFERENCES book(id);
 -- ----- Indexes ---------------------------------------------------------------------------------------
--- Books
-ALTER TABLE Book ADD INDEX i_book_title (title);
--- Residence
+-- books
+ALTER TABLE book ADD INDEX i_book_title (title);
+-- residence
 -- 1
-ALTER TABLE Country ADD INDEX i_country_alpha_2_code (alpha_2_code);
+ALTER TABLE country ADD INDEX i_country_alpha_2_code (alpha_2_code);
 -- 2
-ALTER TABLE Region ADD INDEX i_region_region_abbr (region_abbr);
--- Employee
-ALTER TABLE Admin ADD INDEX i_admin_username (username);
+ALTER TABLE region ADD INDEX i_region_region_abbr (region_abbr);
+-- admin
+ALTER TABLE admin ADD INDEX i_admin_username (username);
 -- Customer/sale
-ALTER TABLE User ADD INDEX i_user_username (username);
--- Contribution
-ALTER TABLE Contribution ADD INDEX i_contribution_title (title);
--- Category
-ALTER TABLE Category ADD INDEX i_category_title (title);
--- Author
-ALTER TABLE Author ADD INDEX i_author_name (name);
--- Series
-ALTER TABLE Series ADD INDEX i_series_title (title);
--- Publisher Location
-ALTER TABLE PublisherLocation ADD INDEX i_publisher_location_title (title);
--- Language
-ALTER TABLE Language ADD INDEX i_language_title (title);
--- Publisher
-ALTER TABLE Publisher ADD INDEX i_publisher_name (name);
+ALTER TABLE user ADD INDEX i_user_username (username);
+-- contribution
+ALTER TABLE contribution ADD INDEX i_contribution_title (title);
+-- category
+ALTER TABLE category ADD INDEX i_category_title (title);
+-- author
+ALTER TABLE author ADD INDEX i_author_name (name);
+-- series
+ALTER TABLE series ADD INDEX i_series_title (title);
+-- publisher location
+ALTER TABLE publisherlocation ADD INDEX i_publisher_location_title (title);
+-- language
+ALTER TABLE language ADD INDEX i_language_title (title);
+-- publisher
+ALTER TABLE publisher ADD INDEX i_publisher_name (name);
 -- ----- Unique ----------------------------------------------------------------------------------------
 -- book
-ALTER TABLE Contribution ADD CONSTRAINT UNIQUE uc_contribution_title (title);
-ALTER TABLE Category ADD CONSTRAINT UNIQUE uc_category_title (title);
-ALTER TABLE Author ADD CONSTRAINT UNIQUE uc_author_name (name);
-ALTER TABLE Series ADD CONSTRAINT UNIQUE uc_series_title (title);
-ALTER TABLE PublisherLocation ADD CONSTRAINT UNIQUE uc_publisher_location_title (title);
-ALTER TABLE Language ADD CONSTRAINT UNIQUE uc_language_title (title);
-ALTER TABLE Publisher ADD CONSTRAINT UNIQUE uc_publisher_name (name);
-ALTER TABLE BookAuthorDetail ADD CONSTRAINT UNIQUE uc_book_id_author_id (book_id, author_id);
+ALTER TABLE contribution ADD CONSTRAINT UNIQUE uc_contribution_title (title);
+ALTER TABLE category ADD CONSTRAINT UNIQUE uc_category_title (title);
+ALTER TABLE author ADD CONSTRAINT UNIQUE uc_author_name (name);
+ALTER TABLE series ADD CONSTRAINT UNIQUE uc_series_title (title);
+ALTER TABLE publisherlocation ADD CONSTRAINT UNIQUE uc_publisher_location_title (title);
+ALTER TABLE language ADD CONSTRAINT UNIQUE uc_language_title (title);
+ALTER TABLE publisher ADD CONSTRAINT UNIQUE uc_publisher_name (name);
+ALTER TABLE bookauthordetail ADD CONSTRAINT UNIQUE uc_book_id_author_id (book_id, author_id);
 -- residence
-ALTER TABLE Country ADD CONSTRAINT UNIQUE uc_country_alpha_2_code (alpha_2_code);
-ALTER TABLE Region ADD CONSTRAINT UNIQUE uc_region_region_abbr (region_abbr);
--- Employee
-ALTER TABLE Admin ADD CONSTRAINT uc_admin_username UNIQUE (username);
+ALTER TABLE country ADD CONSTRAINT UNIQUE uc_country_alpha_2_code (alpha_2_code);
+ALTER TABLE region ADD CONSTRAINT UNIQUE uc_region_region_abbr (region_abbr);
+-- admin
+ALTER TABLE admin ADD CONSTRAINT uc_admin_username UNIQUE (username);
 -- Customer/sale
-ALTER TABLE User ADD CONSTRAINT uc_user_username UNIQUE (username);
+ALTER TABLE user ADD CONSTRAINT uc_user_username UNIQUE (username);
