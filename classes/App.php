@@ -4,8 +4,9 @@ namespace App;
 
 use App\Config\Config;
 use App\Config\Twig;
+use App\Controllers\Admin\AdminController;
+use App\Controllers\Admin\ImportsController;
 use App\Controllers\HomeController;
-use App\Controllers\InvoiceController;
 use App\Exceptions\RouteNotFoundException;
 use Dotenv\Dotenv;
 use Exception;
@@ -23,7 +24,9 @@ class App
 	public bool $hasView = false;
 
 	public function __construct(array $request, Config $config) {
-		$this->request = $request;
+        $this->request = $request;
+		$this->request['uri'] = $this->resolveRoute($request['uri']);
+
 		$this->config = $config;
 		$this->dbInit();
 	}
@@ -53,16 +56,16 @@ class App
 		} catch(RouteNotFoundException $ex) {
 			http_response_code(404);
 
-			$this->view =  View::make('errors/404');
+			$this->view = View::make('errors/404');
 			$this->hasView = true;
 		}
 	}
 
-	static public function initConsts($csvPath): void {
+	static public function initConsts(): void {
 		define("PROJECT_PATH", dirname(__DIR__));
 		define("PRIVATE_PATH", PROJECT_PATH . '/private');
 		define("PUBLIC_PATH", PROJECT_PATH . '/public');
-		define('CSV_DOCUMENT_PATH', $csvPath);
+		define("DATA_FILES_PATH", PROJECT_PATH . '\\data-files\\unece\\');
 
 		// doc root is htdocs
 		//$public_end = strpos($_SERVER['SCRIPT_NAME'], '/public') + 7;
@@ -104,9 +107,26 @@ class App
 	public function mainRouter(Router $router): void {
 		$this->router = $router;
 		$this->router
+            ///////////////////////////////////////////////////////////////////
+            /// Public routes
 			->get('/',[HomeController::class, 'index'])
-			->get('/invoices', [InvoiceController::class, 'index'])
-			->get('/invoices/create', [InvoiceController::class, 'create'])
-			->post('/invoices/create', [InvoiceController::class, 'store']);
+//			->get('/invoices', [InvoiceController::class, 'index'])
+//			->get('/invoices/create', [InvoiceController::class, 'create'])
+//			->post('/invoices/create', [InvoiceController::class, 'store'])
+            ///////////////////////////////////////////////////////////////////
+            /// Admin routes
+            ->get('/admin', [AdminController::class, 'index'])
+			->get('/admin/imports', [ImportsController::class, 'index'])
+        ;
 	}
+
+    private function resolveRoute(string $route): string {
+        if (str_ends_with($route, '/')) {
+            if (strlen($route) == 1) {
+                return $route;
+            }
+            return substr($route, 0, strlen($route) - 1);
+        }
+        return $route;
+    }
 }

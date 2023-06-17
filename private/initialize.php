@@ -9,7 +9,7 @@ ob_start();
 session_start();
 
 App::setDependencies();
-App::initConsts($_ENV['CSV_DOCUMENT_PATH']);
+App::initConsts();
 
 $app = new App(
 	[

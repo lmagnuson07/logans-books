@@ -19,9 +19,6 @@ class Config
 				'db_port' => $env['DB_PORT'],
 				'db_user' => $env['DB_USER'],
 				'db_pass' => $env['DB_PASS'],
-			],
-			'paths' => [
-				'csv_path' => $_ENV['CSV_DOCUMENT_PATH']
 			]
 		];
 	}

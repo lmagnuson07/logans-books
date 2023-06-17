@@ -28,13 +28,6 @@ class HelperFunctions
 		header("Location: " . $location);
 		exit;
 	}
-	// TODO: Inject the server superglobal
-	public static function is_post_request(): string {
-		return $_SERVER['REQUEST_METHOD'] == 'POST';
-	}
-	public static function is_get_request(): string {
-		return $_SERVER['REQUEST_METHOD'] == 'GET';
-	}
 	public static function add_to_array_if_unique(array &$arr, string $key, int|string $value=null):void {
 		if(!empty($arr[$key])) {
 			if (!in_array($value, $arr[$key])) {

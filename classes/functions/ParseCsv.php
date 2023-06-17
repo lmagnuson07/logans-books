@@ -1,48 +1,54 @@
 <?php
 
-namespace App\Shared;
+namespace App\Functions;
+use Exception;
 
 class ParseCsv
 {
-	public string $delimiter = ',';
 	private string $fileName;
 	private mixed $header;
 	private array $data = array();
 	private int $row_count = 0;
 
 	/**
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	public function __construct(string $fileName = '', string $delimiter = '') {
-		if($fileName != '') {
-			if ($this->file($fileName)) {
-				$_SESSION['feedback_msg'] = "[$fileName] loaded";
-			}
-		}
-		if ($delimiter != '') {
-			$this->delimiter = $delimiter;
-		}
+	public function __construct() {
+
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function file($fileName): bool {
 		if(!file_exists($fileName)) {
-			throw new \Exception(message: "File does not exist.");
+			throw new Exception(message: "File does not exist.");
 		} elseif(!is_readable($fileName)) {
-			throw new \Exception(message: "File is not readable.");
+			throw new Exception(message: "File is not readable.");
 		}
 		$this->fileName = $fileName;
 		return true;
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	public function parse() {
+	private function setFile($fileName): void {
+		if($fileName != '') {
+			if ($this->file($fileName)) {
+				Session::setSession('fileFeedbackMsg', "[$fileName] loaded");
+			}
+		}
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public function parse(string $fileName, string $delimiter = ','): array {
+		$this->setFile($fileName);
+
 		if(!isset($this->fileName)) {
-			throw new \Exception(message: "File not set.");
+			throw new Exception(message: "File not set.");
 		}
 
 		// clear any previous results
@@ -50,7 +56,7 @@ class ParseCsv
 
 		$file = fopen($this->fileName, 'r');
 		while(!feof($file)) {
-			$row = fgetcsv($file, 0, $this->delimiter);
+			$row = fgetcsv($file, 0, $delimiter);
 			if($row == null || $row === false || $row == '') { continue; }
 			if(!$this->header) {
 				$this->header = $row;
@@ -62,6 +68,7 @@ class ParseCsv
 		fclose($file);
 		return $this->data;
 	}
+
 	private function reset(): void {
 		$this->header = null;
 		$this->data = [];

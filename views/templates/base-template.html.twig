@@ -1,0 +1,41 @@
+{% embed 'templates/header-cap.html.twig' %}
+	{% block template_extra_head_meta %}
+
+	{% endblock %}
+
+	{% block template_extra_head_styles %}
+
+	{% endblock %}
+
+	{% block template_extra_head_scripts %}
+
+	{% endblock %}
+{% endembed %}
+
+{% block extra_head_meta %}{% endblock %}
+{% block extra_head_styles %}{% endblock %}
+{% block extra_head_scripts %}{% endblock %}
+
+{% include 'templates/header-base.html.twig' %}
+
+<header>
+	{% block extra_header_content %}{% endblock %}
+</header>
+
+<main>
+	{% block body_content %}{% endblock %}
+</main>
+
+{% embed 'templates/footer-cap.html.twig' %}
+	{% block template_extra_footer_scripts %}
+
+	{% endblock %}
+	{% block template_extra_footer_js %}
+
+	{% endblock %}
+{% endembed %}
+
+{% block extra_footer_scripts %}{% endblock %}
+{% block extra_footer_js %}{% endblock %}
+
+{% include 'templates/footer-base.html.twig' %}
