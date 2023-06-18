@@ -38,8 +38,8 @@ ALTER TABLE bookshelfbookdetail DROP CONSTRAINT fk_bookshelf_book_book_id;
 -- Drop Indexes
 ALTER TABLE book DROP INDEX i_book_title;
 
-ALTER TABLE country DROP INDEX i_country_alpha_2_code;
-ALTER TABLE region DROP INDEX i_region_region_abbr;
+ALTER TABLE country DROP INDEX i_country_country_code;
+ALTER TABLE region DROP INDEX i_region_region_code;
 
 ALTER TABLE admin DROP INDEX i_admin_username;
 
@@ -62,8 +62,8 @@ ALTER TABLE language DROP CONSTRAINT uc_language_title;
 ALTER TABLE publisher DROP CONSTRAINT uc_publisher_name;
 ALTER TABLE bookauthordetail DROP CONSTRAINT uc_book_id_author_id;
 
-ALTER TABLE country DROP CONSTRAINT uc_country_alpha_2_code;
-ALTER TABLE region DROP CONSTRAINT uc_region_region_abbr;
+ALTER TABLE country DROP CONSTRAINT uc_country_country_code;
+ALTER TABLE region DROP CONSTRAINT uc_region_region_code;
 
 ALTER TABLE admin DROP CONSTRAINT uc_admin_username;
 ALTER TABLE user DROP CONSTRAINT uc_user_username;

@@ -1,4 +1,4 @@
-iso_code,country_name,countries_with_tir,association_code,National Associations
+iso_code,country_name,has_tir,association_code,national_association
 AFG,Afghanistan,Afghanistan,55,ACCI
 ALB,Albania,Albania,44,ANALTIR
 DZA,Algeria,-,-,-
@@ -27,7 +27,7 @@ GRC,Greece,Greece,37,OFAE
 HUN,Hungary,Hungary,49,MKFE
 IND,India,India,96,FICCI
 IDN,Indonesia,-,-,-
-IRN,Iran (Islamic Republic of),Iran (Islamic Republic of),57,ICCIM
+IRN,IRAN (ISLAMIC REPUBLIC OF),IRAN (ISLAMIC REPUBLIC OF),57,ICCIM
 IRQ,Iraq,-,-,-
 IRL,Ireland,Ireland,24,IRHA
 ISR,Israel,Israel,56,IRTB
@@ -42,7 +42,7 @@ LBR,Liberia,-,-,-
 LTU,Lithuania,Lithuania,32,LINAVA
 LUX,Luxembourg,Luxembourg,14,FEBETRA
 MLT,Malta,Malta,90,ATTO
-MDA,Moldova,Moldova,60,AITA
+MDA,"Moldova, REPUBLIC OF","Moldova, REPUBLIC OF",60,AITA
 MNG,Mongolia,Mongolia,87,NARTAM
 MNE,Montenegro,Montenegro,68,PKCG
 MAR,Morocco,Morocco,85,AMTRI
@@ -51,11 +51,11 @@ MKD,North Macedonia,North Macedonia,65,AMERIT
 NOR,Norway,Norway,25,NLF
 OMN,Oman,Oman,99,SINYAR
 PAK,Pakistan,Pakistan,94,PNC-ICC
-PSE,Palestine,-,-,-
+PSE,"Palestine, STATE OF",-,-,-
 POL,Poland,Poland,51,ZMPD
 PRT,Portugal,Portugal,41,ANTRAM
 QAT,Qatar,Qatar,97,QCCI
-KOR,Republic of Korea,-,-,-
+KOR,"KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF",-,-,-
 ROU,Romania,Romania,50,UNTRR
 RUS,Russian Federation,Russian Federation,53,ASMAP
 SAU,Saudi Arabia,Saudi Arabia,98,SATA
@@ -68,7 +68,7 @@ CHE,Switzerland,Switzerland,15,ASTAG
 SYR,Syrian Arab Republic,Syrian Arab Republic,83,SNC ICC
 TJK,Tajikistan,Tajikistan,78,ABBAT
 TUN,Tunisia,Tunisia,63,CCIT
-TUR,Türkiye,Türkiye,42,TOBB
+TUR,TÜRKIYE,TÜRKIYE,42,TOBB
 TKM,Turkmenistan,Turkmenistan,76,THADA
 UKR,Ukraine,Ukraine,66,AsMAP UA
 ARE,United Arab Emirates,United Arab Emirates,69,ATCUAE

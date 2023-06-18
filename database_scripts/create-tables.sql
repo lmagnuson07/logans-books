@@ -173,15 +173,19 @@ CREATE TABLE IF NOT EXISTS bookpublisherdetail (
 -- 1
 CREATE TABLE IF NOT EXISTS country (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
-    ,name										VARCHAR(255)	NOT NULL
-    ,alpha_2_code								CHAR(2)			NOT NULL
+    ,country_name								VARCHAR(255)	NOT NULL
+    ,country_code								CHAR(2)			NOT NULL
+   	,iso_code									CHAR(3)			DEFAULT NULL
+   	,has_tir									BOOL			DEFAULT FALSE
+   	,association_code							VARCHAR(50)		DEFAULT NULL
+   	,national_association						VARCHAR(50)		DEFAULT NULL
     ,priority									INT				DEFAULT NULL
 );
 -- 2
 CREATE TABLE IF NOT EXISTS region (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
-    ,name										VARCHAR(255) 	NOT NULL
-    ,region_abbr								VARCHAR(50)		DEFAULT NULL
+    ,region_name								VARCHAR(255) 	NOT NULL
+    ,region_code								VARCHAR(50)		DEFAULT NULL
     ,region_type								VARCHAR(255)	DEFAULT NULL
     ,country_id									INT				NOT NULL
 	,priority									INT				DEFAULT NULL
@@ -189,13 +193,18 @@ CREATE TABLE IF NOT EXISTS region (
 -- 3
 CREATE TABLE IF NOT EXISTS city (
 	id											INT				NOT NULL			AUTO_INCREMENT	PRIMARY KEY
-    ,name										VARCHAR(255)	NOT NULL
-    ,city_abbr									VARCHAR(50)		NOT NULL
-	,coordinates								VARCHAR(50)		NOT NULL
-	,code1										VARCHAR(50)		NOT NULL
-	,code2										VARCHAR(50)		NOT NULL
-	,code3										VARCHAR(50)		NOT NULL
-	,code4										VARCHAR(50)		NOT NULL
+    ,settlement_name							VARCHAR(255)	NOT NULL
+    ,settlement_no_diacritics					VARCHAR(255)	DEFAULT NULL
+	,settlement_local_name						VARCHAR(255)	DEFAULT NULL
+	,settlement_local_no_diacritics				VARCHAR(255)	DEFAULT NULL
+    ,settlement_code							VARCHAR(50)		NOT NULL
+	,function_code								VARCHAR(50)		DEFAULT NULL
+	,status_code								VARCHAR(50)		DEFAULT NULL
+	,date										DATE			DEFAULT NULL
+	,iata										VARCHAR(50)		DEFAULT NULL
+	,coordinates								VARCHAR(50)		DEFAULT NULL
+    ,division_code								VARCHAR(50)		DEFAULT NULL
+	,major_city									BOOL			DEFAULT FALSE
     ,region_id									INT 			NOT NULL
     ,country_id									INT 			NOT NULL
 );

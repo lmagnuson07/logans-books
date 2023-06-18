@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Functions;
-use Exception;
+use App\Exceptions\FileNotFoundException;
+use App\Exceptions\FileNotReadableException;
+use App\Superglobals\Session;
 
 class ParseCsv
 {
@@ -11,27 +13,27 @@ class ParseCsv
 	private int $row_count = 0;
 
 	/**
-	 * @throws Exception
+	 *
 	 */
 	public function __construct() {
 
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws FileNotReadableException|FileNotFoundException
 	 */
 	public function file($fileName): bool {
 		if(!file_exists($fileName)) {
-			throw new Exception(message: "File does not exist.");
+			throw new FileNotFoundException(message: "File does not exist.");
 		} elseif(!is_readable($fileName)) {
-			throw new Exception(message: "File is not readable.");
+			throw new FileNotReadableException();
 		}
 		$this->fileName = $fileName;
 		return true;
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws FileNotReadableException|FileNotFoundException
 	 */
 	private function setFile($fileName): void {
 		if($fileName != '') {
@@ -42,13 +44,13 @@ class ParseCsv
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws FileNotReadableException|FileNotFoundException
 	 */
 	public function parse(string $fileName, string $delimiter = ','): array {
 		$this->setFile($fileName);
 
 		if(!isset($this->fileName)) {
-			throw new Exception(message: "File not set.");
+			throw new FileNotFoundException(message: "CSV file not set.");
 		}
 
 		// clear any previous results
@@ -73,5 +75,15 @@ class ParseCsv
 		$this->header = null;
 		$this->data = [];
 		$this->row_count = 0;
+	}
+
+	public function removeZeroWidthSpaceCharacters(array $arr): array {
+		$trimmedRegionArray = [];
+		foreach($arr as $key => $value) {
+			$newKey = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}]/u', '', $key);
+			$newValue = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}]/u', '', $value);
+			$trimmedRegionArray[$newKey] = $newValue;
+		}
+		return $trimmedRegionArray;
 	}
 }

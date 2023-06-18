@@ -1,17 +1,16 @@
 {
     "name": "logma/logans-books",
     "autoload": {
-				"classmap": [
-					"classes/"
-				],
+		"classmap": [
+			"classes/"
+		],
         "psr-4": {
             "App\\": "classes/"
         }
-
     },
-		"scripts": {
-				"dump": ["composer dump-autoload -o"]
-		},
+	"scripts": {
+		"dump": ["composer dump-autoload -o"]
+	},
     "authors": [
         {
             "name": "lmagnuson07",
@@ -21,7 +20,7 @@
     "require": {
         "vlucas/phpdotenv": "^5.5",
         "twig/twig": "^3.5",
-				"ext-pdo": "*",
+		"ext-pdo": "*",
       	"ext-intl": "*"
     }
 }

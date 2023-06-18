@@ -63,9 +63,11 @@ class App
 
 	static public function initConsts(): void {
 		define("PROJECT_PATH", dirname(__DIR__));
-		define("PRIVATE_PATH", PROJECT_PATH . '/private');
-		define("PUBLIC_PATH", PROJECT_PATH . '/public');
-		define("DATA_FILES_PATH", PROJECT_PATH . '\\data-files\\unece\\');
+		define("PRIVATE_PATH", PROJECT_PATH . '\\private\\');
+		define("PUBLIC_PATH", PROJECT_PATH . '\\public\\');
+		define("UPLOADS_PATH", PROJECT_PATH . '\\uploads\\');
+		define("DATA_FILES_PATH", PROJECT_PATH . '\\data-files\\');
+		define("UNECE_PATH", DATA_FILES_PATH . '\\unece\\');
 
 		// doc root is htdocs
 		//$public_end = strpos($_SERVER['SCRIPT_NAME'], '/public') + 7;

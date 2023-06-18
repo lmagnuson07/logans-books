@@ -102,9 +102,9 @@ FOREIGN KEY (book_id) REFERENCES book(id);
 ALTER TABLE book ADD INDEX i_book_title (title);
 -- residence
 -- 1
-ALTER TABLE country ADD INDEX i_country_alpha_2_code (alpha_2_code);
+ALTER TABLE country ADD INDEX i_country_country_code (country_code);
 -- 2
-ALTER TABLE region ADD INDEX i_region_region_abbr (region_abbr);
+ALTER TABLE region ADD INDEX i_region_region_code (region_code);
 -- admin
 ALTER TABLE admin ADD INDEX i_admin_username (username);
 -- Customer/sale
@@ -134,8 +134,8 @@ ALTER TABLE language ADD CONSTRAINT UNIQUE uc_language_title (title);
 ALTER TABLE publisher ADD CONSTRAINT UNIQUE uc_publisher_name (name);
 ALTER TABLE bookauthordetail ADD CONSTRAINT UNIQUE uc_book_id_author_id (book_id, author_id);
 -- residence
-ALTER TABLE country ADD CONSTRAINT UNIQUE uc_country_alpha_2_code (alpha_2_code);
-ALTER TABLE region ADD CONSTRAINT UNIQUE uc_region_region_abbr (region_abbr);
+ALTER TABLE country ADD CONSTRAINT UNIQUE uc_country_country_code (country_code);
+ALTER TABLE region ADD CONSTRAINT UNIQUE uc_region_region_code (region_code);
 -- admin
 ALTER TABLE admin ADD CONSTRAINT uc_admin_username UNIQUE (username);
 -- Customer/sale

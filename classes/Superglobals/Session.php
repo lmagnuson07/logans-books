@@ -10,7 +10,7 @@
  * @author 		Logan Magnuson <logmagns07@gmail.com>
  */
 
-namespace App\Functions;
+namespace App\Superglobals;
 
 /**
  * Contains static functions for interacting with the $_SESSION suberglobal.
