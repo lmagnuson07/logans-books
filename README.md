@@ -1,20 +1,20 @@
 # Logan's Books
 Logan's Books is a **PHP/MySql** database driven application meant to provide a user-friendly interface for book data. 
 The book data for the application is acquired from the [**Google Books**](https://developers.google.com/books/docs/v1/reference/) and [**OpenLibrary**](https://openlibrary.org/developers/api) APIs and loaded into a **MySQL** database. 
-Presentation and business logic is separated via **Twig Templates** templating engine along with **OOP** principles and **MVC** paradigm. 
-SCSS is compiled using **PostCSS**. CSS is also minified and translated for maximum browser support using **PostCSS**. 
-JavaScript is minified using **UglifyJS**. Plugins and extensions are installed via **Composer**.
+Presentation and business logic is separated via **Twig Templates** templating engine along with **OOP** principles and **MVC** paradigm, with classes autoloaded via **PSR-4**. 
+SCSS is compiled using **PostCSS**. CSS is also minified and transformed for maximum browser support using **PostCSS**. 
+JavaScript is minified using **UglifyJS**. Plugins and extensions are installed via **Composer** and **NPM**.
 ## Features
 - Admin interface to gracefully handle the API requests when uploading data.
 ### User Accounts
 - User Account for creating and updating custom "Bookshelves"
 - User Account Deletion (admin only)
 ### Admin Accounts
-- Admin Account CRUD (top level admin only)
+- Admin Account for CRUD (top level admin only)
 ---
 
 ## Country data
-All country, state, and city data is aquired from [UNECE](https://unece.org/trade).
+All country, state, and city data are acquired from [UNECE](https://unece.org/trade).
 The download for the CSV files can be found [here](https://unece.org/trade/cefact/UNLOCODE-Download).
 Data from [UNECE](https://unece.org/trade) is encoded in the ANSI format.
 The data was converted to UTF8 with the following Windows Powershell prompt:
@@ -91,3 +91,9 @@ This can also be added in a .htaccess file, but since I have access to configura
 	RewriteRule ^ index.php [L]
 </IfModule>
 ```
+### URLS for Site
+Urls for the application are setup in the vhosts file on port 80.
+The urls are added to the C:\Windows\System32\drivers\etc\hosts file to reroute localhost.
+There is the main site url as well as a url for phpmyadmin as the document root is a folder inside htdocs:
+- http://logans-books.local/
+- http://logans-books-phpmyadmin.local/phpmyadmin/

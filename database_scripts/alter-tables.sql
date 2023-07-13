@@ -135,7 +135,8 @@ ALTER TABLE publisher ADD CONSTRAINT UNIQUE uc_publisher_name (name);
 ALTER TABLE bookauthordetail ADD CONSTRAINT UNIQUE uc_book_id_author_id (book_id, author_id);
 -- residence
 ALTER TABLE country ADD CONSTRAINT UNIQUE uc_country_country_code (country_code);
-ALTER TABLE region ADD CONSTRAINT UNIQUE uc_region_region_code (region_code);
+ALTER TABLE region ADD CONSTRAINT UNIQUE uc_region_region_code_country_id (region_code, country_id);
+ALTER TABLE city ADD CONSTRAINT UNIQUE uc_settlement_region_id_country_id (settlement_name, settlement_code, country_id, region_id);
 -- admin
 ALTER TABLE admin ADD CONSTRAINT uc_admin_username UNIQUE (username);
 -- Customer/sale

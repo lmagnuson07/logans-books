@@ -21,6 +21,7 @@
         "vlucas/phpdotenv": "^5.5",
         "twig/twig": "^3.5",
 		"ext-pdo": "*",
-      	"ext-intl": "*"
+      	"ext-intl": "*",
+      	"ext-curl": "*"
     }
 }

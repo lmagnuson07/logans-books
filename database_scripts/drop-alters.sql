@@ -63,7 +63,8 @@ ALTER TABLE publisher DROP CONSTRAINT uc_publisher_name;
 ALTER TABLE bookauthordetail DROP CONSTRAINT uc_book_id_author_id;
 
 ALTER TABLE country DROP CONSTRAINT uc_country_country_code;
-ALTER TABLE region DROP CONSTRAINT uc_region_region_code;
+ALTER TABLE region DROP CONSTRAINT uc_region_region_code_country_id;
+ALTER TABLE city DROP CONSTRAINT uc_settlement_region_id_country_id;
 
 ALTER TABLE admin DROP CONSTRAINT uc_admin_username;
 ALTER TABLE user DROP CONSTRAINT uc_user_username;

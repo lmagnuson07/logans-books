@@ -205,7 +205,7 @@ CREATE TABLE IF NOT EXISTS city (
 	,coordinates								VARCHAR(50)		DEFAULT NULL
     ,division_code								VARCHAR(50)		DEFAULT NULL
 	,major_city									BOOL			DEFAULT FALSE
-    ,region_id									INT 			NOT NULL
+    ,region_id									INT 			DEFAULT NULL
     ,country_id									INT 			NOT NULL
 );
 -- 4

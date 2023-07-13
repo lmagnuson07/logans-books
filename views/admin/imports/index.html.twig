@@ -5,8 +5,37 @@
 {% block extra_head_scripts %}{% endblock %}
 
 {% block body_content %}
-	<h2>Welcome to Logan's Books</h2>
-	<p>This is the admin imports page</p>
+	<section>
+		<h2>Welcome to Logan's Books</h2>
+		<p>This is the admin imports page</p>
+	</section>
+
+	<section>
+		<h2>Demographic Imports</h2>
+
+		{% if errorMsg is defined %}
+			<p>Failed to import:</p>
+			<p>{{ errorMsg|raw }}</p>
+		{% endif %}
+
+		{% if successfulImportNumber is null or successfulImportNumber == 0 %}
+			<p>CAUTION: Pressing this button will currently wipe the database. Only press this button if you 100% know what your doing.</p>
+		{% endif %}
+		<p>This process will take a long time as it is setting up the settlement relationships between countries and regions.</p>
+		<p>This process must be split into chunks as it will max out the servers request time limit and database constraints.</p>
+
+		{% if successfulImportNumber is not null and successfulImportNumber == 0 %}
+			<p>The demographic data has been successfully inserted into the database!</p>
+		{% elseif successfulImportNumber is not null %}
+			<p>IMPORTANT: You must press the import button {{ totalImportCount - successfulImportNumber }} more times for the demographic data to be properly inserted into the database.</p>
+			<p>Import Number: {{ successfulImportNumber }}/{{ totalImportCount }}</p>
+		{% endif %}
+
+		<form action="/admin/imports" method="post">
+			<input type="submit" name="importDemographicsBtn" value="Import Demographic Data">
+		</form>
+	</section>
+
 {% endblock %}
 
 {% block extra_footer_scripts %}{% endblock %}

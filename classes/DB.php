@@ -10,7 +10,25 @@ use PDOException;
  */
 class DB
 {
+	/**
+	 * Stores the PDO instance.
+	 *
+	 * @var PDO
+	 */
 	private PDO $pdo;
+	/**
+	 * Makes PDO::FETCH_ASSOC available on the DB class.
+	 *
+	 * Avoids unnecessary PDO imports in other classes that use DB.
+	 */
+	public const FETCH_ASSOC = PDO::FETCH_ASSOC;
+
+	/**
+	 * Store the SQL_SCRIPTS_PATH constant defined in App.
+	 *
+	 * @var string
+	 */
+	static protected string $sqlScriptsPath = SQL_SCRIPTS_PATH;
 
 	// FETCH_ASSOC, FETCH_CLASS, default fetch array
 	private array $defaultOptions = [
@@ -48,4 +66,27 @@ class DB
 		return call_user_func_array([$this->pdo, $name], $arguments);
 	}
 
+	/**
+	 * Recreates the database with developer written sql scripts.
+	 *
+	 * It drops the alters, truncates the tables, drops the tables, re-creates the alters, and inserts some static data.
+	 *
+	 * @return void
+	 */
+	public function recreateDb(): void {
+		$scriptsArray = [
+			self::$sqlScriptsPath . 'drop-alters.sql',
+			self::$sqlScriptsPath . 'truncate-tables.sql',
+			self::$sqlScriptsPath . 'drop-tables.sql',
+			self::$sqlScriptsPath . 'create-tables.sql',
+			self::$sqlScriptsPath . 'alter-tables.sql',
+			self::$sqlScriptsPath . 'inserts.sql'
+		];
+
+		$sql = "";
+		foreach ($scriptsArray as $script) {
+			$sql .= file_get_contents($script);
+		}
+		$this->pdo->exec($sql);
+	}
 }

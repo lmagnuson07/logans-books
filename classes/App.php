@@ -68,14 +68,8 @@ class App
 		define("UPLOADS_PATH", PROJECT_PATH . '\\uploads\\');
 		define("DATA_FILES_PATH", PROJECT_PATH . '\\data-files\\');
 		define("UNECE_PATH", DATA_FILES_PATH . '\\unece\\');
-
-		// doc root is htdocs
-		//$public_end = strpos($_SERVER['SCRIPT_NAME'], '/public') + 7;
-		//$doc_root = substr($_SERVER['SCRIPT_NAME'], 0, $public_end);
-
-		// doc root is public folder
-		$doc_root = substr($_SERVER['SCRIPT_NAME'], 0, 0);
-		define("WWW_ROOT", $doc_root);
+		define("SQL_SCRIPTS_PATH", PROJECT_PATH . '\\database_scripts\\');
+		define("WWW", 'http://logans-books.local');
 	}
 
 	static public function setDependencies(): void {
@@ -83,8 +77,8 @@ class App
 		$dotenv = Dotenv::createImmutable(dirname(__DIR__));
 		$dotenv->load();
 
-		// Setup for twig
 		try {
+			// Setup for twig
 			Twig::init();
 			Twig::initFilters();
 		} catch (Exception $ex) {
@@ -119,6 +113,7 @@ class App
             /// Admin routes
             ->get('/admin', [AdminController::class, 'index'])
 			->get('/admin/imports', [ImportsController::class, 'index'])
+			->post('/admin/imports', [ImportsController::class, 'importDemographics'])
         ;
 	}
 

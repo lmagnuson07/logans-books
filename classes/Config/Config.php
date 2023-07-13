@@ -4,7 +4,6 @@ namespace App\Config;
 
 /**
  * @property-read ?array $db
- * @property-read ?array $paths
  */
 class Config
 {

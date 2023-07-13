@@ -4,6 +4,7 @@ namespace App\Config;
 use App\Exceptions\ViewNotFoundException;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
+use Twig\Extension\DebugExtension;
 
 class Twig
 {
@@ -25,6 +26,7 @@ class Twig
 		}
 		self::$loader = new FilesystemLoader(self::VIEW_PATH);
 		self::$twig = new Environment(self::$loader, [
+			'debug' => true,
 			// 'cache' => PROJECT_PATH . '\storage\cache',
 		]);
 	}
@@ -38,6 +40,6 @@ class Twig
 	}
 
 	static public function initFilters():void {
-
+		self::$twig->addExtension(new DebugExtension());
 	}
 }
