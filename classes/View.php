@@ -29,6 +29,7 @@ class View extends Twig
 
 		return new static;
 	}
+
 	public function render(): string {
 		$twig = new Twig(self::$pageDictInit);
 		try {

@@ -180,6 +180,9 @@ CREATE TABLE IF NOT EXISTS country (
    	,association_code							VARCHAR(50)		DEFAULT NULL
    	,national_association						VARCHAR(50)		DEFAULT NULL
     ,priority									INT				DEFAULT NULL
+	,version									INT				NOT NULL			DEFAULT 0
+    ,created_time								DATETIME		NOT NULL			DEFAULT (CURRENT_TIME)
+	,updated_time								DATETIME		DEFAULT NULL
 );
 -- 2
 CREATE TABLE IF NOT EXISTS region (

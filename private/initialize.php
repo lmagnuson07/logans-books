@@ -8,8 +8,8 @@ use App\Router;
 ob_start();
 session_start();
 
-App::setDependencies();
 App::initConsts();
+App::setDependencies();
 
 $app = new App(
 	[

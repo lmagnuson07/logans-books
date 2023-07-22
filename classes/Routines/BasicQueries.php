@@ -13,7 +13,7 @@
 namespace App\Routines;
 
 use App\DB;
-use App\Exceptions\DataInsertException;
+use App\Exceptions\DatabaseExceptions\DataInsertException;
 use App\Exceptions\ParameterExceptions\EmptyParameterException;
 use App\Exceptions\ParameterExceptions\InvalidArgumentException;
 
@@ -113,6 +113,7 @@ class BasicQueries
 		}, []);
 
 		self::$db->beginTransaction();
+
 
 		$stmt = self::$db->prepare(
 			"INSERT INTO " . $tableName . " (" . join(',', array_values($cols)) . ") " .

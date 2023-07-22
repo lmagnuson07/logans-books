@@ -10,7 +10,6 @@ use DateTime;
 
 class DemographicImportsModel extends Model
 {
-	private string $csvPath = DATA_FILES_PATH;
 	private string $unecePath = UNECE_PATH;
 	private array $csvFiles;
 	private ParseCsv $csvParser;
@@ -239,8 +238,6 @@ class DemographicImportsModel extends Model
 			}
 		}
 
-//		$stagedImportData['settlementArray'] = $newSettlementArray;
-//		return $stagedImportData;
 		return $newSettlementArray;
 	}
 }

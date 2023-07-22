@@ -70,6 +70,8 @@ class App
 		define("UNECE_PATH", DATA_FILES_PATH . '\\unece\\');
 		define("SQL_SCRIPTS_PATH", PROJECT_PATH . '\\database_scripts\\');
 		define("WWW", 'http://logans-books.local');
+
+		define('DEFAULT_TIMEZONE', 'America/Edmonton');
 	}
 
 	static public function setDependencies(): void {
@@ -113,7 +115,7 @@ class App
             /// Admin routes
             ->get('/admin', [AdminController::class, 'index'])
 			->get('/admin/imports', [ImportsController::class, 'index'])
-			->post('/admin/imports', [ImportsController::class, 'importDemographics'])
+			->post('/admin/imports', [ImportsController::class, 'postHandler'])
         ;
 	}
 

@@ -17,6 +17,9 @@
 			<p>Failed to import:</p>
 			<p>{{ errorMsg|raw }}</p>
 		{% endif %}
+		{% if feedbackMsg is defined %}
+			<p>{{ feedbackMsg|raw }}</p>
+		{% endif %}
 
 		{% if successfulImportNumber is null or successfulImportNumber == 0 %}
 			<p>CAUTION: Pressing this button will currently wipe the database. Only press this button if you 100% know what your doing.</p>
@@ -32,7 +35,8 @@
 		{% endif %}
 
 		<form action="/admin/imports" method="post">
-			<input type="submit" name="importDemographicsBtn" value="Import Demographic Data">
+			<input type="submit" name="importDemographicsBtn" value="Import Demographic Data" />
+			<input type="submit" name="resetImport" value="Restart Import" />
 		</form>
 	</section>
 

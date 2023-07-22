@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Functions;
+
 use App\Exceptions\FileNotFoundException;
 use App\Exceptions\FileNotReadableException;
 use App\Superglobals\Session;

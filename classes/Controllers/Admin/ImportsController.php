@@ -3,10 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\App;
-use App\Superglobals\Post;
-use App\Superglobals\Session;
-use PDOException;
-use App\Exceptions\DataInsertException;
+use App\Exceptions\DatabaseExceptions\DataInsertException;
 use App\Exceptions\FileNotFoundException;
 use App\Exceptions\FileNotReadableException;
 use App\Exceptions\ParameterExceptions\EmptyParameterException;
@@ -14,7 +11,10 @@ use App\Exceptions\ParameterExceptions\InvalidArgumentException;
 use App\Functions\ParseCsv;
 use App\Models\admin\DemographicImportsModel;
 use App\Routines\BasicQueries;
+use App\Superglobals\Post;
+use App\Superglobals\Session;
 use App\View;
+use PDOException;
 
 class ImportsController
 {
@@ -43,14 +43,23 @@ class ImportsController
 	 *
 	 * @return View
 	 */
-	public function importDemographics(): View {
+	public function postHandler(): View {
 		Post::initPostArray(Post::getRawPostArray());
 		$postArray = Post::getPostArray();
 
-		if (!isset($postArray['importDemographicsBtn']) || $postArray['importDemographicsBtn'] !== "Import Demographic Data") {
+		if (isset($postArray['importDemographicsBtn']) && $postArray['importDemographicsBtn'] === "Import Demographic Data") {
+			$this->importDemographics();
+			return View::make(view: 'admin/imports/index', pageDictInit: $this->page_dict);
+		} elseif (isset($postArray['resetImport']) && $postArray['resetImport'] === "Restart Import") {
+			$this->resetImports();
+			$this->page_dict['feedbackMsg'] = "The demographic imports have been reset.";
+			return View::make(view: 'admin/imports/index', pageDictInit: $this->page_dict);
+		} else {
 			return View::make(view: 'errors/404');
 		}
+	}
 
+	private function importDemographics(): void {
 		$db = App::db();
 		BasicQueries::init($db);
 
@@ -61,7 +70,6 @@ class ImportsController
 			if (!isset($_SESSION['successfulImportNumber'])) {
 				Session::setSession("successfulImportNumber", 0);
 			}
-			$countryCount = BasicQueries::countTableRecords("country");
 
 			if (!isset($_SESSION['stagedImportData'])) {
 				$db->recreateDb();
@@ -88,7 +96,13 @@ class ImportsController
 			// Loop through a certain amount of data and keep track of the data and how many loops in the session.
 			// Script is too demanding with this much data to run the entire data set.
 			Session::setSession("stagedImportData", $stagedImportData);
-			Session::setSession("currentlyImporting", true);
+
+//			$country = new Country($stagedImportData['countryArray'][0]);
+//			$countryRepository = new CountryRepository($db);
+//			$countryEntity = new Country();
+//			$countryEntity = $countryRepository->fetchByColsById($countryEntity->getClassCols(), 1);
+//
+//			$countriesArray = $countryRepository->fetchAllByCols($countryEntity->getClassCols());
 
 			$chunkedArray = array_chunk($stagedImportData['settlementArray'], 27000);
 			$tempArr = $demographicImportsModel->setSettlementRelationships($stagedImportData, $chunkedArray[$_SESSION['successfulImportNumber']]);
@@ -105,8 +119,6 @@ class ImportsController
 			}
 			// We are done importing
 			if ($_SESSION['totalImportCount'] === $_SESSION['successfulImportNumber']) {
-				Session::setSession("currentlyImporting", false);
-
 				Session::setSession("successfulImportNumber", 0);
 				Session::setSession("totalImportCount", 0);
 
@@ -123,11 +135,15 @@ class ImportsController
 			|InvalidArgumentException|PDOException $ex
 		) {
 			$this->page_dict['errorMsg'] = $ex->getMessage();
-			Session::unsetSession("stagedImportData");
-			Session::unsetSession("totalImportCount");
-			Session::unsetSession("successfulImportNumber");
+			$this->resetImports();
 		}
+	}
 
-		return View::make(view: 'admin/imports/index', pageDictInit: $this->page_dict);
+	private function resetImports(): void {
+		Session::unsetSession("stagedImportData");
+		Session::unsetSession("totalImportCount");
+		Session::unsetSession("successfulImportNumber");
+		$this->page_dict['successfulImportNumber'] = 0;
+		$this->page_dict['totalImportCount'] = 0;
 	}
 }
