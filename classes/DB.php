@@ -25,13 +25,6 @@ class DB
 	public const FETCH_ASSOC = PDO::FETCH_ASSOC;
 
 	/**
-	 * Makes PDO::FETCH_CLASS available on the DB class.
-	 *
-	 * Avoids unnecessary PDO imports in other classes that use DB.
-	 */
-	public const FETCH_CLASS = PDO::FETCH_CLASS;
-
-	/**
 	 * Store the SQL_SCRIPTS_PATH constant defined in App.
 	 *
 	 * @var string

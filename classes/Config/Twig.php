@@ -9,13 +9,9 @@ use Twig\Extension\DebugExtension;
 class Twig
 {
 	const VIEW_PATH = __DIR__ . '/../../views/';
-	protected array $page_dict = [];
+	static protected array $page_dict = [];
 	static protected FilesystemLoader $loader;
 	static protected Environment $twig;
-
-	public function __construct($page_dict=[]) {
-		$this->page_dict = $page_dict;
-	}
 
 	/**
 	 * @throws ViewNotFoundException
@@ -29,14 +25,13 @@ class Twig
 			'debug' => true,
 			// 'cache' => PROJECT_PATH . '\storage\cache',
 		]);
+		static::pageDictInit();
 	}
 
-	public function getPageDict(): array {
-		return $this->page_dict;
-	}
-
-	public function addVar(string $key, mixed $data): void {
-		$this->page_dict[$key] = $data;
+	static private function pageDictInit(): void {
+		static::$page_dict = [
+			"contentServerUrl" => CONTENT_SERVER,
+		];
 	}
 
 	static public function initFilters():void {

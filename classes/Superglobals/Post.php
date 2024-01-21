@@ -46,9 +46,23 @@ class Post {
 	/**
 	 * Returns a reference to the $_POST superglobal.
 	 *
+	 * If the `$_POST` superglobal is empty, it will check the files input (php://input).
+	 * This is needed for ajax requests to the controller method.
+	 * Only sets the `$_POST` if it successfully retrieves data from the files input.
+	 *
 	 * @return array
 	 */
 	static public function getRawPostArray(): array {
+		if (empty($_POST)) {
+			$fileInput = file_get_contents('php://input');
+			if ($fileInput) {
+				$_POST = json_decode($fileInput, true);
+			}
+		}
+		if (!is_array($_POST)) {
+			$arr = [$_POST];
+			$_POST =$arr;
+		}
 		return $_POST;
 	}
 

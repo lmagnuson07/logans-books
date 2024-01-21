@@ -17,8 +17,8 @@ module.exports = {
 			noIsPseudoSelector: true
 		}),
 		require('@csstools/postcss-stepped-value-functions'),
-		require('cssnano')({
-			preset: ["default", { discardComments: { removeAll: true, }, }],
-		}),
+		// require('cssnano')({
+		// 	preset: ["default", { discardComments: { removeAll: true, }, }],
+		// }),
 	],
 };

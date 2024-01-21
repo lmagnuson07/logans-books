@@ -24,19 +24,18 @@ class View extends Twig
 	 */
 	static public function make(string $view, array $pageDictInit=[], array $params=[]):static {
 		self::$view = $view . '.html.twig';
-		self::$pageDictInit = $pageDictInit;
+		self::$pageDictInit = array_merge($pageDictInit, static::$page_dict);
 		self::$params = $params;
 
 		return new static;
 	}
 
 	public function render(): string {
-		$twig = new Twig(self::$pageDictInit);
 		try {
 			if (!file_exists(self::VIEW_PATH . static::$view)) {
 				throw new ViewNotFoundException();
 			}
-			return self::$twig->render(static::$view, $twig->page_dict);
+			return self::$twig->render(static::$view, self::$pageDictInit);
 		} catch (LoaderError $ex) {
 			return 'Loader Error';
 		} catch (RuntimeError $ex) {

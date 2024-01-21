@@ -55,7 +55,10 @@ class ImportsController
 			$this->page_dict['feedbackMsg'] = "The demographic imports have been reset.";
 			return View::make(view: 'admin/imports/index', pageDictInit: $this->page_dict);
 		} else {
-			return View::make(view: 'errors/404');
+			http_response_code(400);
+			echo "400";
+//			echo json_encode($_POST);
+			return View::make(view: 'ajax/ajax');
 		}
 	}
 

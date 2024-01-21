@@ -69,7 +69,9 @@ class App
 		define("DATA_FILES_PATH", PROJECT_PATH . '\\data-files\\');
 		define("UNECE_PATH", DATA_FILES_PATH . '\\unece\\');
 		define("SQL_SCRIPTS_PATH", PROJECT_PATH . '\\database_scripts\\');
+
 		define("WWW", 'http://logans-books.local');
+		define("CONTENT_SERVER", 'http://logans-books-assets.local');
 
 		define('DEFAULT_TIMEZONE', 'America/Edmonton');
 	}

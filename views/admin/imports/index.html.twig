@@ -1,4 +1,4 @@
-{% extends 'templates/base-template.html.twig' %}
+{% extends 'templates/admin-base-template.html.twig' %}
 
 {% block extra_head_meta %}{% endblock %}
 {% block extra_head_styles %}{% endblock %}
@@ -34,10 +34,11 @@
 			<p>Import Number: {{ successfulImportNumber }}/{{ totalImportCount }}</p>
 		{% endif %}
 
-		<form action="/admin/imports" method="post">
-			<input type="submit" name="importDemographicsBtn" value="Import Demographic Data" />
-			<input type="submit" name="resetImport" value="Restart Import" />
+		<form action="/admin/imports" method="post" name="demographicsImportForm">
+			<input id="importDemographicsBtn" type="submit" name="importDemographicsBtn" value="Import Demographic Data" />
+			<input id="resetImportBtn" type="submit" name="resetImport" value="Restart Import" />
 		</form>
+		<img src="{{ contentServerUrl }}/img/images.png" alt="">
 	</section>
 
 {% endblock %}

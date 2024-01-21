@@ -1,0 +1,95 @@
+
+	body .foo {
+		color: #a34532;
+		font-size: 200px;
+	}
+
+p:not(:first-child):not(.special) {
+	color: red;
+}
+
+body {
+  /* $white comes from the vars.js file thats added as a plugin option */
+	/*background-color: $white;*/
+
+	/* $color is imported from vars.css */
+	/*background-color: $color;*/
+}
+
+input::-moz-placeholder {
+	color: red;
+}
+
+input::placeholder {
+	color: red;
+}
+
+@media(max-width: 500px) {
+
+h1, h2, h3, h4, h5, h6 {
+		font-size: 40px;
+}
+	}
+
+:root {
+	--max-body-width: 92rem;
+}
+
+.foo {
+	color: red;
+/*	:is(span) {
+		color: pink;
+	}*/
+}
+
+.foo:hover {
+		color: blue;
+	}
+
+.foo span {
+		color: pink;
+	}
+
+/* PostCSS stepped Value Functions */
+
+.test-functions {
+	padding: 8px 3px 1px calc(3px + 50%);
+	transform: rotate(-50deg);
+	top: 16px;
+	right: 16px;
+	bottom: 21px;
+	left: 12px;
+	width: 12px;
+}
+
+@media (color: 48842621) {
+	:root {
+		--site-bgcolor: gray;
+		--site-color: #fff;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--site-bgcolor: gray;
+		--site-color: #fff;
+	}
+}
+
+@media (color: 70318723) {
+	:root {
+		--site-bgcolor: #fff;
+		--site-color: gray;
+	}
+}
+
+@media (prefers-color-scheme: light) {
+	:root {
+		--site-bgcolor: #fff;
+		--site-color: gray;
+	}
+}
+
+body {
+	background-color: var(--site-bgcolor);
+}
